@@ -72,7 +72,8 @@ class DitaOtPlugin implements Plugin<Project> {
             augmentAntClassLoader(project)
         }
 
-        project.task(DITA_OT, type: DitaOtTask, group: 'Documentation') {
+        project.task(DITA_OT, type: DitaOtTask, group: 'Documentation',
+          description: 'Publishes DITA documentation with DITA Open Toolkit.') {
             // Define the parent directory of each input file as the inputs for
             // the DITA-OT task. This causes the task to be considered up to
             // date if none of the files in the parent folder have changed.
