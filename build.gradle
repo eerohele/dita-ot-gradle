@@ -1,0 +1,38 @@
+plugins {
+    id 'com.gradle.plugin-publish' version '0.9.1'
+}
+
+apply plugin: 'com.gradle.plugin-publish'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'commons-io:commons-io:2.4'
+}
+
+group = 'com.github.eerohele'
+version = '0.1.0'
+
+pluginBundle {
+  website = 'http://github.com/eerohele/dita-ot-gradle'
+  vcsUrl = 'https://github.com/eerohele/dita-ot-gradle.git'
+  description = 'A Gradle plugin for running DITA Open Toolkit'
+  tags = ['dita', 'dita-ot', 'documentation']
+
+  plugins {
+    DitaOtPlugin {
+      id = 'com.github.eerohele.dita-ot-gradle'
+      displayName = 'DITA-OT Gradle Plugin'
+    }
+  }
+}

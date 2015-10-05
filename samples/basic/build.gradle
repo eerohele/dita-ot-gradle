@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'com.github.eerohele:dita-ot-gradle:0.1.0'
+    }
+}
+
+// Load the DITA-OT Gradle plugin.
+apply plugin: 'com.github.eerohele.dita-ot-gradle'
+
+// The DITA-OT Gradle plugin adds a task called "ditaOt" into your Gradle build-
+// file. Let's make it the default task so that you can just type "gradle"
+// on the command line to run DITA-OT.
+defaultTasks 'ditaOt'
+
+ditaOt {
+    // Tell Gradle where your DITA-OT installation is.
+    home = '/opt/dita-ot'
+
+    // Point DITA-OT to the files you want to publish.
+    input { 'dita/root.ditamap' }
+
+    // Tell DITA-OT what you want it to produce.
+    transtype = 'html5'
+
+    // Give DITA-OT additional parameters.
+    //
+    // For a list of the parameters DITA-OT understands, see:
+    // http://www.dita-ot.org/2.1/parameters/
+    properties {
+        property(name: 'processing-mode', value: 'strict')
+    }
+}

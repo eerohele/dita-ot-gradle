@@ -1,0 +1,3 @@
+<val>
+  <prop att="platform" val="osx" action="exclude"/>
+</val>
