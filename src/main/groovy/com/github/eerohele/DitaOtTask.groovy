@@ -21,17 +21,11 @@ class DitaOtTask extends DefaultTask {
      * is `${buildDir}/root`.
      *
      * @param inputFile Input DITA file.
-     * @param files The number of input files.
      * @since 0.1.0
      */
-    File getOutputDir(File inputFile, int numberOfFiles) {
-        File outputDir = new File(project.ditaOt.output)
-
-        if (numberOfFiles == 1) {
-            outputDir
-        } else {
-            new File(outputDir, FilenameUtils.getBaseName(inputFile.getPath()))
-        }
+    File getOutputDir(File inputFile) {
+        new File(project.ditaOt.output,
+                 FilenameUtils.getBaseName(inputFile.getPath()))
     }
 
     /** Get the associated property file for the given DITA map.
@@ -60,7 +54,7 @@ class DitaOtTask extends DefaultTask {
         FileCollection inputFiles = getInputFiles()
 
         inputFiles.files.each { File file ->
-            File outputDir = getOutputDir(file, inputFiles.size())
+            File outputDir = getOutputDir(file)
 
             ant.ant(antfile: "${project.ditaOt.home}/build.xml") {
                 property(name: Properties.ARGS_INPUT, file.getPath())
