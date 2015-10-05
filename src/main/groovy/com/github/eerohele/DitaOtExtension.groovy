@@ -10,7 +10,9 @@ class DitaOtExtension {
 
     Closure properties
 
-    String home = "${System.env.DITA_HOME}"
+    String home = project.hasProperty('ditaHome') ?
+                  project.ditaHome : "${System.env.DITA_HOME}"
+
     String transtype
 
     final Project project
