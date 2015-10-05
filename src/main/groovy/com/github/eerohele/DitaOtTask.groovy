@@ -3,11 +3,16 @@ package com.github.eerohele
 import org.gradle.api.Project
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.file.FileCollection
 
 import org.apache.commons.io.FilenameUtils as FilenameUtils
 
 class DitaOtTask extends DefaultTask {
+    @InputFiles
+    @SkipWhenEmpty
     FileCollection getInputFiles() {
         project.files(project.ditaOt.input)
     }
@@ -23,6 +28,7 @@ class DitaOtTask extends DefaultTask {
      * @param inputFile Input DITA file.
      * @since 0.1.0
      */
+    @OutputDirectory
     File getOutputDir(File inputFile) {
         new File(project.ditaOt.output,
                  FilenameUtils.getBaseName(inputFile.getPath()))
