@@ -1,0 +1,20 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'com.github.eerohele:dita-ot-gradle:0.1.0'
+    }
+}
+
+// Use the same DITA-OT installation for all subprojects.
+ext.ditaHome = '/opt/dita-ot'
+
+// Set 'ditaOt' as the default task for this project.
+defaultTasks 'ditaOt'
+
+subprojects {
+    // Enable the DITA-OT Gradle plugin for all subprojects.
+    apply plugin: 'com.github.eerohele.dita-ot-gradle'
+}

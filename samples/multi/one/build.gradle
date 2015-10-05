@@ -1,0 +1,4 @@
+ditaOt {
+    input { 'one.ditamap' }
+    transtype = 'html5'
+}
