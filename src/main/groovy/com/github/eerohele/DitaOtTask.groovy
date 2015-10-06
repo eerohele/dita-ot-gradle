@@ -66,12 +66,12 @@ class DitaOtTask extends DefaultTask {
 
     @InputFiles
     @SkipWhenEmpty
-    FileTree getInputFileTree() {
+    Set<FileTree> getInputFileTree() {
         PatternSet patternSet = getInputFilePatternSet()
 
         getInputFileCollection().files.collect {
             project.fileTree(it.getParent()).matching(patternSet)
-        }.inject { x, y -> x.add(y) }
+        } as Set
     }
 
     @OutputDirectories
