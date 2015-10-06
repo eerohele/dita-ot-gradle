@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-// Set 'ditaOt' as the default task for this project.
+// Set 'dita' as the default task for this project.
 defaultTasks 'dita'
 
 subprojects {
