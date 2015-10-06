@@ -12,15 +12,15 @@ buildscript {
 
 apply plugin: 'com.github.eerohele.dita-ot-gradle'
 
-defaultTasks 'ditaOt'
+defaultTasks 'dita'
 
 // This is an alternative way of telling Gradle where your DITA-OT installation
 // is.
-dita {
-    home = '/opt/dita-ot'
+ditaOt {
+    dir = '/opt/dita-ot'
 }
 
-ditaOt {
+dita {
     // Publish all .ditamap files in the 'dita' directory.
     input fileTree(dir: 'dita', include: '*.ditamap')
     transtype 'html5'

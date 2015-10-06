@@ -1,4 +1,4 @@
-ditaOt {
+dita {
     input 'one.ditamap'
     transtype 'html5'
 }

@@ -48,10 +48,10 @@ class DitaOtPlugin implements Plugin<Project> {
             runtime 'org.apache.ant:ant-launcher:1.9.4'
             runtime 'org.apache.ant:ant-apache-resolver:1.9.4'
 
-            provided project.files("${dita.home}/lib/dost.jar")
-            provided project.files("${dita.home}/plugins/org.dita.pdf2/lib/fo.jar")
-            provided project.files("${dita.home}/lib")
-            provided project.files("${dita.home}/resources")
+            provided project.files("${dita.dir}/lib/dost.jar")
+            provided project.files("${dita.dir}/plugins/org.dita.pdf2/lib/fo.jar")
+            provided project.files("${dita.dir}/lib")
+            provided project.files("${dita.dir}/resources")
         }
     }
 
@@ -59,7 +59,7 @@ class DitaOtPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.apply plugin: 'base'
 
-        def dita = project.extensions.create(DITA, DitaOtExtension, project)
+        def dita = project.extensions.create(DITA_OT, DitaOtExtension, project)
 
         // Project extensions aren't available before afterEvaluate.
         project.afterEvaluate {
@@ -71,8 +71,8 @@ class DitaOtPlugin implements Plugin<Project> {
             augmentAntClassLoader(project)
         }
 
-        project.task(DITA_OT, type: DitaOtTask, group: 'Documentation',
-          description: 'Publishes DITA documentation with DITA Open Toolkit.')
+        project.task(DITA, type: DitaOtTask, group: 'Documentation',
+            description: 'Publishes DITA documentation with DITA Open Toolkit.')
     }
 
 }

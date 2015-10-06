@@ -23,7 +23,7 @@ class DitaOtTask extends DefaultTask {
     Closure props
     String format = DEFAULT_TRANSTYPE
 
-    void home(String h) {
+    void dir(String h) {
         this.ditaHome = h
     }
 
@@ -125,7 +125,7 @@ class DitaOtTask extends DefaultTask {
     @TaskAction
     void render() {
         if (!this.ditaHome) {
-            setDitaHome(project.dita.home)
+            setDitaHome(project.ditaOt.dir)
         }
 
         getInputFileCollection().files.each { File file ->
