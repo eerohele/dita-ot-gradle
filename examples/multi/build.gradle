@@ -1,3 +1,5 @@
+// See the 'simple' example for comments on the basic properties.
+
 buildscript {
     repositories {
         mavenLocal()
