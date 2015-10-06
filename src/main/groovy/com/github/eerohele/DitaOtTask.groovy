@@ -17,6 +17,7 @@ class DitaOtTask extends DefaultTask {
 
     String ditaHome
     Object inputFiles
+    String ditaVal
     String outputDir = project.buildDir
     String tempDir = getDefaultTempDir()
     Closure props
@@ -28,6 +29,10 @@ class DitaOtTask extends DefaultTask {
 
     void input(Object i) {
         this.inputFiles = i
+    }
+
+    void filter(String f) {
+        this.ditaVal = f
     }
 
     void output(String o) {
@@ -127,10 +132,15 @@ class DitaOtTask extends DefaultTask {
             File out = getOutputDirForFile(file)
 
             ant.ant(antfile: "${getDitaHome()}/build.xml") {
-                property(name: Properties.ARGS_INPUT, file.getPath())
-                property(name: Properties.OUTPUT_DIR, out.getPath())
-                property(name: Properties.TRANSTYPE, this.format)
-                property(name: Properties.TEMP_DIR, this.tempDir)
+                property(name: Properties.ARGS_INPUT, location: file.getPath())
+                property(name: Properties.OUTPUT_DIR, location: out.getPath())
+                property(name: Properties.TEMP_DIR, location: this.tempDir)
+                property(name: Properties.TRANSTYPE, value: this.format)
+
+                if (this.ditaVal) {
+                    property(name: Properties.ARGS_FILTER,
+                             location: this.ditaVal)
+                }
 
                 if (this.props) {
                     // Set the Closure delegate to the `ant` property so that

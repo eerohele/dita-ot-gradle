@@ -28,6 +28,9 @@ ditaOt {
     // Tell DITA-OT what you want it to produce.
     transtype 'html5'
 
+    // Point DITA-OT to the DITAVAL file you want to use.
+    filter 'dita/root.ditaval'
+
     // Give DITA-OT additional parameters.
     //
     // For a list of the parameters DITA-OT understands, see:
