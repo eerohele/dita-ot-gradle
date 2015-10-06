@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.Plugin
 
 class DitaOtPlugin implements Plugin<Project> {
+    static final String DITA = 'dita'
     static final String DITA_OT = 'ditaOt'
 
     /** Add runtime and provided dependencies to Ant classloader.
@@ -33,9 +34,7 @@ class DitaOtPlugin implements Plugin<Project> {
         }
     }
 
-    void setDependencies(Project project) {
-        String ditaHome = project.ditaOt.home
-
+    void setDependencies(Project project, DitaOtExtension dita) {
         project.dependencies {
             runtime 'commons-io:commons-io:2.4'
             runtime 'commons-codec:commons-codec:1.9'
@@ -49,10 +48,10 @@ class DitaOtPlugin implements Plugin<Project> {
             runtime 'org.apache.ant:ant-launcher:1.9.4'
             runtime 'org.apache.ant:ant-apache-resolver:1.9.4'
 
-            provided project.files("${ditaHome}/lib/dost.jar")
-            provided project.files("${ditaHome}/plugins/org.dita.pdf2/lib/fo.jar")
-            provided project.files("${ditaHome}/lib")
-            provided project.files("${ditaHome}/resources")
+            provided project.files("${dita.home}/lib/dost.jar")
+            provided project.files("${dita.home}/plugins/org.dita.pdf2/lib/fo.jar")
+            provided project.files("${dita.home}/lib")
+            provided project.files("${dita.home}/resources")
         }
     }
 
@@ -60,7 +59,7 @@ class DitaOtPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.apply plugin: 'base'
 
-        project.extensions.create(DITA_OT, DitaOtExtension, project)
+        def dita = project.extensions.create(DITA, DitaOtExtension, project)
 
         // Project extensions aren't available before afterEvaluate.
         project.afterEvaluate {
@@ -68,31 +67,12 @@ class DitaOtPlugin implements Plugin<Project> {
             // the user in the buildfile but rather merge with them. I think?
             setRepositories(project)
             setConfigurations(project)
-            setDependencies(project)
+            setDependencies(project, dita)
             augmentAntClassLoader(project)
         }
 
         project.task(DITA_OT, type: DitaOtTask, group: 'Documentation',
-          description: 'Publishes DITA documentation with DITA Open Toolkit.') {
-            // Define the parent directory of each input file as the inputs for
-            // the DITA-OT task. This causes the task to be considered up to
-            // date if none of the files in the parent folder have changed.
-            //
-            // Conversely, if any file in the source folder changes, the task
-            // will no longer be considered up to date.
-            //
-            // TODO: It might be worth considering whether it would make more
-            // sense to parse the input DITA map, get all files associated with
-            // the DITA map, and use that list instead. That's going to be
-            // slower, though.
-            inputs.files {
-                project.files(project.ditaOt.input).collect {
-                    it.getParent()
-                }
-            }
-
-            outputs.dir { project.ditaOt.output }
-        }
+          description: 'Publishes DITA documentation with DITA Open Toolkit.')
     }
 
 }

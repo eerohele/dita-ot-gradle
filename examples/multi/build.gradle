@@ -8,13 +8,13 @@ buildscript {
     }
 }
 
-// Use the same DITA-OT installation for all subprojects.
-ext.ditaHome = '/opt/dita-ot'
-
 // Set 'ditaOt' as the default task for this project.
 defaultTasks 'ditaOt'
 
 subprojects {
     // Enable the DITA-OT Gradle plugin for all subprojects.
     apply plugin: 'com.github.eerohele.dita-ot-gradle'
+
+    // Use the same DITA-OT installation for all subprojects.
+    dita.home = '/opt/dita-ot'
 }

@@ -18,13 +18,15 @@ defaultTasks 'ditaOt'
 
 ditaOt {
     // Tell Gradle where your DITA-OT installation is.
-    home = '/opt/dita-ot'
+    //
+    // By default, it will use your DITA_HOME system environment variable.
+    home '/opt/dita-ot'
 
     // Point DITA-OT to the files you want to publish.
-    input { 'dita/root.ditamap' }
+    input 'dita/root.ditamap'
 
     // Tell DITA-OT what you want it to produce.
-    transtype = 'html5'
+    transtype 'html5'
 
     // Give DITA-OT additional parameters.
     //

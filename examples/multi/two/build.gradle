@@ -1,16 +1,4 @@
-buildscript {
-    repositories {
-        mavenLocal()
-    }
-
-    dependencies {
-        classpath 'com.github.eerohele:dita-ot-gradle:0.1.0'
-    }
-}
-
-apply plugin: 'com.github.eerohele.dita-ot-gradle'
-
 ditaOt {
-    input { 'two.ditamap' }
-    transtype = 'pdf'
+    input 'two.ditamap'
+    transtype 'pdf'
 }

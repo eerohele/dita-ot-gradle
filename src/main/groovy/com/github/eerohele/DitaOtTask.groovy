@@ -4,17 +4,80 @@ import org.gradle.api.Project
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SkipWhenEmpty
+import org.gradle.api.tasks.util.PatternSet
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 
 import org.apache.commons.io.FilenameUtils as FilenameUtils
 
 class DitaOtTask extends DefaultTask {
+    static final DEFAULT_TRANSTYPE = 'html5'
+
+    String ditaHome
+    Object inputFiles
+    String outputDir = project.buildDir
+    String tempDir = getDefaultTempDir()
+    Closure props
+    String format = DEFAULT_TRANSTYPE
+
+    void home(String h) {
+        this.ditaHome = h
+    }
+
+    void input(Object i) {
+        this.inputFiles = i
+    }
+
+    void output(String o) {
+        this.outputDir = o
+    }
+
+    void temp(String t) {
+        this.tempDir = t
+    }
+
+    void properties(Closure p) {
+        this.props = p
+    }
+
+    void transtype(String t) {
+        this.format = t
+    }
+
+    private static File getDefaultTempDir() {
+        String tmpdir = System.getProperty("java.io.tmpdir")
+
+        return new File("${tmpdir}/dita-ot",
+                        System.currentTimeMillis().toString())
+    }
+
+    PatternSet getInputFilePatternSet() {
+        def ps = new PatternSet()
+        ps.include '**/*'
+        ps.exclude "${FilenameUtils.getBaseName(outputDir)}/**/*"
+    }
+
     @InputFiles
     @SkipWhenEmpty
-    FileCollection getInputFiles() {
-        project.files(project.ditaOt.input)
+    FileTree getInputFileTree() {
+        PatternSet patternSet = getInputFilePatternSet()
+
+        getInputFileCollection().files.collect {
+            project.fileTree(it.getParent()).matching(patternSet)
+        }.inject { x, y -> x.add(y) }
+    }
+
+    @OutputDirectories
+    Set<File> getOutputDirectories() {
+        getInputFileCollection().files.collect() {
+            getOutputDirForFile(it)
+        } as Set
+    }
+
+    FileCollection getInputFileCollection() {
+        project.files(this.inputFiles)
     }
 
     /** Get the output directory for the given DITA map.
@@ -28,9 +91,8 @@ class DitaOtTask extends DefaultTask {
      * @param inputFile Input DITA file.
      * @since 0.1.0
      */
-    @OutputDirectory
-    File getOutputDir(File inputFile) {
-        new File(project.ditaOt.output,
+    File getOutputDirForFile(File inputFile) {
+        new File(this.outputDir,
                  FilenameUtils.getBaseName(inputFile.getPath()))
     }
 
@@ -55,20 +117,22 @@ class DitaOtTask extends DefaultTask {
                  FileExtensions.PROPERTIES)
     }
 
-    void runDitaOt() {
-        Closure properties = project.ditaOt.properties
-        FileCollection inputFiles = getInputFiles()
+    @TaskAction
+    void render() {
+        if (!this.ditaHome) {
+            setDitaHome(project.dita.home)
+        }
 
-        inputFiles.files.each { File file ->
-            File outputDir = getOutputDir(file)
+        getInputFileCollection().files.each { File file ->
+            File out = getOutputDirForFile(file)
 
-            ant.ant(antfile: "${project.ditaOt.home}/build.xml") {
+            ant.ant(antfile: "${getDitaHome()}/build.xml") {
                 property(name: Properties.ARGS_INPUT, file.getPath())
-                property(name: Properties.OUTPUT_DIR, outputDir.getPath())
-                property(name: Properties.TRANSTYPE, project.ditaOt.transtype)
-                property(name: Properties.TEMP_DIR, project.ditaOt.temp)
+                property(name: Properties.OUTPUT_DIR, out.getPath())
+                property(name: Properties.TRANSTYPE, this.format)
+                property(name: Properties.TEMP_DIR, this.tempDir)
 
-                if (properties) {
+                if (this.props) {
                     // Set the Closure delegate to the `ant` property so that
                     // The user can do this:
                     //
@@ -81,20 +145,12 @@ class DitaOtTask extends DefaultTask {
                     //   properties {
                     //       ant.property(name: "foo", value: "bar")
                     //   }
-                    properties.delegate = ant
-                    properties.call()
+                    this.props.delegate = ant
+                    this.props.call()
                 }
 
                 property(file: getAssociatedPropertyFile(file).getPath())
             }
         }
-    }
-
-    @TaskAction
-    void run() {
-        // TODO: Investigate the possibility of parallel execution with
-        // groovyx.gpars.GParsPool. I tried it, but it causes builds to become
-        // unreliable, probably because DITA-OT isn't fully thread-safe.
-        runDitaOt()
     }
 }
