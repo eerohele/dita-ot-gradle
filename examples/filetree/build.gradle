@@ -1,0 +1,27 @@
+// See the 'simple' example for comments on the basic properties.
+
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'com.github.eerohele:dita-ot-gradle:0.1.0'
+    }
+}
+
+apply plugin: 'com.github.eerohele.dita-ot-gradle'
+
+defaultTasks 'ditaOt'
+
+// This is an alternative way of telling Gradle where your DITA-OT installation
+// is.
+dita {
+    home = '/opt/dita-ot'
+}
+
+ditaOt {
+    // Publish all .ditamap files in the 'dita' directory.
+    input fileTree(dir: 'dita', include: '*.ditamap')
+    transtype 'html5'
+}
