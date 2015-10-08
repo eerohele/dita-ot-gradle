@@ -15,7 +15,7 @@ import org.apache.commons.io.FilenameUtils as FilenameUtils
 class DitaOtTask extends DefaultTask {
     static final DEFAULT_TRANSTYPE = 'html5'
 
-    String ditaHome
+    String ditaDir = project.ditaOt.dir
     Boolean devMode = false
     Object inputFiles
     String ditaVal
@@ -23,11 +23,6 @@ class DitaOtTask extends DefaultTask {
     String tempDir = getDefaultTempDir()
     Closure props
     String format = DEFAULT_TRANSTYPE
-
-    void dir(String h) {
-        this.ditaHome = h
-    }
-
 
     void devMode(Boolean d) {
         this.devMode = d
@@ -98,7 +93,7 @@ class DitaOtTask extends DefaultTask {
         }.asImmutable()
 
         if (this.devMode) {
-            inputFileTree.plus(project.fileTree(getDitaHome())
+            inputFileTree.plus(project.fileTree(project.ditaOt.dir)
                               .matching(getDitaOtPatternSet())) as Set
         } else {
             inputFileTree as Set
@@ -155,14 +150,10 @@ class DitaOtTask extends DefaultTask {
 
     @TaskAction
     void render() {
-        if (!this.ditaHome) {
-            setDitaHome(project.ditaOt.dir)
-        }
-
         getInputFileCollection().files.each { File file ->
             File out = getOutputDirForFile(file)
 
-            ant.ant(antfile: "${getDitaHome()}/build.xml") {
+            ant.ant(antfile: "${project.ditaOt.dir}/build.xml") {
                 property(name: Properties.ARGS_INPUT, location: file.getPath())
                 property(name: Properties.OUTPUT_DIR, location: out.getPath())
                 property(name: Properties.TEMP_DIR, location: this.tempDir)

@@ -16,12 +16,12 @@ apply plugin: 'com.github.eerohele.dita-ot-gradle'
 // on the command line to run DITA-OT.
 defaultTasks 'dita'
 
-dita {
-    // Tell Gradle where your DITA-OT installation is.
-    //
-    // By default, it will use your DITA_HOME system environment variable.
-    dir '/opt/dita-ot'
+// Tell Gradle where your DITA-OT installation is.
+//
+// By default, it will use your DITA_HOME system environment variable.
+ditaOt.dir = '/opt/dita-ot'
 
+dita {
     // Point DITA-OT to the files you want to publish.
     input 'dita/root.ditamap'
 

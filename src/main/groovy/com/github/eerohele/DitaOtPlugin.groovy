@@ -34,7 +34,7 @@ class DitaOtPlugin implements Plugin<Project> {
         }
     }
 
-    void setDependencies(Project project, DitaOtExtension dita) {
+    void setDependencies(Project project, DitaOtExtension ditaOt) {
         project.dependencies {
             runtime 'commons-io:commons-io:2.4'
             runtime 'commons-codec:commons-codec:1.9'
@@ -48,10 +48,10 @@ class DitaOtPlugin implements Plugin<Project> {
             runtime 'org.apache.ant:ant-launcher:1.9.4'
             runtime 'org.apache.ant:ant-apache-resolver:1.9.4'
 
-            provided project.files("${dita.dir}/lib/dost.jar")
-            provided project.files("${dita.dir}/plugins/org.dita.pdf2/lib/fo.jar")
-            provided project.files("${dita.dir}/lib")
-            provided project.files("${dita.dir}/resources")
+            provided project.files("${ditaOt.dir}/lib/dost.jar")
+            provided project.files("${ditaOt.dir}/plugins/org.dita.pdf2/lib/fo.jar")
+            provided project.files("${ditaOt.dir}/lib")
+            provided project.files("${ditaOt.dir}/resources")
         }
     }
 
@@ -59,7 +59,7 @@ class DitaOtPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.apply plugin: 'base'
 
-        def dita = project.extensions.create(DITA_OT, DitaOtExtension, project)
+        DitaOtExtension ditaOt = project.extensions.create(DITA_OT, DitaOtExtension, project)
 
         // Project extensions aren't available before afterEvaluate.
         project.afterEvaluate {
@@ -67,7 +67,7 @@ class DitaOtPlugin implements Plugin<Project> {
             // the user in the buildfile but rather merge with them. I think?
             setRepositories(project)
             setConfigurations(project)
-            setDependencies(project, dita)
+            setDependencies(project, ditaOt)
             augmentAntClassLoader(project)
         }
 

@@ -14,8 +14,6 @@ apply plugin: 'com.github.eerohele.dita-ot-gradle'
 
 defaultTasks 'dita'
 
-// This is an alternative way of telling Gradle where your DITA-OT installation
-// is.
 ditaOt {
     dir = '/opt/dita-ot'
 }
