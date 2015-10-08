@@ -16,6 +16,7 @@ class DitaOtTask extends DefaultTask {
     static final DEFAULT_TRANSTYPE = 'html5'
 
     String ditaHome
+    Boolean devMode = false
     Object inputFiles
     String ditaVal
     String outputDir = project.buildDir
@@ -25,6 +26,11 @@ class DitaOtTask extends DefaultTask {
 
     void dir(String h) {
         this.ditaHome = h
+    }
+
+
+    void devMode(Boolean d) {
+        this.devMode = d
     }
 
     void input(Object i) {
@@ -64,14 +70,39 @@ class DitaOtTask extends DefaultTask {
         ps.exclude "${FilenameUtils.getBaseName(outputDir)}/**/*"
     }
 
+    PatternSet getDitaOtPatternSet() {
+        def ps = new PatternSet()
+        ps.include '**/*'
+        ps.exclude 'temp/**/*'
+    }
+
+    /** Get input files for up-to-date check.
+     *
+     * By default, all files under all input directories are included in the
+     * up-to-date check, apart from the build directory (TODO: that check
+     * should be made more robust).
+     *
+     * If devMode is true, the DITA-OT directory is also checked. That's useful
+     * for stylesheet developers who don't want to use --rerun-tasks every time
+     * they make a change to the DITA-OT plugin they're developing.
+     *
+     * @since 0.1.0
+     */
     @InputFiles
     @SkipWhenEmpty
     Set<FileTree> getInputFileTree() {
         PatternSet patternSet = getInputFilePatternSet()
 
-        getInputFileCollection().files.collect {
+        List<FileTree> inputFileTree = getInputFileCollection().files.collect {
             project.fileTree(it.getParent()).matching(patternSet)
-        } as Set
+        }.asImmutable()
+
+        if (this.devMode) {
+            inputFileTree.plus(project.fileTree(getDitaHome())
+                              .matching(getDitaOtPatternSet())) as Set
+        } else {
+            inputFileTree as Set
+        }
     }
 
     @OutputDirectories
