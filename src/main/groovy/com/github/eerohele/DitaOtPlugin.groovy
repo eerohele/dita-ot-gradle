@@ -12,11 +12,9 @@ class DitaOtPlugin implements Plugin<Project> {
      * @since 0.1.0
      */
     void augmentAntClassLoader(Project project) {
-        def classLoader = org.apache.tools.ant.Project.class.classLoader
-        def runtime = project.configurations.runtime as Set
-        def provided = project.configurations.provided as Set
+        URLClassLoader classLoader = org.apache.tools.ant.Project.classLoader
 
-        runtime.plus(provided).each {
+        (project.configurations.runtime + project.configurations.provided).each {
             classLoader.addURL(project.file(it).toURI().toURL())
         }
     }

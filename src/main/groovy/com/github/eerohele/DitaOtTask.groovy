@@ -1,6 +1,5 @@
 package com.github.eerohele
 
-import org.gradle.api.Project
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.InputFiles
@@ -16,7 +15,7 @@ class DitaOtTask extends DefaultTask {
     static final DEFAULT_TRANSTYPE = 'html5'
 
     String ditaDir = project.ditaOt.dir
-    Boolean devMode = false
+    Boolean developmentMode = false
     Object inputFiles
     String ditaVal
     String outputDir = project.buildDir
@@ -25,7 +24,7 @@ class DitaOtTask extends DefaultTask {
     String format = DEFAULT_TRANSTYPE
 
     void devMode(Boolean d) {
-        this.devMode = d
+        this.developmentMode = d
     }
 
     void input(Object i) {
@@ -53,22 +52,20 @@ class DitaOtTask extends DefaultTask {
     }
 
     private static File getDefaultTempDir() {
-        String tmpdir = System.getProperty("java.io.tmpdir")
-
-        return new File("${tmpdir}/dita-ot",
-                        System.currentTimeMillis().toString())
+        String tmpdir = System.getProperty('java.io.tmpdir')
+        new File("${tmpdir}/dita-ot", System.currentTimeMillis().toString())
     }
 
     PatternSet getInputFilePatternSet() {
-        def ps = new PatternSet()
-        ps.include '**/*'
-        ps.exclude "${FilenameUtils.getBaseName(outputDir)}/**/*"
+        PatternSet ps = new PatternSet()
+        ps.include GlobPatterns.ALL_FILES
+        ps.exclude("${FilenameUtils.getBaseName(outputDir)}/" + GlobPatterns.ALL_FILES)
     }
 
     PatternSet getDitaOtPatternSet() {
-        def ps = new PatternSet()
-        ps.include '**/*'
-        ps.exclude 'temp/**/*'
+        PatternSet ps = new PatternSet()
+        ps.include GlobPatterns.ALL_FILES
+        ps.exclude 'temp/' + GlobPatterns.ALL_FILES
     }
 
     /** Get input files for up-to-date check.
@@ -92,9 +89,9 @@ class DitaOtTask extends DefaultTask {
             project.fileTree(it.getParent()).matching(patternSet)
         }.asImmutable()
 
-        if (this.devMode) {
-            inputFileTree.plus(project.fileTree(project.ditaOt.dir)
-                              .matching(getDitaOtPatternSet())) as Set
+        if (this.developmentMode) {
+            inputFileTree + project.fileTree(project.ditaOt.dir)
+                                   .matching(getDitaOtPatternSet()) as Set
         } else {
             inputFileTree as Set
         }
@@ -102,7 +99,7 @@ class DitaOtTask extends DefaultTask {
 
     @OutputDirectories
     Set<File> getOutputDirectories() {
-        getInputFileCollection().files.collect() {
+        getInputFileCollection().files.collect {
             getOutputDirForFile(it)
         } as Set
     }
@@ -156,13 +153,6 @@ class DitaOtTask extends DefaultTask {
             ant.ant(antfile: "${project.ditaOt.dir}/build.xml") {
                 property(name: Properties.ARGS_INPUT, location: file.getPath())
                 property(name: Properties.OUTPUT_DIR, location: out.getPath())
-                property(name: Properties.TEMP_DIR, location: this.tempDir)
-                property(name: Properties.TRANSTYPE, value: this.format)
-
-                if (this.ditaVal) {
-                    property(name: Properties.ARGS_FILTER,
-                             location: this.ditaVal)
-                }
 
                 if (this.props) {
                     // Set the Closure delegate to the `ant` property so that
@@ -182,6 +172,14 @@ class DitaOtTask extends DefaultTask {
                 }
 
                 property(file: getAssociatedPropertyFile(file).getPath())
+
+                property(name: Properties.TEMP_DIR, location: this.tempDir)
+                property(name: Properties.TRANSTYPE, value: this.format)
+
+                if (this.ditaVal) {
+                    property(name: Properties.ARGS_FILTER,
+                             location: this.ditaVal)
+                }
             }
         }
     }

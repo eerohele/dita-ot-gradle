@@ -1,5 +1,5 @@
 package com.github.eerohele
 
 class FileExtensions {
-    private static final String PROPERTIES = '.properties'
+    static final String PROPERTIES = '.properties'
 }
