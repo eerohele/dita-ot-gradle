@@ -4,8 +4,11 @@ import org.gradle.api.Project
 
 class DitaOtExtension {
     final Project project
+    File home
 
-    String dir = "${System.env.DITA_HOME}"
+    void dir(Object d) {
+        home = project.file(d)
+    }
 
     DitaOtExtension(Project project) {
         this.project = project

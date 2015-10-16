@@ -46,10 +46,10 @@ class DitaOtPlugin implements Plugin<Project> {
             runtime 'org.apache.ant:ant-launcher:1.9.4'
             runtime 'org.apache.ant:ant-apache-resolver:1.9.4'
 
-            provided project.files("${ditaOt.dir}/lib/dost.jar")
-            provided project.files("${ditaOt.dir}/plugins/org.dita.pdf2/lib/fo.jar")
-            provided project.files("${ditaOt.dir}/lib")
-            provided project.files("${ditaOt.dir}/resources")
+            provided project.files("${ditaOt.home}/lib/dost.jar")
+            provided project.files("${ditaOt.home}/plugins/org.dita.pdf2/lib/fo.jar")
+            provided project.files("${ditaOt.home}/lib")
+            provided project.files("${ditaOt.home}/resources")
         }
     }
 

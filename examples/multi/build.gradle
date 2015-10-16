@@ -18,5 +18,5 @@ subprojects {
     apply plugin: 'com.github.eerohele.dita-ot-gradle'
 
     // Use the same DITA-OT installation for all subprojects.
-    ditaOt.dir = '/opt/dita-ot'
+    ditaOt.dir '/opt/dita-ot'
 }
