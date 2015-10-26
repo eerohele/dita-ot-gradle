@@ -85,9 +85,9 @@ class DitaOtTask extends DefaultTask {
     Set<FileTree> getInputFileTree() {
         PatternSet patternSet = getInputFilePatternSet()
 
-        List<FileTree> inputFileTree = getInputFileCollection().files.collect {
+        List<FileTree> inputFileTree = (getInputFileCollection().files.collect {
             project.fileTree(it.getParent()).matching(patternSet)
-        }.asImmutable()
+        } + project.files(this.ditaVal)).asImmutable()
 
         if (this.developmentMode) {
             inputFileTree + project.fileTree(project.ditaOt.home)
