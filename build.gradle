@@ -10,6 +10,11 @@ apply plugin: 'codenarc'
 dependencies {
     compile gradleApi()
     compile localGroovy()
+
+    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+        exclude group: 'org.hamcrest', module: 'hamcrest-core'
+    }
 }
 
 repositories {
@@ -20,11 +25,17 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
 }
 
+test {
+    systemProperty 'dita.home', System.getProperty('dita.home', '/opt/dita-ot')
+}
+
 group = 'com.github.eerohele'
 version = '0.1.0'
 
+task publish(dependsOn: ['codenarcMain', 'test'])
+
 pluginBundle {
-  website = 'http://github.com/eerohele/dita-ot-gradle'
+  website = 'https://github.com/eerohele/dita-ot-gradle'
   vcsUrl = 'https://github.com/eerohele/dita-ot-gradle.git'
   description = 'A Gradle plugin for running DITA Open Toolkit'
   tags = ['dita', 'dita-ot', 'documentation']
