@@ -17,7 +17,7 @@ class DitaOtTask extends DefaultTask {
     Boolean developmentMode = false
     Boolean singleDirMode = false
     Object inputFiles
-    String ditaVal
+    Object ditaVal
     String outputDir = project.buildDir
     String tempDir = getDefaultTempDir()
     Closure props
@@ -31,7 +31,7 @@ class DitaOtTask extends DefaultTask {
         this.inputFiles = i
     }
 
-    void filter(String f) {
+    void filter(Object f) {
         this.ditaVal = f
     }
 
@@ -116,6 +116,10 @@ class DitaOtTask extends DefaultTask {
         project.files(this.inputFiles)
     }
 
+    File getDitaValFile() {
+        project.file(this.ditaVal)
+    }
+
     /** Get the output directory for the given DITA map.
      *
      * If the user has given an output directory, use that. Otherwise,
@@ -192,7 +196,7 @@ class DitaOtTask extends DefaultTask {
 
                 if (this.ditaVal) {
                     property(name: Properties.ARGS_FILTER,
-                             location: this.ditaVal)
+                             location: getDitaValFile().getPath())
                 }
             }
         }
