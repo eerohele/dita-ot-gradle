@@ -134,7 +134,7 @@ class DitaOtTask extends DefaultTask {
     File getOutputDirForFile(File inputFile) {
         File outputDir = new File(this.outputDir)
 
-        if (this.singleDirMode) {
+        if (this.singleDirMode || getInputFileCollection().files.size() == 1) {
             outputDir
         } else {
             new File(outputDir,
