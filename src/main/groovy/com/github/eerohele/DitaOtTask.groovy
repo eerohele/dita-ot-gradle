@@ -14,7 +14,6 @@ import org.apache.commons.io.FilenameUtils as FilenameUtils
 class DitaOtTask extends DefaultTask {
     static final DEFAULT_TRANSTYPE = 'html5'
 
-    String ditaDir = project.ditaOt.home
     Boolean developmentMode = false
     Boolean singleDirMode = false
     Object inputFiles
