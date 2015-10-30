@@ -16,6 +16,7 @@ class DitaOtTask extends DefaultTask {
 
     String ditaDir = project.ditaOt.home
     Boolean developmentMode = false
+    Boolean singleDirMode = false
     Object inputFiles
     String ditaVal
     String outputDir = project.buildDir
@@ -49,6 +50,10 @@ class DitaOtTask extends DefaultTask {
 
     void transtype(String t) {
         this.format = t
+    }
+
+    void singleOutputDir(Boolean s) {
+        this.singleDirMode = s
     }
 
     private static File getDefaultTempDir() {
@@ -120,8 +125,14 @@ class DitaOtTask extends DefaultTask {
      * @since 0.1.0
      */
     File getOutputDirForFile(File inputFile) {
-        new File(this.outputDir,
-                 FilenameUtils.getBaseName(inputFile.getPath()))
+        File outputDir = new File(this.outputDir)
+
+        if (this.singleDirMode) {
+            outputDir
+        } else {
+            new File(outputDir,
+                     FilenameUtils.getBaseName(inputFile.getPath()))
+        }
     }
 
     /** Get the associated property file for the given DITA map.
