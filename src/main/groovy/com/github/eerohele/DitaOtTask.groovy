@@ -95,8 +95,7 @@ class DitaOtTask extends DefaultTask {
         }).asImmutable()
 
         List<FileTree> treeWithDitaval = this.ditaVal != null
-            ? inputFileTree + project.files(this.ditaVal)
-            : inputFileTree
+            ? inputFileTree + project.files(this.ditaVal) : inputFileTree
 
         if (this.developmentMode) {
             treeWithDitaval + project.fileTree(project.ditaOt.home)
@@ -168,8 +167,8 @@ class DitaOtTask extends DefaultTask {
     void render() {
         if (project.ditaOt.home == null) {
             throw new InvalidUserDataException(
-"""DITA Open Toolkit directory not set. Add a line like this into build.gradle:
-    ditaOt.dir /path/to/your/dita-ot/installation""")
+'''DITA Open Toolkit directory not set. Add a line like this into build.gradle:
+    ditaOt.dir /path/to/your/dita-ot/installation''')
         }
 
         getInputFileCollection().files.each { File file ->
