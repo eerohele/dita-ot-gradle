@@ -1,6 +1,7 @@
 package com.github.eerohele
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectories
@@ -165,6 +166,12 @@ class DitaOtTask extends DefaultTask {
 
     @TaskAction
     void render() {
+        if (project.ditaOt.home == null) {
+            throw new InvalidUserDataException(
+"""DITA Open Toolkit directory not set. Add a line like this into build.gradle:
+    ditaOt.dir /path/to/your/dita-ot/installation""")
+        }
+
         getInputFileCollection().files.each { File file ->
             File out = getOutputDirForFile(file)
 
