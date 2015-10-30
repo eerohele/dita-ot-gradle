@@ -1,2 +1,4 @@
 build/
 .gradle/
+bower_components/
+node_modules/
