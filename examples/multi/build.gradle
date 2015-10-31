@@ -1,13 +1,7 @@
 // See the 'simple' example for comments on the basic properties.
 
-buildscript {
-    repositories {
-        mavenLocal()
-    }
-
-    dependencies {
-        classpath 'com.github.eerohele:dita-ot-gradle:0.1.0'
-    }
+plugins {
+    id 'com.github.eerohele.dita-ot-gradle' version '0.1.0'
 }
 
 // Set 'dita' as the default task for this project.

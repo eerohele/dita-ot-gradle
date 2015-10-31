@@ -1,11 +1,5 @@
-buildscript {
-    repositories {
-        mavenLocal()
-    }
-
-    dependencies {
-        classpath 'com.github.eerohele:dita-ot-gradle:0.1.0'
-    }
+plugins {
+    id 'com.github.eerohele.dita-ot-gradle' version '0.1.0'
 }
 
 // Load the DITA-OT Gradle plugin.
