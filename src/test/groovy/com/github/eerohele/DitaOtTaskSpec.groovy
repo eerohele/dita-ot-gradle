@@ -14,23 +14,27 @@ class DitaOtTaskSpec extends Specification {
     private static final String DITA = 'dita'
     private static final String DITA_OT = 'ditaOt'
 
+    private static final String ROOT_DITAMAP = 'root.ditamap'
+    private static final String ROOT_DITAVAL = 'root.ditaval'
+    private static final String TRANSTYPE_HTML5 = 'html5'
+
     Project project
 
     String ditaHome
     File testRootDir
     File examplesDir
 
-    def getInputFiles(Task task) {
+    Set<File> getInputFiles(Task task) {
         task.getInputFileCollection().getFiles()
     }
 
-    def setup() {
+    void setup() {
         ditaHome = System.getProperty('dita.home')
 
         if (!ditaHome || !new File(ditaHome).isDirectory()) {
-            throw new Exception('''dita.home system property not properly set.
-To run the tests, you need a working DITA-OT installation and you need to set
-the dita.home system property to point to that installation.''')
+            throw new InvalidUserDataException('''dita.home system property not
+properly set. To run the tests, you need a working DITA-OT installation and you
+need to set the dita.home system property to point to that installation.''')
         }
 
         project = ProjectBuilder.builder().withName('test').build()
@@ -39,12 +43,13 @@ the dita.home system property to point to that installation.''')
         examplesDir = new File(testRootDir, 'examples')
     }
 
+    @SuppressWarnings('MethodName')
     def 'Creating a task'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-                input 'root.ditamap'
-                filter 'default.ditaval'
-                transtype 'html5'
+                input ROOT_DITAMAP
+                filter ROOT_DITAVAL
+                transtype TRANSTYPE_HTML5
 
                 properties {
                     property name: 'processing-mode', value: 'strict'
@@ -52,12 +57,13 @@ the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.inputFiles == 'root.ditamap'
-            task.ditaVal == 'default.ditaval'
-            task.format == 'html5'
+            task.inputFiles == ROOT_DITAMAP
+            task.ditaVal == ROOT_DITAVAL
+            task.format == TRANSTYPE_HTML5
             task.props != null
     }
 
+    @SuppressWarnings('MethodName')
     def 'Giving single input file as String'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -65,9 +71,10 @@ the dita.home system property to point to that installation.''')
             }
 
         then:
-            getInputFiles(task).find { it.getName() == 'root.ditamap' }
+            getInputFiles(task).find { it.getName() == ROOT_DITAMAP }
     }
 
+    @SuppressWarnings('MethodName')
     def 'Giving single input file as File'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -75,9 +82,10 @@ the dita.home system property to point to that installation.''')
             }
 
         then:
-            getInputFiles(task).find { it.getName() == 'root.ditamap' }
+            getInputFiles(task).find { it.getName() == ROOT_DITAMAP }
     }
 
+    @SuppressWarnings('MethodName')
     def 'Giving multiple input files'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -86,10 +94,10 @@ the dita.home system property to point to that installation.''')
             }
 
         then:
-            getInputFiles(task).collect { it.getName() } ==
-                ['one.ditamap', 'two.ditamap']
+            getInputFiles(task)*.getName() == ['one.ditamap', 'two.ditamap']
     }
 
+    @SuppressWarnings('MethodName')
     def 'Includes containing directories in up-to-date check'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -103,6 +111,7 @@ the dita.home system property to point to that installation.''')
             task.getInputFileTree().size() == 2
     }
 
+    @SuppressWarnings('MethodName')
     def 'Getting property file associated with input file'() {
         setup:
             File inputFile = project.file("$examplesDir/simple/dita/root.ditamap")
@@ -112,9 +121,10 @@ the dita.home system property to point to that installation.''')
             }
 
         expect:
-            task.getAssociatedPropertyFile(inputFile).getName() == "root.properties"
+            task.getAssociatedPropertyFile(inputFile).getName() == 'root.properties'
     }
 
+    @SuppressWarnings('MethodName')
     def 'Giving DITAVAL as File'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -123,7 +133,7 @@ the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.ditaVal.getName() == 'root.ditaval'
+            task.ditaVal.getName() == ROOT_DITAVAL
     }
 
     // This feature works, but the test doesn't. The FileTree is always empty.
@@ -140,6 +150,7 @@ the dita.home system property to point to that installation.''')
     //         task.getInputFileCollection().size() == 2
     // }
 
+    @SuppressWarnings('MethodName')
     def 'DITAVAL file is included in the input file tree'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -149,10 +160,11 @@ the dita.home system property to point to that installation.''')
 
         then:
             task.getInputFileTree().find {
-                it.class == File && it.getName() == 'root.ditaval'
+                it.class == File && it.getName() == ROOT_DITAVAL
             }
     }
 
+    @SuppressWarnings('MethodName')
     def 'DITA-OT directory is included in the input file tree if devMode is enabled'() {
         setup:
             project.extensions.create(DITA_OT, DitaOtExtension, project)
@@ -170,6 +182,8 @@ the dita.home system property to point to that installation.''')
             }
     }
 
+    @SuppressWarnings('MethodName')
+    @SuppressWarnings('DuplicateStringLiteral')
     def 'Single input file => single output directory'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -177,9 +191,12 @@ the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getOutputDirectories().collect { it.getName() } == [ "build" ]
+            task.getOutputDirectories()*.getName() == [ 'build' ]
     }
 
+    @SuppressWarnings('MethodName')
+    @SuppressWarnings('DuplicateStringLiteral')
+    @SuppressWarnings('DuplicateListLiteral')
     def 'Single directory mode => single output directory'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -189,9 +206,10 @@ the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getOutputDirectories().collect { it.getName() } == [ "build" ]
+            task.getOutputDirectories()*.getName() == [ 'build' ]
     }
 
+    @SuppressWarnings('MethodName')
     def 'Multiple input files => multiple input folders'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -200,9 +218,10 @@ the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getOutputDirectories().collect { it.getName() } == [ "one", "two" ]
+            task.getOutputDirectories()*.getName() == [ 'one', 'two' ]
     }
 
+    @SuppressWarnings('MethodName')
     def 'Throws InvalidUserDataException if DITA-OT directory is not set'() {
         setup:
             project.extensions.create(DITA_OT, DitaOtExtension, project)
@@ -210,7 +229,7 @@ the dita.home system property to point to that installation.''')
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"
-                transtype 'html5'
+                transtype TRANSTYPE_HTML5
             }
 
             task.render()
@@ -219,6 +238,7 @@ the dita.home system property to point to that installation.''')
             thrown InvalidUserDataException
     }
 
+    @SuppressWarnings('MethodName')
     def 'Does not throw InvalidUserDataException if DITA-OT directory is set'() {
         setup:
             project.extensions.create(DITA_OT, DitaOtExtension, project)
@@ -226,7 +246,7 @@ the dita.home system property to point to that installation.''')
 
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"
-                transtype 'html5'
+                transtype TRANSTYPE_HTML5
             }
 
         when: 'DITA-OT dir is given but the project is not set up correctly.'
@@ -236,6 +256,7 @@ the dita.home system property to point to that installation.''')
             thrown BuildException
     }
 
+    @SuppressWarnings('MethodName')
     def 'Does not throw any errors of everything is set up properly'() {
         when: 'Project is set up correctly and DITA-OT dir is given.'
             project.apply plugin: DitaOtPlugin
@@ -244,7 +265,7 @@ the dita.home system property to point to that installation.''')
 
             project.dita {
                 input "$examplesDir/simple/dita/root.ditamap"
-                transtype 'html5'
+                transtype TRANSTYPE_HTML5
             }
 
         then: 'Build succeeds.'

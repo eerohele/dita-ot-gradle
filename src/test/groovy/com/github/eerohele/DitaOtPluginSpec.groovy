@@ -14,6 +14,7 @@ class DitaOtPluginSpec extends Specification {
         project = ProjectBuilder.builder().build()
     }
 
+    @SuppressWarnings('MethodName')
     def "Apply plugin"() {
         expect:
             project.tasks.findByName(DITA) == null
@@ -29,6 +30,7 @@ class DitaOtPluginSpec extends Specification {
             project.tasks.findByName('clean') != null
     }
 
+    @SuppressWarnings('MethodName')
     def "Load extensions"() {
         when:
             project.apply plugin: DitaOtPlugin
