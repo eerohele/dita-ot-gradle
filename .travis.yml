@@ -1,8 +1,16 @@
 language: groovy
+
+jdk:
+  - oraclejdk8
+
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
 before_script:
   - git submodule update --init --recursive
+
+script: gradle :check
+
 cache:
   directories:
     - $HOME/.gradle/caches/
