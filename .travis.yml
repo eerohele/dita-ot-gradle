@@ -9,7 +9,7 @@ before_cache:
 before_script:
   - git submodule update --init --recursive
 
-script: gradle :check
+script: ./gradlew :check
 
 cache:
   directories:
