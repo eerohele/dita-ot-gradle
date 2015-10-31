@@ -29,17 +29,22 @@ repositories {
     jcenter()
 }
 
+codenarc {
+    toolVersion = '0.24.1'
+    configFile = file('config/codenarc/codenarc.groovy')
+}
+
 String ditaHome = new File('.', 'dita-ot/src/main').getCanonicalPath()
 
 test {
-    dependsOn ':dost:copyInstall', 'integrate'
+    dependsOn 'integrate'
     systemProperty 'dita.home', System.getProperty('dita.home', ditaHome)
 }
 
 group = 'com.github.eerohele'
 version = '0.1.0'
 
-task integrate << {
+task integrate(dependsOn: ':dost:copyInstall') << {
     ant.ant([antfile: 'integrator.xml', dir: file('dita-ot/src/main')])
 }
 
