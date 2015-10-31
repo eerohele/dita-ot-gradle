@@ -1,1 +1,4 @@
 rootProject.name = 'dita-ot-gradle'
+
+include 'dita-ot'
+project(':dita-ot').name = 'dost'

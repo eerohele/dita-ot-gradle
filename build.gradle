@@ -7,43 +7,54 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'codenarc'
 
+defaultTasks 'check'
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
+
+    compile 'commons-io:commons-io:2.4'
 
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
         exclude group: 'org.hamcrest', module: 'hamcrest-core'
     }
+
+    testCompile 'com.github.dita-ot:dost:2.1.2'
+    testCompile 'xml-resolver:xml-resolver:1.2'
+    testCompile 'com.ibm.icu:icu4j:54.1'
 }
 
 repositories {
     jcenter()
 }
 
-dependencies {
-    compile 'commons-io:commons-io:2.4'
-}
+String ditaHome = new File('.', 'dita-ot/src/main').getCanonicalPath()
 
 test {
-    systemProperty 'dita.home', System.getProperty('dita.home', '/opt/dita-ot')
+    dependsOn ':dost:copyInstall', 'integrate'
+    systemProperty 'dita.home', System.getProperty('dita.home', ditaHome)
 }
 
 group = 'com.github.eerohele'
 version = '0.1.0'
 
-task publish(dependsOn: ['codenarcMain', 'test'])
+task integrate << {
+    ant.ant([antfile: 'integrator.xml', dir: file('dita-ot/src/main')])
+}
+
+task publish(dependsOn: ['check'])
 
 pluginBundle {
-  website = 'https://github.com/eerohele/dita-ot-gradle'
-  vcsUrl = 'https://github.com/eerohele/dita-ot-gradle.git'
-  description = 'A Gradle plugin for running DITA Open Toolkit'
-  tags = ['dita', 'dita-ot', 'documentation']
+    website = 'https://github.com/eerohele/dita-ot-gradle'
+    vcsUrl = 'https://github.com/eerohele/dita-ot-gradle.git'
+    description = 'A Gradle plugin for running DITA Open Toolkit'
+    tags = ['dita', 'dita-ot', 'documentation']
 
-  plugins {
-    DitaOtPlugin {
-      id = 'com.github.eerohele.dita-ot-gradle'
-      displayName = 'DITA-OT Gradle Plugin'
+    plugins {
+        DitaOtPlugin {
+            id = 'com.github.eerohele.dita-ot-gradle'
+            displayName = 'DITA-OT Gradle Plugin'
+        }
     }
-  }
 }
