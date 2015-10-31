@@ -1,4 +1,4 @@
 dita {
     input 'one.ditamap'
-    transtype 'html5'
+    transtype 'xhtml'
 }

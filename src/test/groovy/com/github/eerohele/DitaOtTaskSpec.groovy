@@ -16,7 +16,7 @@ class DitaOtTaskSpec extends Specification {
 
     private static final String ROOT_DITAMAP = 'root.ditamap'
     private static final String ROOT_DITAVAL = 'root.ditaval'
-    private static final String TRANSTYPE_HTML5 = 'html5'
+    private static final String DEFAULT_TRANSTYPE = 'xhtml'
 
     Project project
 
@@ -49,7 +49,7 @@ need to set the dita.home system property to point to that installation.''')
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input ROOT_DITAMAP
                 filter ROOT_DITAVAL
-                transtype TRANSTYPE_HTML5
+                transtype DEFAULT_TRANSTYPE
 
                 properties {
                     property name: 'processing-mode', value: 'strict'
@@ -59,7 +59,7 @@ need to set the dita.home system property to point to that installation.''')
         then:
             task.inputFiles == ROOT_DITAMAP
             task.ditaVal == ROOT_DITAVAL
-            task.format == TRANSTYPE_HTML5
+            task.format == DEFAULT_TRANSTYPE
             task.props != null
     }
 
@@ -229,7 +229,7 @@ need to set the dita.home system property to point to that installation.''')
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"
-                transtype TRANSTYPE_HTML5
+                transtype DEFAULT_TRANSTYPE
             }
 
             task.render()
@@ -246,7 +246,7 @@ need to set the dita.home system property to point to that installation.''')
 
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"
-                transtype TRANSTYPE_HTML5
+                transtype DEFAULT_TRANSTYPE
             }
 
         when: 'DITA-OT dir is given but the project is not set up correctly.'
@@ -265,7 +265,7 @@ need to set the dita.home system property to point to that installation.''')
 
             project.dita {
                 input "$examplesDir/simple/dita/root.ditamap"
-                transtype TRANSTYPE_HTML5
+                transtype DEFAULT_TRANSTYPE
             }
 
         then: 'Build succeeds.'
