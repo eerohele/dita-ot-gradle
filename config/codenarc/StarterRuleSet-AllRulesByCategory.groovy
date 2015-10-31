@@ -103,7 +103,7 @@ ruleset {
     EmptyMethodInAbstractClass
     FinalClassWithProtectedMember
     ImplementationAsType
-    Instanceof
+    // Instanceof
     LocaleSetDefault
     NestedForLoop
     PrivateFieldCouldBeFinal
