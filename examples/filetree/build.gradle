@@ -4,8 +4,6 @@ plugins {
     id 'com.github.eerohele.dita-ot-gradle' version '0.1.0'
 }
 
-apply plugin: 'com.github.eerohele.dita-ot-gradle'
-
 defaultTasks 'dita'
 
 ditaOt {

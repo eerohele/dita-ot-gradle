@@ -1,9 +1,7 @@
+// Load the DITA-OT Gradle plugin.
 plugins {
     id 'com.github.eerohele.dita-ot-gradle' version '0.1.0'
 }
-
-// Load the DITA-OT Gradle plugin.
-apply plugin: 'com.github.eerohele.dita-ot-gradle'
 
 // The DITA-OT Gradle plugin adds a task called "dita" into your Gradle build-
 // file. Let's make it the default task so that you can just type "gradle"
