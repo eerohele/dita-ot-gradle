@@ -112,7 +112,7 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
-    def 'Getting property file associated with input file'() {
+    def 'Getting file associated with input file'() {
         setup:
             File inputFile = project.file("$examplesDir/simple/dita/root.ditamap")
 
@@ -121,7 +121,7 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         expect:
-            task.getAssociatedPropertyFile(inputFile).getName() == 'root.properties'
+            task.getAssociatedFile(inputFile, '.properties').getName() == 'root.properties'
     }
 
     @SuppressWarnings('MethodName')
@@ -162,6 +162,20 @@ need to set the dita.home system property to point to that installation.''')
             task.getInputFileTree().find {
                 it.class == File && it.getName() == ROOT_DITAVAL
             }
+    }
+
+    @SuppressWarnings('MethodName')
+    @SuppressWarnings('DuplicateStringLiteral')
+    def 'Using associated DITAVAL file'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input "$examplesDir/simple/dita/root.ditamap"
+                useAssociatedFilter true
+            }
+
+        then:
+            File inputFile = task.getInputFileCollection().files[0]
+            task.getDitaValFile(inputFile).getName() == 'root.ditaval'
     }
 
     @SuppressWarnings('MethodName')
