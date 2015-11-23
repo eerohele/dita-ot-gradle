@@ -181,6 +181,8 @@ class DitaOtTask extends DefaultTask {
     ditaOt.dir /path/to/your/dita-ot/installation''')
         }
 
+        System.setProperty("java.awt.headless", "true")
+
         getInputFileCollection().files.each { File file ->
             File out = getOutputDirForFile(file)
             File propFile = getAssociatedFile(file, FileExtensions.PROPERTIES)
