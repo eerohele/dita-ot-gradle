@@ -70,6 +70,7 @@ class DitaOtTask extends DefaultTask {
         PatternSet ps = new PatternSet()
         ps.include GlobPatterns.ALL_FILES
         ps.exclude("${FilenameUtils.getBaseName(outputDir)}/" + GlobPatterns.ALL_FILES)
+        ps.exclude('.gradle/' + GlobPatterns.ALL_FILES)
     }
 
     PatternSet getDitaOtPatternSet() {
