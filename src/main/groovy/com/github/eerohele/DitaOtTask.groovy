@@ -17,6 +17,7 @@ class DitaOtTask extends DefaultTask {
 
     Boolean developmentMode = false
     Boolean singleDirMode = false
+    Boolean associatedDitaVal = false
     Object inputFiles
     Object ditaVal
     String outputDir = project.buildDir
@@ -56,6 +57,10 @@ class DitaOtTask extends DefaultTask {
         this.singleDirMode = s
     }
 
+    void useAssociatedFilter(Boolean a) {
+        this.associatedDitaVal = a
+    }
+
     private static File getDefaultTempDir() {
         String tmpdir = System.getProperty('java.io.tmpdir')
         new File("${tmpdir}/dita-ot", System.currentTimeMillis().toString())
@@ -65,6 +70,7 @@ class DitaOtTask extends DefaultTask {
         PatternSet ps = new PatternSet()
         ps.include GlobPatterns.ALL_FILES
         ps.exclude("${FilenameUtils.getBaseName(outputDir)}/" + GlobPatterns.ALL_FILES)
+        ps.exclude('.gradle/' + GlobPatterns.ALL_FILES)
     }
 
     PatternSet getDitaOtPatternSet() {
@@ -116,8 +122,12 @@ class DitaOtTask extends DefaultTask {
         project.files(this.inputFiles)
     }
 
-    File getDitaValFile() {
-        project.file(this.ditaVal)
+    File getDitaValFile(File inputFile) {
+        if (this.ditaVal) {
+            project.file(this.ditaVal)
+        } else {
+            getAssociatedFile(inputFile, FileExtensions.DITAVAL)
+        }
     }
 
     /** Get the output directory for the given DITA map.
@@ -142,25 +152,26 @@ class DitaOtTask extends DefaultTask {
         }
     }
 
-    /** Get the associated property file for the given DITA map.
+    /** Get a file "associated" with a given file.
      *
-     * An "associated" property file is a file in the same directory as the
-     * input DITA file that has the exact same basename but with the
-     * .properties extension.
+     * An "associated" file is a file in the same directory as the
+     * input file that has the exact same basename but with the given extension.
      *
-     * Example: if the input DITA file is `subdir/root.ditamap`, the associated
-     * property file is `subdir/root.properties`.
+     * Example: if the input file is `subdir/root.ditamap` and the given
+     * extension is ".properties", the associated file is
      *
-     * @param file Input DITA file.
-     * @since 0.1.0
+     *`subdir/root.properties`.
+     *
+     * @param inputFile Input file.
+     * @param extension The extension of the associated file.
+     * @since 0.2.0
      */
-    static File getAssociatedPropertyFile(File inputFile) {
+    static File getAssociatedFile(File inputFile, String extension) {
         String absPath = inputFile.getAbsolutePath()
         String dirname = FilenameUtils.getFullPathNoEndSeparator(absPath)
         String basename = FilenameUtils.getBaseName(absPath)
 
-        new File(FilenameUtils.concat(dirname, basename) +
-                 FileExtensions.PROPERTIES)
+        new File(FilenameUtils.concat(dirname, basename) + extension)
     }
 
     @TaskAction
@@ -171,8 +182,11 @@ class DitaOtTask extends DefaultTask {
     ditaOt.dir /path/to/your/dita-ot/installation''')
         }
 
+        System.setProperty("java.awt.headless", "true")
+
         getInputFileCollection().files.each { File file ->
             File out = getOutputDirForFile(file)
+            File propFile = getAssociatedFile(file, FileExtensions.PROPERTIES)
 
             ant.ant(antfile: "${project.ditaOt.home}/build.xml") {
                 property(name: Properties.ARGS_INPUT, location: file.getPath())
@@ -195,14 +209,14 @@ class DitaOtTask extends DefaultTask {
                     this.props.call()
                 }
 
-                property(file: getAssociatedPropertyFile(file).getPath())
+                property(file: propFile.getPath())
 
                 property(name: Properties.TEMP_DIR, location: this.tempDir)
                 property(name: Properties.TRANSTYPE, value: this.format)
 
-                if (this.ditaVal) {
+                if (this.ditaVal || this.associatedDitaVal) {
                     property(name: Properties.ARGS_FILTER,
-                             location: getDitaValFile().getPath())
+                             location: getDitaValFile(file).getPath())
                 }
             }
         }
