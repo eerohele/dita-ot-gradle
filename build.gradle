@@ -7,6 +7,11 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'codenarc'
 
+allprojects {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
 defaultTasks 'check'
 
 dependencies {
@@ -42,7 +47,7 @@ test {
 }
 
 group = 'com.github.eerohele'
-version = '0.2.0'
+version = '0.2.1'
 
 task integrate(dependsOn: ':dost:copyInstall') << {
     ant.ant([antfile: 'integrator.xml', dir: file('dita-ot/src/main')])

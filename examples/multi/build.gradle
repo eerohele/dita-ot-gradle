@@ -1,7 +1,7 @@
 // See the 'simple' example for comments on the basic properties.
 
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.2.0'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.2.1'
 }
 
 // Set 'dita' as the default task for this project.
