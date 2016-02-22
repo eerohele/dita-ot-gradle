@@ -10,8 +10,6 @@ plugins {
 defaultTasks 'dita'
 
 // Tell Gradle where your DITA-OT installation is.
-//
-// By default, it will use your DITA_HOME system environment variable.
 ditaOt.dir '/opt/dita-ot'
 
 dita {
