@@ -293,7 +293,7 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
-    def 'Does not throw InvalidUserDataException if DITA-OT directory is set'() {
+    def 'Throws BuildException if classpath setup fails'() {
         setup:
             project.extensions.create(DITA_OT, DitaOtExtension, project)
             project.ditaOt.dir ditaHome

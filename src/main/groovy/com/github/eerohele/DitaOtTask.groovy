@@ -12,6 +12,8 @@ import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.util.PatternSet
 
+import org.apache.tools.ant.BuildException
+
 import javax.inject.Inject
 
 class DitaOtTask extends DefaultTask {
@@ -202,6 +204,13 @@ class DitaOtTask extends DefaultTask {
         }
 
         FileCollection classpath = getDitaOtClasspath()
+
+        if (classpath == null) {
+            throw new BuildException(
+'''Could not set up the classpath. Does ditaOt.dir point to a working DITA-OT
+installation? If yes, please report this error in the GitHub issue tracker.''')
+        }
+
         File antfile = new File(project.ditaOt.home, 'build.xml')
         List<String> outputFormats = this.formats
 
