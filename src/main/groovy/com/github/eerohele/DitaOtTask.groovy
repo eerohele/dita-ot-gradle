@@ -25,7 +25,7 @@ class DitaOtTask extends DefaultTask {
     String outputDir = project.buildDir
     String tempDir = getDefaultTempDir()
     Closure props
-    String format = DEFAULT_TRANSTYPE
+    List<String> formats = [DEFAULT_TRANSTYPE]
 
     void devMode(Boolean d) {
         this.developmentMode = d
@@ -51,8 +51,8 @@ class DitaOtTask extends DefaultTask {
         this.props = p
     }
 
-    void transtype(String t) {
-        this.format = t
+    void transtype(String... t) {
+        this.formats = t
     }
 
     void singleOutputDir(Boolean s) {
@@ -123,9 +123,11 @@ class DitaOtTask extends DefaultTask {
 
     @OutputDirectories
     Set<File> getOutputDirectories() {
-        getInputFileCollection().files.collect {
-            getOutputDirForFile(it)
-        } as Set
+        getInputFileCollection().files.collect { file ->
+            this.formats.collect {
+                getOutputDirectory(file, it)
+            }
+        }.flatten() as Set
     }
 
     FileCollection getInputFileCollection() {
@@ -149,16 +151,23 @@ class DitaOtTask extends DefaultTask {
      * is `${buildDir}/root`.
      *
      * @param inputFile Input DITA file.
+     * @param outputFormat DITA transtype.
      * @since 0.1.0
      */
-    File getOutputDirForFile(File inputFile) {
-        File outputDir = new File(this.outputDir)
+    File getOutputDirectory(File inputFile, String outputFormat) {
+        File baseOutputDir = null
 
         if (this.singleDirMode || getInputFileCollection().files.size() == 1) {
-            outputDir
+            baseOutputDir = new File(this.outputDir)
         } else {
-            new File(outputDir,
-                     FilenameUtils.getBaseName(inputFile.getPath()))
+            String basename = FilenameUtils.getBaseName(inputFile.getPath())
+            baseOutputDir = new File(this.outputDir, basename)
+        }
+
+        if (outputFormat && this.formats.size() > 1) {
+            new File(baseOutputDir, outputFormat)
+        } else {
+            baseOutputDir
         }
     }
 
@@ -194,7 +203,7 @@ class DitaOtTask extends DefaultTask {
 
         FileCollection classpath = getDitaOtClasspath()
         File antfile = new File(project.ditaOt.home, 'build.xml')
-        List<String> outputFormat = this.format
+        List<String> outputFormats = this.formats
 
         getInputFileCollection().each { File inputFile ->
             File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
@@ -205,37 +214,39 @@ class DitaOtTask extends DefaultTask {
                 def antClassLoader = antProject.getClass().classLoader
                 antClassLoader.addURLs(classpath*.toURI()*.toURL())
 
-                File outputDir = getOutputDirForFile(inputFile)
+                outputFormats.each { String outputFormat ->
+                    File outputDir = getOutputDirectory(inputFile, outputFormat)
 
-                ant(antfile: antfile.getPath()) {
-                    property(name: Properties.ARGS_INPUT, location: inputFile.getPath())
-                    property(name: Properties.OUTPUT_DIR, location: outputDir.getPath())
+                    ant(antfile: antfile.getPath()) {
+                        property(name: Properties.ARGS_INPUT, location: inputFile.getPath())
+                        property(name: Properties.OUTPUT_DIR, location: outputDir.getPath())
 
-                    if (this.props) {
-                        // Set the Closure delegate to the `ant` property so that
-                        // The user can do this:
-                        //
-                        //   properties {
-                        //       property(name: "foo", value: "bar")
-                        //   }
-                        //
-                        // Instead of this:
-                        //
-                        //   properties {
-                        //       ant.property(name: "foo", value: "bar")
-                        //   }
-                        this.props.delegate = ant
-                        this.props.call()
-                    }
+                        if (this.props) {
+                            // Set the Closure delegate to the `ant` property so that
+                            // The user can do this:
+                            //
+                            //   properties {
+                            //       property(name: "foo", value: "bar")
+                            //   }
+                            //
+                            // Instead of this:
+                            //
+                            //   properties {
+                            //       ant.property(name: "foo", value: "bar")
+                            //   }
+                            this.props.delegate = ant
+                            this.props.call()
+                        }
 
-                    property file: associatedPropertyFile
+                        property file: associatedPropertyFile
 
-                    property name: Properties.TEMP_DIR, location: this.tempDir
-                    property name: Properties.TRANSTYPE, value: outputFormat
+                        property name: Properties.TEMP_DIR, location: this.tempDir
+                        property name: Properties.TRANSTYPE, value: outputFormat
 
-                    if (this.ditaVal || this.associatedDitaVal) {
-                        property(name: Properties.ARGS_FILTER,
-                                 location: getDitaValFile(inputFile).getPath())
+                        if (this.ditaVal || this.associatedDitaVal) {
+                            property(name: Properties.ARGS_FILTER,
+                                     location: getDitaValFile(inputFile).getPath())
+                        }
                     }
                 }
             }

@@ -43,7 +43,7 @@ need to set the dita.home system property to point to that installation.''')
         examplesDir = new File(testRootDir, 'examples')
     }
 
-    @SuppressWarnings('MethodName')
+    @SuppressWarnings(['MethodName', 'DuplicateStringLiteral'])
     def 'Creating a task'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -59,8 +59,20 @@ need to set the dita.home system property to point to that installation.''')
         then:
             task.inputFiles == ROOT_DITAMAP
             task.ditaVal == ROOT_DITAVAL
-            task.format == DEFAULT_TRANSTYPE
+            task.formats == [DEFAULT_TRANSTYPE]
             task.props != null
+    }
+
+    @SuppressWarnings(['MethodName', 'DuplicateStringLiteral', 'DuplicateListLiteral'])
+    def 'Using multiple transtypes'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input ROOT_DITAMAP
+                transtype 'xhtml', 'pdf', 'html5', 'troff'
+            }
+
+        then:
+            task.formats == ['xhtml', 'pdf', 'html5', 'troff']
     }
 
     @SuppressWarnings('MethodName')
@@ -85,6 +97,18 @@ need to set the dita.home system property to point to that installation.''')
             getInputFiles(task).find { it.getName() == ROOT_DITAMAP }
     }
 
+    @SuppressWarnings(['MethodName', 'DuplicateStringLiteral', 'DuplicateListLiteral'])
+    def 'Giving single input file and multiple transtypes'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input project.file("$examplesDir/simple/dita/root.ditamap")
+                transtype 'html5', 'pdf'
+            }
+
+        then:
+            task.getOutputDirectories()*.getName() == [ 'html5', 'pdf' ]
+    }
+
     @SuppressWarnings('MethodName')
     def 'Giving multiple input files'() {
         when:
@@ -95,6 +119,22 @@ need to set the dita.home system property to point to that installation.''')
 
         then:
             getInputFiles(task)*.getName() == ['one.ditamap', 'two.ditamap']
+    }
+
+    @SuppressWarnings(['MethodName', 'DuplicateStringLiteral', 'DuplicateListLiteral'])
+    def 'Giving multiple input files and multiple transtypes'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input project.files("$examplesDir/multi/one/one.ditamap",
+                                    "$examplesDir/multi/two/two.ditamap")
+                transtype 'html5', 'pdf'
+            }
+
+        then:
+            task.getOutputDirectories().collect {
+                File parent = new File(it.getParent())
+                new File(parent.getName(), it.getName()).getPath()
+            } == [ 'one/html5', 'one/pdf', 'two/html5', 'two/pdf' ]
     }
 
     @SuppressWarnings('MethodName')
