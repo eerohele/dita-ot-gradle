@@ -1,16 +1,18 @@
 package com.github.eerohele
 
+import org.apache.commons.io.FilenameUtils as FilenameUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
+import org.gradle.api.internal.project.IsolatedAntBuilder
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SkipWhenEmpty
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.util.PatternSet
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileTree
 
-import org.apache.commons.io.FilenameUtils as FilenameUtils
+import javax.inject.Inject
 
 class DitaOtTask extends DefaultTask {
     static final DEFAULT_TRANSTYPE = 'html5'
@@ -77,6 +79,14 @@ class DitaOtTask extends DefaultTask {
         PatternSet ps = new PatternSet()
         ps.include GlobPatterns.ALL_FILES
         ps.exclude 'temp/' + GlobPatterns.ALL_FILES
+    }
+
+    @InputFiles
+    FileCollection ditaOtClasspath
+
+    @Inject
+    IsolatedAntBuilder getAntBuilder() {
+        throw new UnsupportedOperationException()
     }
 
     /** Get input files for up-to-date check.
@@ -182,41 +192,51 @@ class DitaOtTask extends DefaultTask {
     ditaOt.dir /path/to/your/dita-ot/installation''')
         }
 
-        System.setProperty("java.awt.headless", "true")
+        FileCollection classpath = getDitaOtClasspath()
+        File antfile = new File(project.ditaOt.home, 'build.xml')
+        List<String> outputFormat = this.format
 
-        getInputFileCollection().files.each { File file ->
-            File out = getOutputDirForFile(file)
-            File propFile = getAssociatedFile(file, FileExtensions.PROPERTIES)
+        getInputFileCollection().each { File inputFile ->
+            File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
-            ant.ant(antfile: "${project.ditaOt.home}/build.xml") {
-                property(name: Properties.ARGS_INPUT, location: file.getPath())
-                property(name: Properties.OUTPUT_DIR, location: out.getPath())
+            antBuilder.withClasspath(classpath).execute {
+                // Add every JAR file in the DITA-OT "lib" directory into the Ant
+                // class loader.
+                def antClassLoader = antProject.getClass().classLoader
+                antClassLoader.addURLs(classpath*.toURI()*.toURL())
 
-                if (this.props) {
-                    // Set the Closure delegate to the `ant` property so that
-                    // The user can do this:
-                    //
-                    //   properties {
-                    //       property(name: "foo", value: "bar")
-                    //   }
-                    //
-                    // Instead of this:
-                    //
-                    //   properties {
-                    //       ant.property(name: "foo", value: "bar")
-                    //   }
-                    this.props.delegate = ant
-                    this.props.call()
-                }
+                File outputDir = getOutputDirForFile(inputFile)
 
-                property(file: propFile.getPath())
+                ant(antfile: antfile.getPath()) {
+                    property(name: Properties.ARGS_INPUT, location: inputFile.getPath())
+                    property(name: Properties.OUTPUT_DIR, location: outputDir.getPath())
 
-                property(name: Properties.TEMP_DIR, location: this.tempDir)
-                property(name: Properties.TRANSTYPE, value: this.format)
+                    if (this.props) {
+                        // Set the Closure delegate to the `ant` property so that
+                        // The user can do this:
+                        //
+                        //   properties {
+                        //       property(name: "foo", value: "bar")
+                        //   }
+                        //
+                        // Instead of this:
+                        //
+                        //   properties {
+                        //       ant.property(name: "foo", value: "bar")
+                        //   }
+                        this.props.delegate = ant
+                        this.props.call()
+                    }
 
-                if (this.ditaVal || this.associatedDitaVal) {
-                    property(name: Properties.ARGS_FILTER,
-                             location: getDitaValFile(file).getPath())
+                    property file: associatedPropertyFile
+
+                    property name: Properties.TEMP_DIR, location: this.tempDir
+                    property name: Properties.TRANSTYPE, value: outputFormat
+
+                    if (this.ditaVal || this.associatedDitaVal) {
+                        property(name: Properties.ARGS_FILTER,
+                                 location: getDitaValFile(inputFile).getPath())
+                    }
                 }
             }
         }
