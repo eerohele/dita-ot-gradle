@@ -10,7 +10,11 @@ class DitaOtPlugin implements Plugin<Project> {
 
     FileCollection getClasspath(Project project) {
         project.fileTree(dir: project.ditaOt.home).matching {
-            include('lib/**/*.jar', 'plugins/org.dita.pdf2/lib/fo.jar')
+            include(
+                'lib/**/*.jar',
+                'resources/messages.xml',
+                'plugins/org.dita.pdf2/lib/fo.jar'
+            )
         }
     }
 
