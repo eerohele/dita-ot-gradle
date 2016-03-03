@@ -13,7 +13,8 @@ class DitaOtPlugin implements Plugin<Project> {
             include(
                 'lib/**/*.jar',
                 'resources/messages.xml',
-                'plugins/org.dita.pdf2/lib/fo.jar'
+                'plugins/org.dita.pdf2/lib/fo.jar',
+                'plugins/org.dita.pdf2/build/libs/fo.jar'
             )
         }
     }
