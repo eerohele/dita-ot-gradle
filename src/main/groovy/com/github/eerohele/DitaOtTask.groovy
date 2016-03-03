@@ -220,8 +220,8 @@ installation? If yes, please report this error in the GitHub issue tracker.''')
             antBuilder.withClasspath(classpath).execute {
                 // Add every JAR file in the DITA-OT "lib" directory into the Ant
                 // class loader.
-                def antClassLoader = antProject.getClass().classLoader
-                antClassLoader.addURLs(classpath*.toURI()*.toURL())
+                URLClassLoader antClassLoader = antProject.getClass().classLoader
+                classpath*.toURI()*.toURL().each { antClassLoader.addURL(it) }
 
                 outputFormats.each { String outputFormat ->
                     File outputDir = getOutputDirectory(inputFile, outputFormat)
