@@ -1,18 +1,19 @@
 package com.github.eerohele
 
 import org.apache.commons.io.FilenameUtils as FilenameUtils
+import org.apache.tools.ant.BuildException
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.internal.project.IsolatedAntBuilder
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.util.PatternSet
 
-import org.apache.tools.ant.BuildException
+import org.gradle.api.internal.project.IsolatedAntBuilder
 
 import javax.inject.Inject
 
@@ -197,21 +198,19 @@ class DitaOtTask extends DefaultTask {
 
     @TaskAction
     void render() {
-        if (project.ditaOt.home == null) {
-            throw new InvalidUserDataException(
-'''DITA Open Toolkit directory not set. Add a line like this into build.gradle:
-    ditaOt.dir /path/to/your/dita-ot/installation''')
+        File ditaHome = project.ditaOt.home
+
+        if (ditaHome == null) {
+            throw new InvalidUserDataException(DitaOtPlugin.MESSAGES.ditaHomeError)
         }
 
         FileCollection classpath = getDitaOtClasspath()
 
         if (classpath == null) {
-            throw new BuildException(
-'''Could not set up the classpath. Does ditaOt.dir point to a working DITA-OT
-installation? If yes, please report this error in the GitHub issue tracker.''')
+            throw new BuildException(DitaOtPlugin.MESSAGES.classpathError)
         }
 
-        File antfile = new File(project.ditaOt.home, 'build.xml')
+        File antfile = new File(ditaHome, 'build.xml')
         List<String> outputFormats = this.formats
 
         getInputFileCollection().each { File inputFile ->

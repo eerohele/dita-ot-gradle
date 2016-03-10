@@ -7,6 +7,7 @@ import org.gradle.api.file.FileCollection
 class DitaOtPlugin implements Plugin<Project> {
     static final String DITA = 'dita'
     static final String DITA_OT = 'ditaOt'
+    static final ConfigObject MESSAGES = new ConfigSlurper().parse(Messages).messages
 
     Double getCurrentJavaVersion() {
         System.getProperty('java.specification.version').toDouble()
