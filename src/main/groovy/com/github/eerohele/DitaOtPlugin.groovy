@@ -16,10 +16,15 @@ class DitaOtPlugin implements Plugin<Project> {
     FileCollection getClasspath(Project project) {
         project.fileTree(dir: project.ditaOt.home).matching {
             include(
+                'resources/',
                 'lib/**/*.jar',
-                'resources/messages.xml',
                 'plugins/org.dita.pdf2/lib/fo.jar',
                 'plugins/org.dita.pdf2/build/libs/fo.jar'
+            )
+
+            exclude(
+                'lib/ant-launcher.jar',
+                'lib/ant.jar'
             )
         }
     }
