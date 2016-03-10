@@ -8,6 +8,10 @@ class DitaOtPlugin implements Plugin<Project> {
     static final String DITA = 'dita'
     static final String DITA_OT = 'ditaOt'
 
+    Double getCurrentJavaVersion() {
+        System.getProperty('java.specification.version').toDouble()
+    }
+
     FileCollection getClasspath(Project project) {
         project.fileTree(dir: project.ditaOt.home).matching {
             include(
@@ -31,6 +35,10 @@ class DitaOtPlugin implements Plugin<Project> {
             group: 'Documentation',
             description: 'Publishes DITA documentation with DITA Open Toolkit.'
         )
+
+        if (getCurrentJavaVersion() < 1.8) {
+            project.logger.warn(MESSAGES.javaVersionWarning)
+        }
 
         project.afterEvaluate {
             task.conventionMapping.with {
