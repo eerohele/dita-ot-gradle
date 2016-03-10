@@ -41,18 +41,19 @@ codenarc {
     configFile = file('config/codenarc/codenarc.groovy')
 }
 
-String ditaHome = new File('.', 'dita-ot/src/main').getCanonicalPath()
+File ditaHome = new File("${projectDir}/dita-ot/src/main")
 
 test {
     dependsOn 'integrate'
-    systemProperty 'dita.home', System.getProperty('dita.home', ditaHome)
+    systemProperty 'dita.home', System.getProperty('dita.home', ditaHome.getPath())
+    systemProperty 'examples.dir', new File(projectDir, 'examples')
 }
 
 group = 'com.github.eerohele'
 version = '0.3.0'
 
 task integrate(dependsOn: ':dost:copyInstall') << {
-    ant.ant([antfile: 'integrator.xml', dir: file('dita-ot/src/main')])
+    ant.ant([antfile: 'integrator.xml', dir: ditaHome])
 }
 
 task publish(dependsOn: ['check'])

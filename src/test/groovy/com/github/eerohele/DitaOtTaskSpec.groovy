@@ -21,8 +21,7 @@ class DitaOtTaskSpec extends Specification {
     Project project
 
     String ditaHome
-    File testRootDir
-    File examplesDir
+    String examplesDir
 
     Set<File> getInputFiles(Task task) {
         task.getInputFileCollection().getFiles()
@@ -37,10 +36,10 @@ properly set. To run the tests, you need a working DITA-OT installation and you
 need to set the dita.home system property to point to that installation.''')
         }
 
+        examplesDir = System.getProperty('examples.dir')
+
         project = ProjectBuilder.builder().withName('test').build()
         project.configurations.create(DITA)
-        testRootDir = new File('.')
-        examplesDir = new File(testRootDir, 'examples')
     }
 
     @SuppressWarnings(['MethodName', 'DuplicateStringLiteral'])
@@ -280,12 +279,12 @@ need to set the dita.home system property to point to that installation.''')
         setup:
             project.extensions.create(DITA_OT, DitaOtExtension, project)
 
-        when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"
                 transtype DEFAULT_TRANSTYPE
             }
 
+        when:
             task.render()
 
         then:
@@ -294,16 +293,16 @@ need to set the dita.home system property to point to that installation.''')
 
     @SuppressWarnings('MethodName')
     def 'Throws BuildException if classpath setup fails'() {
-        setup:
+        setup: 'DITA-OT dir is given but the project is not set up correctly.'
             project.extensions.create(DITA_OT, DitaOtExtension, project)
             project.ditaOt.dir ditaHome
 
+        when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"
                 transtype DEFAULT_TRANSTYPE
             }
 
-        when: 'DITA-OT dir is given but the project is not set up correctly.'
             task.render()
 
         then: 'Fails because the classpath is not set up.'
@@ -312,18 +311,50 @@ need to set the dita.home system property to point to that installation.''')
 
     @SuppressWarnings('MethodName')
     def 'Does not throw any errors of everything is set up properly'() {
-        when: 'Project is set up correctly and DITA-OT dir is given.'
+        setup: 'Project is set up correctly and DITA-OT dir is given.'
             project.apply plugin: DitaOtPlugin
-
             project.ditaOt.dir ditaHome
+            project.evaluate()
 
+        when:
             project.dita {
                 input "$examplesDir/simple/dita/root.ditamap"
                 transtype DEFAULT_TRANSTYPE
             }
 
+            project.dita.render()
+
         then: 'Build succeeds.'
+            new File("${project.buildDir}/topic1.html").exists()
             notThrown BuildException
+
+        cleanup:
+            project.tasks.findByName('clean').execute()
+    }
+
+    @SuppressWarnings('MethodName')
+    @SuppressWarnings('DuplicateStringLiteral')
+    def 'Closes Ant classloader after build has finished'() {
+        setup:
+            project.apply plugin: DitaOtPlugin
+            project.ditaOt.dir ditaHome
+            project.evaluate()
+
+        when:
+            project.dita {
+                input "$examplesDir/simple/dita/root.ditamap"
+                transtype DEFAULT_TRANSTYPE
+            }
+
+            project.dita.render()
+
+            project.dita.antBuilder.execute {
+                antProject.getClass().getClassLoader().loadClass('org.dita.dost.invoker.Main')
+            }
+
+        then: 'Build succeeds, Ant classloader is closed'
+            new File("${project.buildDir}/topic1.html").exists()
+            thrown ClassNotFoundException
 
         cleanup:
             project.tasks.findByName('clean').execute()
