@@ -42,6 +42,8 @@ class DitaOtPlugin implements Plugin<Project> {
             description: 'Publishes DITA documentation with DITA Open Toolkit.'
         )
 
+        System.setProperty('java.awt.headless', 'true')
+
         if (getCurrentJavaVersion() < 1.8) {
             project.logger.warn(MESSAGES.javaVersionWarning)
         }
@@ -52,5 +54,4 @@ class DitaOtPlugin implements Plugin<Project> {
             }
         }
     }
-
 }
