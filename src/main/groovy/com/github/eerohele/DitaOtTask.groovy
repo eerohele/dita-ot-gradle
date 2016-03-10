@@ -84,14 +84,6 @@ class DitaOtTask extends DefaultTask {
         ps.exclude 'temp/' + GlobPatterns.ALL_FILES
     }
 
-    @InputFiles
-    FileCollection ditaOtClasspath
-
-    @Inject
-    IsolatedAntBuilder getAntBuilder() {
-        throw new UnsupportedOperationException()
-    }
-
     /** Get input files for up-to-date check.
      *
      * By default, all files under all input directories are included in the
@@ -196,6 +188,13 @@ class DitaOtTask extends DefaultTask {
         new File(FilenameUtils.concat(dirname, basename) + extension)
     }
 
+    @Inject
+    IsolatedAntBuilder getAntBuilder() {
+        throw new UnsupportedOperationException()
+    }
+
+    FileCollection ditaOtClasspath
+
     @TaskAction
     void render() {
         File ditaHome = project.ditaOt.home
@@ -213,14 +212,12 @@ class DitaOtTask extends DefaultTask {
         File antfile = new File(ditaHome, 'build.xml')
         List<String> outputFormats = this.formats
 
-        getInputFileCollection().each { File inputFile ->
-            File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
+        antBuilder.execute {
+            URLClassLoader antClassLoader = antProject.getClass().getClassLoader()
+            classpath*.toURI()*.toURL()*.each { antClassLoader.addURL(it)}
 
-            antBuilder.withClasspath(classpath).execute {
-                // Add every JAR file in the DITA-OT "lib" directory into the Ant
-                // class loader.
-                URLClassLoader antClassLoader = antProject.getClass().classLoader
-                classpath*.toURI()*.toURL().each { antClassLoader.addURL(it) }
+            getInputFileCollection().each { File inputFile ->
+                File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
                 outputFormats.each { String outputFormat ->
                     File outputDir = getOutputDirectory(inputFile, outputFormat)
@@ -258,6 +255,11 @@ class DitaOtTask extends DefaultTask {
                     }
                 }
             }
+
+            // The Ant classloader *must* be closed at the end of the build.
+            // Otherwise running the DITA-OT build before running this task
+            // will cause mysterious classpath errors.
+            antClassLoader.close()
         }
     }
 }
