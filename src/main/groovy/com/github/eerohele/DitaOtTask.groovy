@@ -1,7 +1,6 @@
 package com.github.eerohele
 
 import org.apache.commons.io.FilenameUtils as FilenameUtils
-import org.apache.tools.ant.BuildException
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
@@ -14,8 +13,6 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.util.PatternSet
 
 import org.gradle.api.internal.project.IsolatedAntBuilder
-
-import javax.inject.Inject
 
 class DitaOtTask extends DefaultTask {
     static final DEFAULT_TRANSTYPE = 'html5'
@@ -188,12 +185,7 @@ class DitaOtTask extends DefaultTask {
         new File(FilenameUtils.concat(dirname, basename) + extension)
     }
 
-    @Inject
-    IsolatedAntBuilder getAntBuilder() {
-        throw new UnsupportedOperationException()
-    }
-
-    FileCollection ditaOtClasspath
+    IsolatedAntBuilder antBuilder
 
     @TaskAction
     void render() {
@@ -203,19 +195,10 @@ class DitaOtTask extends DefaultTask {
             throw new InvalidUserDataException(DitaOtPlugin.MESSAGES.ditaHomeError)
         }
 
-        FileCollection classpath = getDitaOtClasspath()
-
-        if (classpath == null) {
-            throw new BuildException(DitaOtPlugin.MESSAGES.classpathError)
-        }
-
         File antfile = new File(ditaHome, 'build.xml')
         List<String> outputFormats = this.formats
 
         antBuilder.execute {
-            URLClassLoader antClassLoader = antProject.getClass().getClassLoader()
-            classpath*.toURI()*.toURL()*.each { antClassLoader.addURL(it)}
-
             getInputFileCollection().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
@@ -255,11 +238,6 @@ class DitaOtTask extends DefaultTask {
                     }
                 }
             }
-
-            // The Ant classloader *must* be closed at the end of the build.
-            // Otherwise running the DITA-OT build before running this task
-            // will cause mysterious classpath errors.
-            antClassLoader.close()
         }
     }
 }

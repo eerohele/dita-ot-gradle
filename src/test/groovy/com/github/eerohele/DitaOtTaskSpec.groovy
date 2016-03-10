@@ -292,24 +292,6 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
-    def 'Throws BuildException if classpath setup fails'() {
-        setup: 'DITA-OT dir is given but the project is not set up correctly.'
-            project.extensions.create(DITA_OT, DitaOtExtension, project)
-            project.ditaOt.dir ditaHome
-
-        when:
-            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-                input "$examplesDir/simple/dita/root.ditamap"
-                transtype DEFAULT_TRANSTYPE
-            }
-
-            task.render()
-
-        then: 'Fails because the classpath is not set up.'
-            thrown BuildException
-    }
-
-    @SuppressWarnings('MethodName')
     def 'Does not throw any errors of everything is set up properly'() {
         setup: 'Project is set up correctly and DITA-OT dir is given.'
             project.apply plugin: DitaOtPlugin
@@ -331,33 +313,4 @@ need to set the dita.home system property to point to that installation.''')
         cleanup:
             project.tasks.findByName('clean').execute()
     }
-
-    @SuppressWarnings('MethodName')
-    @SuppressWarnings('DuplicateStringLiteral')
-    def 'Closes Ant classloader after build has finished'() {
-        setup:
-            project.apply plugin: DitaOtPlugin
-            project.ditaOt.dir ditaHome
-            project.evaluate()
-
-        when:
-            project.dita {
-                input "$examplesDir/simple/dita/root.ditamap"
-                transtype DEFAULT_TRANSTYPE
-            }
-
-            project.dita.render()
-
-            project.dita.antBuilder.execute {
-                antProject.getClass().getClassLoader().loadClass('org.dita.dost.invoker.Main')
-            }
-
-        then: 'Build succeeds, Ant classloader is closed'
-            new File("${project.buildDir}/topic1.html").exists()
-            thrown ClassNotFoundException
-
-        cleanup:
-            project.tasks.findByName('clean').execute()
-    }
-
 }
