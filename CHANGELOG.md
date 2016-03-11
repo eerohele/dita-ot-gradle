@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.3.0 — [Unreleased]
+## 0.3.0 — 2016-03-11
 - Add support for multiple transtypes
 - Fix classpath conflicts and update classpath compilation strategy
 
