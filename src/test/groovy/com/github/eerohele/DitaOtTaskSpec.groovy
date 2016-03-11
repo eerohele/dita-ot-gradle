@@ -204,6 +204,34 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
+    def 'DITAVAL file is included in the input file tree when outside root map directory'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input "$examplesDir/simple/dita/root.ditamap"
+                filter "$examplesDir/filetree/dita/two.ditaval"
+            }
+
+        then:
+            task.getInputFileTree().files.flatten().find {
+                it == new File("$examplesDir/filetree/dita/two.ditaval")
+            }
+    }
+
+    @SuppressWarnings('MethodName')
+    def 'Project cache directory is not included in the input file tree'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input "$examplesDir/simple/dita/root.ditamap"
+                filter "$examplesDir/simple/dita/root.ditaval"
+            }
+
+        then:
+            task.getInputFileTree().files.flatten().find {
+                it == new File("$examplesDir/simple/.gradle")
+            } == null
+    }
+
+    @SuppressWarnings('MethodName')
     @SuppressWarnings('DuplicateStringLiteral')
     def 'Using associated DITAVAL file'() {
         when:
