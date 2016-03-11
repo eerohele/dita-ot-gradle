@@ -15,63 +15,53 @@ import org.gradle.api.tasks.util.PatternSet
 import org.gradle.api.internal.project.IsolatedAntBuilder
 
 class DitaOtTask extends DefaultTask {
-    static final DEFAULT_TRANSTYPE = 'html5'
+    Options options = new Options()
 
-    Boolean developmentMode = false
-    Boolean singleDirMode = false
-    Boolean associatedDitaVal = false
-    Object inputFiles
-    Object ditaVal
-    String outputDir = project.buildDir
-    String tempDir = getDefaultTempDir()
-    Closure props
-    List<String> formats = [DEFAULT_TRANSTYPE]
+    DitaOtTask() {
+        super()
+        this.options.output = project.buildDir
+    }
 
     void devMode(Boolean d) {
-        this.developmentMode = d
+        this.options.devMode = d
     }
 
     void input(Object i) {
-        this.inputFiles = i
+        this.options.input = i
     }
 
     void filter(Object f) {
-        this.ditaVal = f
+        this.options.filter = f
     }
 
     void output(String o) {
-        this.outputDir = o
+        this.options.output = o
     }
 
     void temp(String t) {
-        this.tempDir = t
+        this.options.temp = t
     }
 
     void properties(Closure p) {
-        this.props = p
+        this.options.properties = p
     }
 
     void transtype(String... t) {
-        this.formats = t
+        this.options.transtype = t
     }
 
     void singleOutputDir(Boolean s) {
-        this.singleDirMode = s
+        this.options.singleOutputDir = s
     }
 
     void useAssociatedFilter(Boolean a) {
-        this.associatedDitaVal = a
-    }
-
-    private static File getDefaultTempDir() {
-        String tmpdir = System.getProperty('java.io.tmpdir')
-        new File("${tmpdir}/dita-ot", System.currentTimeMillis().toString())
+        this.options.useAssociatedFilter = a
     }
 
     PatternSet getInputFilePatternSet() {
         PatternSet ps = new PatternSet()
         ps.include GlobPatterns.ALL_FILES
-        ps.exclude("${FilenameUtils.getBaseName(outputDir)}/" + GlobPatterns.ALL_FILES)
+        ps.exclude("${FilenameUtils.getBaseName(this.options.output)}/" + GlobPatterns.ALL_FILES)
         ps.exclude('.gradle/' + GlobPatterns.ALL_FILES)
     }
 
@@ -102,10 +92,10 @@ class DitaOtTask extends DefaultTask {
             project.fileTree(it.getParent()).matching(patternSet)
         }).asImmutable()
 
-        List<FileTree> treeWithDitaval = this.ditaVal != null
-            ? inputFileTree + project.files(this.ditaVal) : inputFileTree
+        List<FileTree> treeWithDitaval = this.options.filter != null
+            ? inputFileTree + project.files(this.options.filter) : inputFileTree
 
-        if (this.developmentMode) {
+        if (this.options.devMode) {
             treeWithDitaval + project.fileTree(project.ditaOt.home)
                                    .matching(getDitaOtPatternSet()) as Set
         } else {
@@ -116,19 +106,19 @@ class DitaOtTask extends DefaultTask {
     @OutputDirectories
     Set<File> getOutputDirectories() {
         getInputFileCollection().files.collect { file ->
-            this.formats.collect {
+            this.options.transtype.collect {
                 getOutputDirectory(file, it)
             }
         }.flatten() as Set
     }
 
     FileCollection getInputFileCollection() {
-        project.files(this.inputFiles)
+        project.files(this.options.input)
     }
 
     File getDitaValFile(File inputFile) {
-        if (this.ditaVal) {
-            project.file(this.ditaVal)
+        if (this.options.filter) {
+            project.file(this.options.filter)
         } else {
             getAssociatedFile(inputFile, FileExtensions.DITAVAL)
         }
@@ -143,21 +133,21 @@ class DitaOtTask extends DefaultTask {
      * is `${buildDir}/root`.
      *
      * @param inputFile Input DITA file.
-     * @param outputFormat DITA transtype.
+     * @param transtype DITA transtype.
      * @since 0.1.0
      */
-    File getOutputDirectory(File inputFile, String outputFormat) {
+    File getOutputDirectory(File inputFile, String transtype) {
         File baseOutputDir = null
 
-        if (this.singleDirMode || getInputFileCollection().files.size() == 1) {
-            baseOutputDir = new File(this.outputDir)
+        if (this.options.singleOutputDir || getInputFileCollection().files.size() == 1) {
+            baseOutputDir = new File(this.options.output)
         } else {
             String basename = FilenameUtils.getBaseName(inputFile.getPath())
-            baseOutputDir = new File(this.outputDir, basename)
+            baseOutputDir = new File(this.options.output, basename)
         }
 
-        if (outputFormat && this.formats.size() > 1) {
-            new File(baseOutputDir, outputFormat)
+        if (transtype && this.options.transtype.size() > 1) {
+            new File(baseOutputDir, transtype)
         } else {
             baseOutputDir
         }
@@ -195,21 +185,18 @@ class DitaOtTask extends DefaultTask {
             throw new InvalidUserDataException(DitaOtPlugin.MESSAGES.ditaHomeError)
         }
 
-        File antfile = new File(ditaHome, 'build.xml')
-        List<String> outputFormats = this.formats
-
         antBuilder.execute {
             getInputFileCollection().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
-                outputFormats.each { String outputFormat ->
-                    File outputDir = getOutputDirectory(inputFile, outputFormat)
+                this.options.transtype.each { String transtype ->
+                    File outputDir = getOutputDirectory(inputFile, transtype)
 
-                    ant(antfile: antfile.getPath()) {
+                    ant(antfile: new File(ditaHome, 'build.xml')) {
                         property(name: Properties.ARGS_INPUT, location: inputFile.getPath())
                         property(name: Properties.OUTPUT_DIR, location: outputDir.getPath())
 
-                        if (this.props) {
+                        if (this.options.properties) {
                             // Set the Closure delegate to the `ant` property so that
                             // The user can do this:
                             //
@@ -222,16 +209,16 @@ class DitaOtTask extends DefaultTask {
                             //   properties {
                             //       ant.property(name: "foo", value: "bar")
                             //   }
-                            this.props.delegate = ant
-                            this.props.call()
+                            this.options.properties.delegate = ant
+                            this.options.properties.call()
                         }
 
                         property file: associatedPropertyFile
 
-                        property name: Properties.TEMP_DIR, location: this.tempDir
-                        property name: Properties.TRANSTYPE, value: outputFormat
+                        property name: Properties.TEMP_DIR, location: this.options.temp
+                        property name: Properties.TRANSTYPE, value: transtype
 
-                        if (this.ditaVal || this.associatedDitaVal) {
+                        if (this.options.filter || this.options.useAssociatedFilter) {
                             property(name: Properties.ARGS_FILTER,
                                      location: getDitaValFile(inputFile).getPath())
                         }

@@ -56,10 +56,10 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.inputFiles == ROOT_DITAMAP
-            task.ditaVal == ROOT_DITAVAL
-            task.formats == [DEFAULT_TRANSTYPE]
-            task.props != null
+            task.options.input == ROOT_DITAMAP
+            task.options.filter == ROOT_DITAVAL
+            task.options.transtype == [DEFAULT_TRANSTYPE]
+            task.options.properties != null
     }
 
     @SuppressWarnings(['MethodName', 'DuplicateStringLiteral', 'DuplicateListLiteral'])
@@ -71,7 +71,7 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.formats == ['xhtml', 'pdf', 'html5', 'troff']
+            task.options.transtype == ['xhtml', 'pdf', 'html5', 'troff']
     }
 
     @SuppressWarnings('MethodName')
@@ -172,7 +172,7 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.ditaVal.getName() == ROOT_DITAVAL
+            task.options.filter.getName() == ROOT_DITAVAL
     }
 
     // This feature works, but the test doesn't. The FileTree is always empty.
