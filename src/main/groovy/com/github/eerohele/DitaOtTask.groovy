@@ -11,8 +11,6 @@ import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 
-import org.gradle.api.internal.project.IsolatedAntBuilder
-
 class DitaOtTask extends DefaultTask {
     Options options = new Options()
 
@@ -165,8 +163,6 @@ class DitaOtTask extends DefaultTask {
         new File(FilenameUtils.concat(dirname, basename) + extension)
     }
 
-    IsolatedAntBuilder antBuilder
-
     @TaskAction
     void render() {
         File ditaHome = project.ditaOt.home
@@ -175,7 +171,7 @@ class DitaOtTask extends DefaultTask {
             throw new InvalidUserDataException(DitaOtPlugin.MESSAGES.ditaHomeError)
         }
 
-        antBuilder.execute {
+        AntBuilderAssistant.getAntBuilder(project).execute {
             getInputFiles().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
