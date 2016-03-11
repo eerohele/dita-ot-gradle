@@ -264,6 +264,7 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
+    @SuppressWarnings('DuplicateStringLiteral')
     def 'DITA-OT directory is not included in the input file tree if devMode is disabled'() {
         setup:
             project.extensions.create(DITA_OT, DitaOtExtension, project)
