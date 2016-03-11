@@ -17,7 +17,7 @@ import org.apache.tools.ant.BuildException
 class AntBuilderAssistant {
     private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<IsolatedAntBuilder>()
 
-    protected static FileCollection getClasspath(Project project) {
+    private static FileCollection getClasspath(Project project) {
         project.fileTree(dir: project.ditaOt.home).matching {
             include(
                 'resources/',
@@ -54,7 +54,7 @@ class AntBuilderAssistant {
     }
 
     protected static IsolatedAntBuilder getAntBuilder(Project project) {
-        IsolatedAntBuilder antBuilder = THREAD_LOCAL_ANT_BUILDER.get();
+        IsolatedAntBuilder antBuilder = THREAD_LOCAL_ANT_BUILDER.get()
 
         if (antBuilder == null) {
             antBuilder = makeAntBuilder(project)
