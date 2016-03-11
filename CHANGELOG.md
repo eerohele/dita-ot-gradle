@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.3.1 — [Unreleased]
 - Improve input file detection logic
+- Fix support for scenarios where DITA-OT libraries aren't yet available in the
+  project evaluation phase.
 
 ## 0.3.0 — 2016-03-11
 - Add support for multiple transtypes
