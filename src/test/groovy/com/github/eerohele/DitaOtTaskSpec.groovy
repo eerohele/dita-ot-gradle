@@ -264,6 +264,24 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
+    def 'DITA-OT directory is not included in the input file tree if devMode is disabled'() {
+        setup:
+            project.extensions.create(DITA_OT, DitaOtExtension, project)
+            project.ditaOt.dir ditaHome
+
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input "$examplesDir/simple/dita/root.ditamap"
+                devMode false
+            }
+
+        then:
+            task.getInputFileTree().find {
+                it.class == File && it.getName() == 'build.xml'
+            } == null
+    }
+
+    @SuppressWarnings('MethodName')
     @SuppressWarnings('DuplicateStringLiteral')
     def 'Single input file => single output directory'() {
         when:
