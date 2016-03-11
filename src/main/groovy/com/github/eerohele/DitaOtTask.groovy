@@ -60,8 +60,7 @@ class DitaOtTask extends DefaultTask {
     /** Get input files for up-to-date check.
      *
      * By default, all files under all input directories are included in the
-     * up-to-date check, apart from the build directory (TODO: that check
-     * should be made more robust).
+     * up-to-date check, apart from the build directory.
      *
      * If devMode is true, the DITA-OT directory is also checked. That's useful
      * for stylesheet developers who don't want to use --rerun-tasks every time
@@ -79,6 +78,8 @@ class DitaOtTask extends DefaultTask {
             }
         } as Set
 
+        // DITAVAL file might be outside the DITA map directory, so we add that
+        // separately.
         this.options.filter && inputFiles << project.files(this.options.filter)
 
         if (this.options.devMode) {
