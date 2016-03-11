@@ -20,7 +20,7 @@ class DitaOtPlugin implements Plugin<Project> {
     static final String DITA_OT = 'ditaOt'
     static final ConfigObject MESSAGES = new ConfigSlurper().parse(Messages).messages
 
-    private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<>()
+    private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<IsolatedAntBuilder>()
 
     FileCollection getClasspath(Project project) {
         project.fileTree(dir: project.ditaOt.home).matching {
