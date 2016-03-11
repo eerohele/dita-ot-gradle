@@ -2,75 +2,88 @@ package com.github.eerohele
 
 import org.gradle.api.Project
 import org.gradle.api.Plugin
+import org.gradle.api.file.FileCollection
+
+import org.gradle.api.internal.ClassPathRegistry
+import org.gradle.api.internal.DefaultClassPathProvider
+import org.gradle.api.internal.DefaultClassPathRegistry
+import org.gradle.api.internal.classpath.DefaultModuleRegistry
+import org.gradle.api.internal.classpath.ModuleRegistry
+import org.gradle.api.internal.project.antbuilder.DefaultIsolatedAntBuilder
+import org.gradle.internal.classloader.DefaultClassLoaderFactory
+
+import org.apache.tools.ant.BuildException
+import org.gradle.api.internal.project.IsolatedAntBuilder
 
 class DitaOtPlugin implements Plugin<Project> {
     static final String DITA = 'dita'
     static final String DITA_OT = 'ditaOt'
+    static final ConfigObject MESSAGES = new ConfigSlurper().parse(Messages).messages
 
-    /** Add runtime and provided dependencies to Ant classloader.
-     *
-     * @since 0.1.0
-     */
-    void augmentAntClassLoader(Project project) {
-        URLClassLoader classLoader = org.apache.tools.ant.Project.classLoader
+    private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<>()
 
-        (project.configurations.runtime + project.configurations.provided).each {
-            classLoader.addURL(project.file(it).toURI().toURL())
+    FileCollection getClasspath(Project project) {
+        project.fileTree(dir: project.ditaOt.home).matching {
+            include(
+                'resources/',
+                'lib/**/*.jar',
+                'plugins/org.dita.pdf2/lib/fo.jar',
+                'plugins/org.dita.pdf2/build/libs/fo.jar'
+            )
+
+            exclude(
+                'lib/ant-launcher.jar',
+                'lib/ant.jar'
+            )
         }
     }
 
-    void setRepositories(Project project) {
-        project.repositories {
-          mavenCentral()
+    IsolatedAntBuilder makeAntBuilder(FileCollection classpath) {
+        if (classpath == null) {
+            throw new BuildException(MESSAGES.classpathError)
         }
+
+        ModuleRegistry moduleRegistry = new DefaultModuleRegistry()
+        ClassPathRegistry registry = new DefaultClassPathRegistry(new DefaultClassPathProvider(moduleRegistry))
+        DefaultIsolatedAntBuilder builder = new DefaultIsolatedAntBuilder(registry, new DefaultClassLoaderFactory())
+
+        builder.execute {
+            classpath*.toURI()*.toURL()*.each {
+                antProject.getClass().getClassLoader().addURL(it)
+            }
+        }
+
+        builder
     }
 
-    void setConfigurations(Project project) {
-        project.configurations {
-            runtime
-            provided
-        }
-    }
+    IsolatedAntBuilder getAntBuilder(FileCollection classpath) {
+        IsolatedAntBuilder antBuilder = THREAD_LOCAL_ANT_BUILDER.get();
 
-    void setDependencies(Project project, DitaOtExtension ditaOt) {
-        project.dependencies {
-            runtime 'commons-io:commons-io:2.4'
-            runtime 'commons-codec:commons-codec:1.9'
-            runtime 'xerces:xercesImpl:2.11.0'
-            runtime 'xml-apis:xml-apis:1.4.01'
-            runtime 'xml-resolver:xml-resolver:1.2'
-            runtime 'net.sourceforge.saxon:saxon:9.1.0.8:dom'
-            runtime 'net.sourceforge.saxon:saxon:9.1.0.8'
-            runtime 'com.ibm.icu:icu4j:54.1'
-            runtime 'org.apache.ant:ant:1.9.4'
-            runtime 'org.apache.ant:ant-launcher:1.9.4'
-            runtime 'org.apache.ant:ant-apache-resolver:1.9.4'
-
-            provided project.files("${ditaOt.home}/lib/dost.jar")
-            provided project.files("${ditaOt.home}/plugins/org.dita.pdf2/lib/fo.jar")
-            provided project.files("${ditaOt.home}/lib")
-            provided project.files("${ditaOt.home}/resources")
+        if (antBuilder == null) {
+            antBuilder = makeAntBuilder(classpath)
+            THREAD_LOCAL_ANT_BUILDER.set(antBuilder)
         }
+
+        antBuilder
     }
 
     @Override
     void apply(Project project) {
         project.apply plugin: 'base'
 
-        DitaOtExtension ditaOt = project.extensions.create(DITA_OT, DitaOtExtension, project)
+        project.extensions.create(DITA_OT, DitaOtExtension, project)
 
-        // Project extensions aren't available before afterEvaluate.
+        def task = project.task(
+            DITA,
+            type: DitaOtTask,
+            group: 'Documentation',
+            description: 'Publishes DITA documentation with DITA Open Toolkit.'
+        )
+
+        System.setProperty('java.awt.headless', 'true')
+
         project.afterEvaluate {
-            // FIXME: These shouldn't simply override the properties defined by
-            // the user in the buildfile but rather merge with them. I think?
-            setRepositories(project)
-            setConfigurations(project)
-            setDependencies(project, ditaOt)
-            augmentAntClassLoader(project)
+            task.antBuilder = getAntBuilder(getClasspath(project))
         }
-
-        project.task(DITA, type: DitaOtTask, group: 'Documentation',
-            description: 'Publishes DITA documentation with DITA Open Toolkit.')
     }
-
 }

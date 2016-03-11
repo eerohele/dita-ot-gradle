@@ -16,16 +16,18 @@ defaultTasks 'check'
 
 dependencies {
     compile gradleApi()
-    compile localGroovy()
 
-    compile 'commons-io:commons-io:2.4'
+    compile 'commons-io:commons-io:1.4'
 
     testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
         exclude group: 'org.hamcrest', module: 'hamcrest-core'
     }
 
-    testCompile 'com.github.dita-ot:dost:2.1.2'
+    testCompile ('com.github.dita-ot:dost:2.1.2') {
+        exclude group: 'commons-io', module: 'commons-io'
+    }
+
     testCompile 'xml-resolver:xml-resolver:1.2'
     testCompile 'com.ibm.icu:icu4j:54.1'
 }
@@ -39,18 +41,19 @@ codenarc {
     configFile = file('config/codenarc/codenarc.groovy')
 }
 
-String ditaHome = new File('.', 'dita-ot/src/main').getCanonicalPath()
+File ditaHome = new File("${projectDir}/dita-ot/src/main")
 
 test {
     dependsOn 'integrate'
-    systemProperty 'dita.home', System.getProperty('dita.home', ditaHome)
+    systemProperty 'dita.home', System.getProperty('dita.home', ditaHome.getPath())
+    systemProperty 'examples.dir', new File(projectDir, 'examples')
 }
 
 group = 'com.github.eerohele'
-version = '0.2.1'
+version = '0.3.0'
 
 task integrate(dependsOn: ':dost:copyInstall') << {
-    ant.ant([antfile: 'integrator.xml', dir: file('dita-ot/src/main')])
+    ant.ant([antfile: 'integrator.xml', dir: ditaHome])
 }
 
 task publish(dependsOn: ['check'])

@@ -1,7 +1,7 @@
 // Load the DITA-OT Gradle plugin.
 
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.2.1'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.3.0'
 }
 
 // The DITA-OT Gradle plugin adds a task called "dita" into your Gradle build-
@@ -17,7 +17,7 @@ dita {
     input 'dita/root.ditamap'
 
     // Tell DITA-OT what you want it to produce.
-    transtype 'xhtml'
+    transtype 'xhtml', 'pdf'
 
     // Point DITA-OT to the DITAVAL file you want to use.
     filter 'dita/root.ditaval'

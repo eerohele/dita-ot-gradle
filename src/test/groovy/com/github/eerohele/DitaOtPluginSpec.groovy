@@ -32,11 +32,13 @@ class DitaOtPluginSpec extends Specification {
 
     @SuppressWarnings('MethodName')
     def "Load extensions"() {
-        when:
+        given:
             project.apply plugin: DitaOtPlugin
 
-        then:
+        when:
             project.ditaOt.dir '/opt/dita-ot'
+
+        then:
             project.ditaOt.home.class == File
     }
 }

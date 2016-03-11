@@ -21,8 +21,7 @@ class DitaOtTaskSpec extends Specification {
     Project project
 
     String ditaHome
-    File testRootDir
-    File examplesDir
+    String examplesDir
 
     Set<File> getInputFiles(Task task) {
         task.getInputFileCollection().getFiles()
@@ -37,13 +36,13 @@ properly set. To run the tests, you need a working DITA-OT installation and you
 need to set the dita.home system property to point to that installation.''')
         }
 
+        examplesDir = System.getProperty('examples.dir')
+
         project = ProjectBuilder.builder().withName('test').build()
         project.configurations.create(DITA)
-        testRootDir = new File('.')
-        examplesDir = new File(testRootDir, 'examples')
     }
 
-    @SuppressWarnings('MethodName')
+    @SuppressWarnings(['MethodName', 'DuplicateStringLiteral'])
     def 'Creating a task'() {
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -57,10 +56,22 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.inputFiles == ROOT_DITAMAP
-            task.ditaVal == ROOT_DITAVAL
-            task.format == DEFAULT_TRANSTYPE
-            task.props != null
+            task.options.input == ROOT_DITAMAP
+            task.options.filter == ROOT_DITAVAL
+            task.options.transtype == [DEFAULT_TRANSTYPE]
+            task.options.properties != null
+    }
+
+    @SuppressWarnings(['MethodName', 'DuplicateStringLiteral', 'DuplicateListLiteral'])
+    def 'Using multiple transtypes'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input ROOT_DITAMAP
+                transtype 'xhtml', 'pdf', 'html5', 'troff'
+            }
+
+        then:
+            task.options.transtype == ['xhtml', 'pdf', 'html5', 'troff']
     }
 
     @SuppressWarnings('MethodName')
@@ -85,6 +96,18 @@ need to set the dita.home system property to point to that installation.''')
             getInputFiles(task).find { it.getName() == ROOT_DITAMAP }
     }
 
+    @SuppressWarnings(['MethodName', 'DuplicateStringLiteral', 'DuplicateListLiteral'])
+    def 'Giving single input file and multiple transtypes'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input project.file("$examplesDir/simple/dita/root.ditamap")
+                transtype 'html5', 'pdf'
+            }
+
+        then:
+            task.getOutputDirectories()*.getName() == [ 'html5', 'pdf' ]
+    }
+
     @SuppressWarnings('MethodName')
     def 'Giving multiple input files'() {
         when:
@@ -95,6 +118,22 @@ need to set the dita.home system property to point to that installation.''')
 
         then:
             getInputFiles(task)*.getName() == ['one.ditamap', 'two.ditamap']
+    }
+
+    @SuppressWarnings(['MethodName', 'DuplicateStringLiteral', 'DuplicateListLiteral'])
+    def 'Giving multiple input files and multiple transtypes'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input project.files("$examplesDir/multi/one/one.ditamap",
+                                    "$examplesDir/multi/two/two.ditamap")
+                transtype 'html5', 'pdf'
+            }
+
+        then:
+            task.getOutputDirectories().collect {
+                File parent = new File(it.getParent())
+                new File(parent.getName(), it.getName()).getPath()
+            } == [ 'one/html5', 'one/pdf', 'two/html5', 'two/pdf' ]
     }
 
     @SuppressWarnings('MethodName')
@@ -133,7 +172,7 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.ditaVal.getName() == ROOT_DITAVAL
+            task.options.filter.getName() == ROOT_DITAVAL
     }
 
     // This feature works, but the test doesn't. The FileTree is always empty.
@@ -240,12 +279,12 @@ need to set the dita.home system property to point to that installation.''')
         setup:
             project.extensions.create(DITA_OT, DitaOtExtension, project)
 
-        when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"
                 transtype DEFAULT_TRANSTYPE
             }
 
+        when:
             task.render()
 
         then:
@@ -253,40 +292,25 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
-    def 'Does not throw InvalidUserDataException if DITA-OT directory is set'() {
-        setup:
-            project.extensions.create(DITA_OT, DitaOtExtension, project)
-            project.ditaOt.dir ditaHome
-
-            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-                input "$examplesDir/simple/dita/root.ditamap"
-                transtype DEFAULT_TRANSTYPE
-            }
-
-        when: 'DITA-OT dir is given but the project is not set up correctly.'
-            task.render()
-
-        then: 'Fails because the classpath is not set up.'
-            thrown BuildException
-    }
-
-    @SuppressWarnings('MethodName')
     def 'Does not throw any errors of everything is set up properly'() {
-        when: 'Project is set up correctly and DITA-OT dir is given.'
+        setup: 'Project is set up correctly and DITA-OT dir is given.'
             project.apply plugin: DitaOtPlugin
-
             project.ditaOt.dir ditaHome
+            project.evaluate()
 
+        when:
             project.dita {
                 input "$examplesDir/simple/dita/root.ditamap"
                 transtype DEFAULT_TRANSTYPE
             }
 
+            project.dita.render()
+
         then: 'Build succeeds.'
+            new File("${project.buildDir}/topic1.html").exists()
             notThrown BuildException
 
         cleanup:
             project.tasks.findByName('clean').execute()
     }
-
 }
