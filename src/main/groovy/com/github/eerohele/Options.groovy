@@ -1,3 +1,5 @@
+package com.github.eerohele
+
 class Options {
     static final String DEFAULT_TRANSTYPE = 'html5'
 
