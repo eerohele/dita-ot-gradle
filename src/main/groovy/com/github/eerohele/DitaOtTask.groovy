@@ -10,7 +10,6 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.util.PatternSet
 
 import org.gradle.api.internal.project.IsolatedAntBuilder
 
@@ -74,7 +73,7 @@ class DitaOtTask extends DefaultTask {
     @SkipWhenEmpty
     Set<FileTree> getInputFileTree() {
         Set<FileTree> inputFiles = getInputFiles().collect {
-            FileCollection files = project.fileTree(dir: it.getParent()).exclude {
+            project.fileTree(dir: it.getParent()).exclude {
                    it == project.getGradle().startParameter.getProjectCacheDir() ||
                    it == project.file(this.options.output)
             }
