@@ -58,19 +58,6 @@ class DitaOtTask extends DefaultTask {
         this.options.useAssociatedFilter = a
     }
 
-    PatternSet getInputFilePatternSet() {
-        PatternSet ps = new PatternSet()
-        ps.include GlobPatterns.ALL_FILES
-        ps.exclude("${FilenameUtils.getBaseName(this.options.output)}/" + GlobPatterns.ALL_FILES)
-        ps.exclude('.gradle/' + GlobPatterns.ALL_FILES)
-    }
-
-    PatternSet getDitaOtPatternSet() {
-        PatternSet ps = new PatternSet()
-        ps.include GlobPatterns.ALL_FILES
-        ps.exclude 'temp/' + GlobPatterns.ALL_FILES
-    }
-
     /** Get input files for up-to-date check.
      *
      * By default, all files under all input directories are included in the
@@ -86,37 +73,40 @@ class DitaOtTask extends DefaultTask {
     @InputFiles
     @SkipWhenEmpty
     Set<FileTree> getInputFileTree() {
-        PatternSet patternSet = getInputFilePatternSet()
+        Set<FileTree> inputFiles = getInputFiles().collect {
+            FileCollection files = project.fileTree(dir: it.getParent()).exclude {
+                   it == project.getGradle().startParameter.getProjectCacheDir() ||
+                   it == project.file(this.options.output)
+            }
+        } as Set
 
-        List<FileTree> inputFileTree = (getInputFileCollection().files.collect {
-            project.fileTree(it.getParent()).matching(patternSet)
-        }).asImmutable()
-
-        List<FileTree> treeWithDitaval = this.options.filter != null
-            ? inputFileTree + project.files(this.options.filter) : inputFileTree
+        this.options.filter && inputFiles << project.files(this.options.filter)
 
         if (this.options.devMode) {
-            treeWithDitaval + project.fileTree(project.ditaOt.home)
-                                   .matching(getDitaOtPatternSet()) as Set
+            File ditaHome = project.ditaOt.home
+
+            inputFiles + project.fileTree(dir: ditaHome).exclude {
+                it == new File(ditaHome, 'temp')
+            }
         } else {
-            treeWithDitaval as Set
+            inputFiles
         }
     }
 
     @OutputDirectories
     Set<File> getOutputDirectories() {
-        getInputFileCollection().files.collect { file ->
+        getInputFiles().collect { file ->
             this.options.transtype.collect {
                 getOutputDirectory(file, it)
             }
         }.flatten() as Set
     }
 
-    FileCollection getInputFileCollection() {
+    FileCollection getInputFiles() {
         project.files(this.options.input)
     }
 
-    File getDitaValFile(File inputFile) {
+    File getDitavalFile(File inputFile) {
         if (this.options.filter) {
             project.file(this.options.filter)
         } else {
@@ -139,7 +129,7 @@ class DitaOtTask extends DefaultTask {
     File getOutputDirectory(File inputFile, String transtype) {
         File baseOutputDir = null
 
-        if (this.options.singleOutputDir || getInputFileCollection().files.size() == 1) {
+        if (this.options.singleOutputDir || getInputFiles().size() == 1) {
             baseOutputDir = new File(this.options.output)
         } else {
             String basename = FilenameUtils.getBaseName(inputFile.getPath())
@@ -186,7 +176,7 @@ class DitaOtTask extends DefaultTask {
         }
 
         antBuilder.execute {
-            getInputFileCollection().each { File inputFile ->
+            getInputFiles().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
                 this.options.transtype.each { String transtype ->
@@ -220,7 +210,7 @@ class DitaOtTask extends DefaultTask {
 
                         if (this.options.filter || this.options.useAssociatedFilter) {
                             property(name: Properties.ARGS_FILTER,
-                                     location: getDitaValFile(inputFile).getPath())
+                                     location: getDitavalFile(inputFile).getPath())
                         }
                     }
                 }

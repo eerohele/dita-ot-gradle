@@ -24,7 +24,7 @@ class DitaOtTaskSpec extends Specification {
     String examplesDir
 
     Set<File> getInputFiles(Task task) {
-        task.getInputFileCollection().getFiles()
+        task.getInputFiles().getFiles()
     }
 
     void setup() {
@@ -186,7 +186,7 @@ need to set the dita.home system property to point to that installation.''')
     //         }
 
     //     then:
-    //         task.getInputFileCollection().size() == 2
+    //         task.getInputFiles().size() == 2
     // }
 
     @SuppressWarnings('MethodName')
@@ -198,8 +198,8 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getInputFileTree().find {
-                it.class == File && it.getName() == ROOT_DITAVAL
+            task.getInputFileTree().files.flatten().find {
+                it == new File("$examplesDir/simple/dita/root.ditaval")
             }
     }
 
@@ -213,8 +213,8 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            File inputFile = task.getInputFileCollection().files[0]
-            task.getDitaValFile(inputFile).getName() == 'root.ditaval'
+            File inputFile = task.getInputFiles().files[0]
+            task.getDitavalFile(inputFile) == new File("$examplesDir/simple/dita/root.ditaval")
     }
 
     @SuppressWarnings('MethodName')
