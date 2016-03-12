@@ -2,3 +2,5 @@
 	path = dita-ot
 	url = https://github.com/dita-ot/dita-ot.git
 	branch = master
+	ignore = all
+	fetchRecurseSubmodules = false
