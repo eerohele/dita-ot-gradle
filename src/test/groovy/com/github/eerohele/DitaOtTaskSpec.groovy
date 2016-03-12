@@ -3,7 +3,6 @@ package com.github.eerohele
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.InvalidUserDataException
-import org.gradle.api.file.FileTree
 import org.gradle.testfixtures.ProjectBuilder
 
 import org.apache.tools.ant.BuildException
@@ -145,9 +144,9 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            // I couldn't figure out how to bend the Gradle FileTree API to my
-            // will so as to come up with a more exact check than this.
-            task.getInputFileTree().size() == 2
+            Set<File> inputFiles = task.getInputFileTree().files.flatten()
+            inputFiles.contains(new File("$examplesDir/multi/one/one.ditamap"))
+            inputFiles.contains(new File("$examplesDir/multi/two/two.ditamap"))
     }
 
     @SuppressWarnings('MethodName')
@@ -175,19 +174,19 @@ need to set the dita.home system property to point to that installation.''')
             task.options.filter.getName() == ROOT_DITAVAL
     }
 
-    // This feature works, but the test doesn't. The FileTree is always empty.
-    // No idea why.
-    //
-    // def 'Giving input file tree'() {
-    //     when:
-    //         Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-    //             input project.fileTree(dir: "$examplesDir/filetree/dita",
-    //                                    include: '*.ditamap')
-    //         }
+    @SuppressWarnings('MethodName')
+    def 'Giving input file tree'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input project.fileTree(dir: "$examplesDir/filetree/dita",
+                                       include: '*.ditamap')
+            }
 
-    //     then:
-    //         task.getInputFiles().size() == 2
-    // }
+        then:
+        Set<File> inputFiles = task.getInputFileTree().files.flatten()
+        inputFiles.contains(new File("$examplesDir/filetree/dita/one.ditamap"))
+        inputFiles.contains(new File("$examplesDir/filetree/dita/two.ditamap"))
+    }
 
     @SuppressWarnings('MethodName')
     def 'DITAVAL file is included in the input file tree'() {
@@ -198,8 +197,8 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getInputFileTree().files.flatten().find {
-                it == new File("$examplesDir/simple/dita/root.ditaval")
+            task.getInputFileTree().find {
+                it.contains(new File("$examplesDir/simple/dita/root.ditaval"))
             }
     }
 
@@ -212,13 +211,18 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getInputFileTree().files.flatten().find {
-                it == new File("$examplesDir/filetree/dita/two.ditaval")
+            task.getInputFileTree().find {
+                it.contains(new File("$examplesDir/filetree/dita/two.ditaval"))
             }
     }
 
     @SuppressWarnings('MethodName')
-    def 'Project cache directory is not included in the input file tree'() {
+    def 'Project cache and output directories are not included in the input file tree'() {
+        setup:
+            File cacheDir = new File("$examplesDir/simple/.gradle")
+            cacheDir.mkdir()
+            project.buildDir.mkdir()
+
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"
@@ -226,9 +230,14 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getInputFileTree().files.flatten().find {
-                it == new File("$examplesDir/simple/.gradle")
-            } == null
+            cacheDir.exists() && !task.getInputFileTree().contains(cacheDir)
+            project.buildDir.exists() && !task.getInputFileTree().contains(project.buildDir)
+
+        cleanup:
+            cacheDir.delete()
+            project.buildDir.delete()
+            assert !cacheDir.exists()
+            assert !project.buildDir.exists()
     }
 
     @SuppressWarnings('MethodName')
@@ -258,9 +267,13 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getInputFileTree().find {
-                it.class == File && it.getName() == 'build.xml'
-            }
+            task.getInputFileTree().contains(new File(ditaHome, 'build.xml'))
+
+        and:
+            !task.getInputFileTree().contains(new File(ditaHome, 'lib/org.dita.dost.platform/plugin.properties'))
+
+        and:
+            !task.getInputFileTree().contains(new File(ditaHome, 'lib/dost-configuration.jar'))
     }
 
     @SuppressWarnings('MethodName')
@@ -277,9 +290,7 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getInputFileTree().find {
-                it.class == File && it.getName() == 'build.xml'
-            } == null
+            !task.getInputFileTree().contains(new File(ditaHome, 'build.xml'))
     }
 
     @SuppressWarnings('MethodName')

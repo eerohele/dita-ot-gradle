@@ -69,10 +69,11 @@ class DitaOtTask extends DefaultTask {
     @InputFiles
     @SkipWhenEmpty
     Set<FileTree> getInputFileTree() {
+        String outputDir = FilenameUtils.getBaseName(this.options.output)
+
         Set<FileTree> inputFiles = getInputFiles().collect {
-            project.fileTree(dir: it.getParent()).exclude {
-                   it == project.getGradle().startParameter.getProjectCacheDir() ||
-                   it == project.file(this.options.output)
+            project.fileTree(dir: it.getParent()).matching {
+                exclude '.gradle', outputDir
             }
         } as Set
 
@@ -83,8 +84,10 @@ class DitaOtTask extends DefaultTask {
         if (this.options.devMode) {
             File ditaHome = project.ditaOt.home
 
-            inputFiles + project.fileTree(dir: ditaHome).exclude {
-                it == new File(ditaHome, 'temp')
+            inputFiles + project.fileTree(dir: ditaHome).matching {
+                exclude 'temp',
+                        'lib/dost-configuration.jar',
+                        'lib/org.dita.dost.platform/plugin.properties'
             }
         } else {
             inputFiles
