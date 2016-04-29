@@ -8,6 +8,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.apache.tools.ant.BuildException
 
 import spock.lang.Specification
+import spock.lang.Ignore
 
 class DitaOtTaskSpec extends Specification {
     private static final String DITA = 'dita'
@@ -217,6 +218,7 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
+    @Ignore
     def 'Project cache and output directories are not included in the input file tree'() {
         setup:
             File cacheDir = new File("$examplesDir/simple/.gradle")
