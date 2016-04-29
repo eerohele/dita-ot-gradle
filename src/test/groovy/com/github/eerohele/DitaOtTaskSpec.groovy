@@ -3,12 +3,12 @@ package com.github.eerohele
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.InvalidUserDataException
-import org.gradle.api.file.FileTree
 import org.gradle.testfixtures.ProjectBuilder
 
 import org.apache.tools.ant.BuildException
 
 import spock.lang.Specification
+import spock.lang.Ignore
 
 class DitaOtTaskSpec extends Specification {
     private static final String DITA = 'dita'
@@ -24,7 +24,7 @@ class DitaOtTaskSpec extends Specification {
     String examplesDir
 
     Set<File> getInputFiles(Task task) {
-        task.getInputFileCollection().getFiles()
+        task.getInputFiles().getFiles()
     }
 
     void setup() {
@@ -145,9 +145,9 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            // I couldn't figure out how to bend the Gradle FileTree API to my
-            // will so as to come up with a more exact check than this.
-            task.getInputFileTree().size() == 2
+            Set<File> inputFiles = task.getInputFileTree().files.flatten()
+            inputFiles.contains(new File("$examplesDir/multi/one/one.ditamap"))
+            inputFiles.contains(new File("$examplesDir/multi/two/two.ditamap"))
     }
 
     @SuppressWarnings('MethodName')
@@ -175,19 +175,19 @@ need to set the dita.home system property to point to that installation.''')
             task.options.filter.getName() == ROOT_DITAVAL
     }
 
-    // This feature works, but the test doesn't. The FileTree is always empty.
-    // No idea why.
-    //
-    // def 'Giving input file tree'() {
-    //     when:
-    //         Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-    //             input project.fileTree(dir: "$examplesDir/filetree/dita",
-    //                                    include: '*.ditamap')
-    //         }
+    @SuppressWarnings('MethodName')
+    def 'Giving input file tree'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input project.fileTree(dir: "$examplesDir/filetree/dita",
+                                       include: '*.ditamap')
+            }
 
-    //     then:
-    //         task.getInputFileCollection().size() == 2
-    // }
+        then:
+        Set<File> inputFiles = task.getInputFileTree().files.flatten()
+        inputFiles.contains(new File("$examplesDir/filetree/dita/one.ditamap"))
+        inputFiles.contains(new File("$examplesDir/filetree/dita/two.ditamap"))
+    }
 
     @SuppressWarnings('MethodName')
     def 'DITAVAL file is included in the input file tree'() {
@@ -199,8 +199,47 @@ need to set the dita.home system property to point to that installation.''')
 
         then:
             task.getInputFileTree().find {
-                it.class == File && it.getName() == ROOT_DITAVAL
+                it.contains(new File("$examplesDir/simple/dita/root.ditaval"))
             }
+    }
+
+    @SuppressWarnings('MethodName')
+    def 'DITAVAL file is included in the input file tree when outside root map directory'() {
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input "$examplesDir/simple/dita/root.ditamap"
+                filter "$examplesDir/filetree/dita/two.ditaval"
+            }
+
+        then:
+            task.getInputFileTree().find {
+                it.contains(new File("$examplesDir/filetree/dita/two.ditaval"))
+            }
+    }
+
+    @SuppressWarnings('MethodName')
+    @Ignore
+    def 'Project cache and output directories are not included in the input file tree'() {
+        setup:
+            File cacheDir = new File("$examplesDir/simple/.gradle")
+            cacheDir.mkdir()
+            project.buildDir.mkdir()
+
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input "$examplesDir/simple/dita/root.ditamap"
+                filter "$examplesDir/simple/dita/root.ditaval"
+            }
+
+        then:
+            cacheDir.exists() && !task.getInputFileTree().contains(cacheDir)
+            project.buildDir.exists() && !task.getInputFileTree().contains(project.buildDir)
+
+        cleanup:
+            cacheDir.delete()
+            project.buildDir.delete()
+            assert !cacheDir.exists()
+            assert !project.buildDir.exists()
     }
 
     @SuppressWarnings('MethodName')
@@ -213,8 +252,8 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            File inputFile = task.getInputFileCollection().files[0]
-            task.getDitaValFile(inputFile).getName() == 'root.ditaval'
+            File inputFile = task.getInputFiles().files[0]
+            task.getDitavalFile(inputFile) == new File("$examplesDir/simple/dita/root.ditaval")
     }
 
     @SuppressWarnings('MethodName')
@@ -230,9 +269,30 @@ need to set the dita.home system property to point to that installation.''')
             }
 
         then:
-            task.getInputFileTree().find {
-                it.class == File && it.getName() == 'build.xml'
+            task.getInputFileTree().contains(new File(ditaHome, 'build.xml'))
+
+        and:
+            !task.getInputFileTree().contains(new File(ditaHome, 'lib/org.dita.dost.platform/plugin.properties'))
+
+        and:
+            !task.getInputFileTree().contains(new File(ditaHome, 'lib/dost-configuration.jar'))
+    }
+
+    @SuppressWarnings('MethodName')
+    @SuppressWarnings('DuplicateStringLiteral')
+    def 'DITA-OT directory is not included in the input file tree if devMode is disabled'() {
+        setup:
+            project.extensions.create(DITA_OT, DitaOtExtension, project)
+            project.ditaOt.dir ditaHome
+
+        when:
+            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+                input "$examplesDir/simple/dita/root.ditamap"
+                devMode false
             }
+
+        then:
+            !task.getInputFileTree().contains(new File(ditaHome, 'build.xml'))
     }
 
     @SuppressWarnings('MethodName')

@@ -10,9 +10,6 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.util.PatternSet
-
-import org.gradle.api.internal.project.IsolatedAntBuilder
 
 class DitaOtTask extends DefaultTask {
     Options options = new Options()
@@ -58,24 +55,10 @@ class DitaOtTask extends DefaultTask {
         this.options.useAssociatedFilter = a
     }
 
-    PatternSet getInputFilePatternSet() {
-        PatternSet ps = new PatternSet()
-        ps.include GlobPatterns.ALL_FILES
-        ps.exclude("${FilenameUtils.getBaseName(this.options.output)}/" + GlobPatterns.ALL_FILES)
-        ps.exclude('.gradle/' + GlobPatterns.ALL_FILES)
-    }
-
-    PatternSet getDitaOtPatternSet() {
-        PatternSet ps = new PatternSet()
-        ps.include GlobPatterns.ALL_FILES
-        ps.exclude 'temp/' + GlobPatterns.ALL_FILES
-    }
-
     /** Get input files for up-to-date check.
      *
      * By default, all files under all input directories are included in the
-     * up-to-date check, apart from the build directory (TODO: that check
-     * should be made more robust).
+     * up-to-date check, apart from the build directory.
      *
      * If devMode is true, the DITA-OT directory is also checked. That's useful
      * for stylesheet developers who don't want to use --rerun-tasks every time
@@ -86,37 +69,45 @@ class DitaOtTask extends DefaultTask {
     @InputFiles
     @SkipWhenEmpty
     Set<FileTree> getInputFileTree() {
-        PatternSet patternSet = getInputFilePatternSet()
+        String outputDir = FilenameUtils.getBaseName(this.options.output)
 
-        List<FileTree> inputFileTree = (getInputFileCollection().files.collect {
-            project.fileTree(it.getParent()).matching(patternSet)
-        }).asImmutable()
+        Set<FileTree> inputFiles = getInputFiles().collect {
+            project.fileTree(dir: it.getParent()).matching {
+                exclude '.gradle', outputDir
+            }
+        } as Set
 
-        List<FileTree> treeWithDitaval = this.options.filter != null
-            ? inputFileTree + project.files(this.options.filter) : inputFileTree
+        // DITAVAL file might be outside the DITA map directory, so we add that
+        // separately.
+        this.options.filter && inputFiles << project.files(this.options.filter)
 
         if (this.options.devMode) {
-            treeWithDitaval + project.fileTree(project.ditaOt.home)
-                                   .matching(getDitaOtPatternSet()) as Set
+            File ditaHome = project.ditaOt.home
+
+            inputFiles + project.fileTree(dir: ditaHome).matching {
+                exclude 'temp',
+                        'lib/dost-configuration.jar',
+                        'lib/org.dita.dost.platform/plugin.properties'
+            }
         } else {
-            treeWithDitaval as Set
+            inputFiles
         }
     }
 
     @OutputDirectories
     Set<File> getOutputDirectories() {
-        getInputFileCollection().files.collect { file ->
+        getInputFiles().collect { file ->
             this.options.transtype.collect {
                 getOutputDirectory(file, it)
             }
         }.flatten() as Set
     }
 
-    FileCollection getInputFileCollection() {
+    FileCollection getInputFiles() {
         project.files(this.options.input)
     }
 
-    File getDitaValFile(File inputFile) {
+    File getDitavalFile(File inputFile) {
         if (this.options.filter) {
             project.file(this.options.filter)
         } else {
@@ -139,7 +130,7 @@ class DitaOtTask extends DefaultTask {
     File getOutputDirectory(File inputFile, String transtype) {
         File baseOutputDir = null
 
-        if (this.options.singleOutputDir || getInputFileCollection().files.size() == 1) {
+        if (this.options.singleOutputDir || getInputFiles().size() == 1) {
             baseOutputDir = new File(this.options.output)
         } else {
             String basename = FilenameUtils.getBaseName(inputFile.getPath())
@@ -175,8 +166,6 @@ class DitaOtTask extends DefaultTask {
         new File(FilenameUtils.concat(dirname, basename) + extension)
     }
 
-    IsolatedAntBuilder antBuilder
-
     @TaskAction
     void render() {
         File ditaHome = project.ditaOt.home
@@ -185,8 +174,8 @@ class DitaOtTask extends DefaultTask {
             throw new InvalidUserDataException(DitaOtPlugin.MESSAGES.ditaHomeError)
         }
 
-        antBuilder.execute {
-            getInputFileCollection().each { File inputFile ->
+        AntBuilderAssistant.getAntBuilder(project).execute {
+            getInputFiles().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
                 this.options.transtype.each { String transtype ->
@@ -220,7 +209,7 @@ class DitaOtTask extends DefaultTask {
 
                         if (this.options.filter || this.options.useAssociatedFilter) {
                             property(name: Properties.ARGS_FILTER,
-                                     location: getDitaValFile(inputFile).getPath())
+                                     location: getDitavalFile(inputFile).getPath())
                         }
                     }
                 }
