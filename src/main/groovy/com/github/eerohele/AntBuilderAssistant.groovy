@@ -9,8 +9,11 @@ import org.gradle.api.internal.DefaultClassPathRegistry
 import org.gradle.api.internal.classpath.DefaultModuleRegistry
 import org.gradle.api.internal.classpath.ModuleRegistry
 import org.gradle.api.internal.project.antbuilder.DefaultIsolatedAntBuilder
-import org.gradle.internal.classloader.DefaultClassLoaderFactory
 import org.gradle.api.internal.project.IsolatedAntBuilder
+import org.gradle.internal.classloader.DefaultClassLoaderFactory
+import org.gradle.internal.installation.CurrentGradleInstallation
+
+import org.gradle.util.GradleVersion
 
 import org.apache.tools.ant.BuildException
 
@@ -35,12 +38,18 @@ class AntBuilderAssistant {
 
     protected static IsolatedAntBuilder makeAntBuilder(Project project) {
         FileCollection classpath = getClasspath(project)
+        ModuleRegistry moduleRegistry
 
         if (classpath == null) {
             throw new BuildException(DitaOtPlugin.MESSAGES.classpathError)
         }
 
-        ModuleRegistry moduleRegistry = new DefaultModuleRegistry()
+        if (GradleVersion.current() >= GradleVersion.version('2.13')) {
+            moduleRegistry = new DefaultModuleRegistry(CurrentGradleInstallation.get())
+        } else {
+            moduleRegistry = new DefaultModuleRegistry()
+        }
+
         ClassPathRegistry registry = new DefaultClassPathRegistry(new DefaultClassPathProvider(moduleRegistry))
         DefaultIsolatedAntBuilder antBuilder = new DefaultIsolatedAntBuilder(registry, new DefaultClassLoaderFactory())
 
