@@ -2,7 +2,8 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.3.1 — [Unreleased]
+## 0.3.1 — 2016-04-29
+- Fix support for Gradle 2.13
 - Improve input file detection logic
 - Fix support for scenarios where DITA-OT libraries aren't yet available in the
   project evaluation phase.
