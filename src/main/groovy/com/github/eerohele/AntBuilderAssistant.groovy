@@ -39,6 +39,7 @@ class AntBuilderAssistant {
     protected static IsolatedAntBuilder makeAntBuilder(Project project) {
         FileCollection classpath = getClasspath(project)
         ModuleRegistry moduleRegistry
+        DefaultIsolatedAntBuilder antBuilder
 
         if (classpath == null) {
             throw new BuildException(DitaOtPlugin.MESSAGES.classpathError)
@@ -50,8 +51,13 @@ class AntBuilderAssistant {
             moduleRegistry = new DefaultModuleRegistry()
         }
 
-        ClassPathRegistry registry = new DefaultClassPathRegistry(new DefaultClassPathProvider(moduleRegistry))
-        DefaultIsolatedAntBuilder antBuilder = new DefaultIsolatedAntBuilder(registry, new DefaultClassLoaderFactory())
+        ClassPathRegistry classPathRegistry = new DefaultClassPathRegistry(new DefaultClassPathProvider(moduleRegistry))
+
+        if (GradleVersion.current() > GradleVersion.version('2.13')) {
+            antBuilder = new DefaultIsolatedAntBuilder(classPathRegistry, new DefaultClassLoaderFactory(), moduleRegistry)
+        } else {
+            antBuilder = new DefaultIsolatedAntBuilder(classPathRegistry, new DefaultClassLoaderFactory())
+        }
 
         antBuilder.execute {
             classpath*.toURI()*.toURL()*.each {

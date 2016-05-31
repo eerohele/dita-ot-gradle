@@ -50,7 +50,7 @@ test {
 }
 
 group = 'com.github.eerohele'
-version = '0.3.1'
+version = '0.3.2'
 
 task integrate(dependsOn: ':dost:copyInstall') << {
     ant.ant([antfile: 'integrator.xml', dir: ditaHome])
