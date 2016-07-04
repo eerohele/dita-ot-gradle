@@ -31,6 +31,8 @@ ruleset {
     ruleset('rulesets/size.xml')
     ruleset('rulesets/junit.xml')
     // ruleset('rulesets/unnecessary.xml')
-    ruleset('rulesets/dry.xml')
+    ruleset('rulesets/dry.xml') {
+        exclude 'DuplicateStringLiteral'
+    }
     ruleset('rulesets/design.xml')
 }

@@ -1,7 +1,5 @@
 package com.github.eerohele
 
-import java.net.URI
-
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.TaskAction
@@ -10,10 +8,12 @@ class DitaOtSetupTask extends DefaultTask {
     List<Object> plugins
     File dir
 
+    @SuppressWarnings('ConfusingMethodName')
     void plugins(Object... plugins) {
         this.plugins = plugins
     }
 
+    @SuppressWarnings('ConfusingMethodName')
     void dir(Object dir) {
         this.dir = project.file(dir)
     }
