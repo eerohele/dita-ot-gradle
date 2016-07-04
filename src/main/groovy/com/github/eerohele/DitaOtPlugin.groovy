@@ -12,7 +12,12 @@ class DitaOtPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.apply plugin: 'base'
 
-        project.extensions.create(DITA_OT, DitaOtExtension, project)
+        project.task(
+            DITA_OT,
+            type: DitaOtSetupTask,
+            group: 'Documentation',
+            description: 'Set up DITA Open Toolkit'
+        )
 
         project.task(
             DITA,

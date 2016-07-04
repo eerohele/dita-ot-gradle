@@ -39,6 +39,6 @@ class DitaOtPluginSpec extends Specification {
             project.ditaOt.dir '/opt/dita-ot'
 
         then:
-            project.ditaOt.home.class == File
+            project.ditaOt.dir.class == File
     }
 }
