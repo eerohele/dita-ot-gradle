@@ -30,6 +30,7 @@ dependencies {
 
     testCompile 'xml-resolver:xml-resolver:1.2'
     testCompile 'com.ibm.icu:icu4j:54.1'
+    testCompile 'org.apache.ant:ant-launcher:1.9.7'
 }
 
 repositories {
@@ -52,8 +53,10 @@ test {
 group = 'com.github.eerohele'
 version = '0.3.2'
 
-task integrate(dependsOn: ':dost:copyInstall') << {
-    ant.ant([antfile: 'integrator.xml', dir: ditaHome])
+task integrate(type: JavaExec, dependsOn: ':dost:copyInstall') {
+    classpath configurations.testCompile
+    main = 'org.apache.tools.ant.launch.Launcher'
+    args("-lib", "${ditaHome}/lib", "-buildfile", "${ditaHome}/integrator.xml")
 }
 
 task publish(dependsOn: ['check'])
@@ -73,5 +76,5 @@ pluginBundle {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.13'
+    gradleVersion = '2.14'
 }
