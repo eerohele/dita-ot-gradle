@@ -17,7 +17,11 @@ class AntBuilderAssistantSpec extends Specification {
         ditaHome = System.getProperty('dita.home')
         project = ProjectBuilder.builder().build()
         project.configurations.create(DITA)
-        project.extensions.create(DITA_OT, DitaOtExtension, project)
+
+        project.tasks.create(name: DITA_OT, type: DitaOtSetupTask) {
+            dir ditaHome
+        }
+
         project.ditaOt.dir ditaHome
     }
 

@@ -259,8 +259,9 @@ need to set the dita.home system property to point to that installation.''')
     @SuppressWarnings('MethodName')
     def 'DITA-OT directory is included in the input file tree if devMode is enabled'() {
         setup:
-            project.extensions.create(DITA_OT, DitaOtExtension, project)
-            project.ditaOt.dir ditaHome
+            project.tasks.create(name: DITA_OT, type: DitaOtSetupTask) {
+                dir ditaHome
+            }
 
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -282,8 +283,9 @@ need to set the dita.home system property to point to that installation.''')
     @SuppressWarnings('DuplicateStringLiteral')
     def 'DITA-OT directory is not included in the input file tree if devMode is disabled'() {
         setup:
-            project.extensions.create(DITA_OT, DitaOtExtension, project)
-            project.ditaOt.dir ditaHome
+            project.tasks.create(name: DITA_OT, type: DitaOtSetupTask) {
+                dir ditaHome
+            }
 
         when:
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
@@ -337,7 +339,7 @@ need to set the dita.home system property to point to that installation.''')
     @SuppressWarnings('MethodName')
     def 'Throws InvalidUserDataException if DITA-OT directory is not set'() {
         setup:
-            project.extensions.create(DITA_OT, DitaOtExtension, project)
+            project.tasks.create(name: DITA_OT, type: DitaOtSetupTask)
 
             Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
                 input "$examplesDir/simple/dita/root.ditamap"

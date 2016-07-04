@@ -21,7 +21,7 @@ class AntBuilderAssistant {
     private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<IsolatedAntBuilder>()
 
     private static FileCollection getClasspath(Project project) {
-        project.fileTree(dir: project.ditaOt.home).matching {
+        project.fileTree(dir: project.ditaOt.dir).matching {
             include(
                 'resources/',
                 'lib/**/*.jar',

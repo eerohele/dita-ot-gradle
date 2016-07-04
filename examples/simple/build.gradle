@@ -9,15 +9,23 @@ plugins {
 // on the command line to run DITA-OT.
 defaultTasks 'dita'
 
-// Tell Gradle where your DITA-OT installation is.
-ditaOt.dir '/opt/dita-ot'
+ditaOt {
+    // Tell Gradle where your DITA-OT installation is.
+    dir '/opt/dita-ot'
+
+    // Optionally, give Gradle a list of DITA-OT plugins to install. To install
+    // them, run:
+    //
+    // $ gradle ditaOt
+    plugins 'https://github.com/dita-ot/org.dita.normalize/archive/1.0.zip'
+}
 
 dita {
     // Point DITA-OT to the files you want to publish.
     input 'dita/root.ditamap'
 
     // Tell DITA-OT what you want it to produce.
-    transtype 'xhtml', 'pdf'
+    transtype 'xhtml', 'pdf', 'dita'
 
     // Point DITA-OT to the DITAVAL file you want to use.
     filter 'dita/root.ditaval'

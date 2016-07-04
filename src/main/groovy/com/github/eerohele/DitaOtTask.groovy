@@ -82,7 +82,7 @@ class DitaOtTask extends DefaultTask {
         this.options.filter && inputFiles << project.files(this.options.filter)
 
         if (this.options.devMode) {
-            File ditaHome = project.ditaOt.home
+            File ditaHome = project.ditaOt.dir
 
             inputFiles + project.fileTree(dir: ditaHome).matching {
                 exclude 'temp',
@@ -168,9 +168,9 @@ class DitaOtTask extends DefaultTask {
 
     @TaskAction
     void render() {
-        File ditaHome = project.ditaOt.home
+        File ditaHome = project.ditaOt.dir
 
-        if (ditaHome == null) {
+        if (project.ditaOt == null || ditaHome == null) {
             throw new InvalidUserDataException(DitaOtPlugin.MESSAGES.ditaHomeError)
         }
 
