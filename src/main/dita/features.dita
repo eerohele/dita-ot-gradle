@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA 1.3 Topic//EN" "topic.dtd">
+
+<topic id="introduction">
+  <title>Features</title>
+
+  <body>
+    <bodydiv>
+      <section>
+        <title>Performance</title>
+        <p>Depending on the size of your document,
+          <keyword keyref="plugin.short-name"/> can
+          <ph audience="user">magically</ph> decrease your publishing times by
+          up to 70%<fn>This figure only holds for relatively small
+          documents where the overhead of creating the JVM, loading
+          classes, compiling XSLT stylesheets, and so on takes up more time than
+          the actual processing. If your document takes 30 minutes to process
+          now, it won't take 9&#160;minutes with <keyword
+          keyref="plugin.short-name"/>: more like 28&#160;minutes, most likely.</fn>
+          after the first run. The difference is more noticeable with small or
+          medium documents.</p>
+
+        <p>Here's a graph that shows the development of the publishing
+          duration in seconds over 50&#160;runs for the <xref
+          keyref="links.dita-ot-user-guide"/> with and without the <keyword
+          keyref="plugin.short-name"/><fn>DITA Open Toolkit 2.2 (development version),
+          Gradle 2.7, MacBook Pro, 2,5 GHz Intel Core i5, 8 GB 1600 MHz DDR3.</fn>:
+        </p>
+
+        <div outputclass="metrics"></div>
+
+        <note><p>You must have <xref
+          href="https://docs.gradle.org/current/userguide/gradle_daemon.html"
+          scope="external" format="html">the Gradle Daemon enabled</xref> to get
+          the performance benefit.</p></note>
+
+        <p audience="developer">The performance improvement is due to the
+        <xref href="https://docs.gradle.org/current/userguide/gradle_daemon.html"
+              format="html"
+              scope="external">Gradle Daemon</xref>, which effectively removes
+              the <term>JVM</term> warmup time.
+        </p>
+
+        <p audience="developer">If you're feeling adventurous and you have a
+          multi-project build, you can also try Gradle's
+          <option>--parallel</option> option to build your documents in parallel
+          and speed builds up even more. However, since DITA-OT isn't fully
+          thread-safe, your builds might become unreliable.</p>
+      </section>
+
+      <section>
+        <title>Easy to configure</title>
+        <p>After you've installed Gradle<fn>If you're on OS X or Linux,
+          installing Gradle is painless. On Windows, you'll have to set at
+          least one environment variable, unfortunately.</fn> and DITA-OT, using
+          <keyword keyref="plugin.short-name"/> is simple. There's no need to
+          use <filepath>startcmd.bat</filepath> or mess with your classpath:
+          just create a <xref keyref="links.buildfile-simple"/>, run Gradle, and
+          voilà: your published document should appear in your project's build
+          directory (<filepath>build</filepath> by default).
+        </p>
+
+        <p>Just like Gradle, <keyword keyref="plugin.short-name"/> works on all
+        major platforms.</p>
+
+        <p audience="developer">(The <term>API</term> is pretty nice, too.)</p>
+      </section>
+
+      <section>
+        <title>Versatile publishing</title>
+        <p>With <keyword keyref="plugin.short-name"/>, you easily publish
+          large document sets in one go. If you want to publish every file
+          with a <filepath>ditamap</filepath> extension in the
+          <filepath>dita</filepath> subdirectory using the PDF transtype, do
+          something like this:</p>
+
+        <codeblock outputclass="language-groovy">dita {
+    input fileTree(dir: 'dita', include: '*.ditamap')
+    transtype 'pdf'
+}</codeblock>
+
+        <p>By default, <keyword keyref="plugin.short-name"/> looks for a
+        <filepath>properties</filepath> file the has the same basename as your
+        input file and that's in the same directory as your input file<fn>For
+        example, if your DITA map file is called
+        <filepath>my-awesome-document.ditamap</filepath>,
+        <keyword keyref="plugin.short-name"/> looks for a file called
+        <filepath>my-awesome-document.properties</filepath> in the same
+        directory as that file.</fn> and uses any DITA-OT parameters you define
+        in it to publish that input file.</p>
+
+        <p>You can combine these two features to publish many DITA map files at
+          once and define document-specific properties (such as the location
+          of the DITAVAL file).</p>
+
+        <p>If you want to define multiple DITA-OT publishing tasks in the same
+           Gradle buildfile (if you want to publish the same document multiple
+           times with different parameters, for example) you can use the
+           alternative syntax for defining tasks:</p>
+
+        <codeblock outputclass="language-groovy">import com.github.eerohele.DitaOtTask
+
+task web(type: DitaOtTask) {
+    input 'root.ditamap'
+    transtype 'html5'
+    filter 'web.ditaval'
+}
+
+task pdf(type: DitaOtTask) {
+    input 'root.ditamap'
+    transtype 'pdf'
+    filter 'print.ditaval'
+
+    properties {
+      property name: 'args.rellinks', value: 'all'
+    }
+}</codeblock>
+      </section>
+
+      <section>
+        <title>Incremental builds</title>
+        <p><keyword keyref="plugin.short-name"/> checks whether your source files
+        have changed<fn>It currently checks whether any of the files under the
+        directory where your source file is have changed. If you have files
+        outside that directory, <keyword keyref="plugin.short-name"/> can't detect
+        changes to those files.</fn> and only runs DITA-OT if they
+        have (or if you force it to by passing the
+        <option>--rerun-tasks</option> option).</p>
+        <p>If you're publishing a large document set, you can set up a
+          <xref
+            href="https://github.com/eerohele/dita-ot-gradle/tree/master/examples/multi"
+            scope="external">
+            multi-project build</xref> and speed up the feedback cycle by
+            publishing only those documents that have changed.</p>
+      </section>
+
+      <section>
+        <title>Continuous builds</title>
+        <p>You can also use Gradle's <xref
+          href="http://gradle.org/feature-spotlight-continuous-build/"
+          format="html" scope="external">continuous build feature</xref> option
+          to tell DITA-OT to automatically republish your document when it
+          changes:</p>
+
+        <codeblock outputclass="language-bash">$ gradle --continuous
+...
+Waiting for changes to input files of tasks... (ctrl-d to exit)
+Change detected, executing build...
+...</codeblock>
+
+        <p>This is especially useful when writing a small document or a single
+          topic because it lets you see the effects of your changes fairly
+          quickly.</p>
+      </section>
+    </bodydiv>
+
+  </body>
+
+  <related-links scope="external" format="html">
+    <link href="https://docs.gradle.org/current/userguide/overview.html#sec:special_feature_of_gradle">
+      <linktext>Gradle: Features</linktext>
+    </link>
+
+    <link href="https://docs.gradle.org/current/userguide/multi_project_builds.html">
+      <linktext>Gradle: Multi-project Builds</linktext>
+    </link>
+  </related-links>
+</topic>

@@ -1,0 +1,12 @@
+.metrics {
+  line-height: 1vr;
+  margin-top: -1px;
+  padding-bottom: calc(1vr - 9.75px);
+}
+
+.metrics .mg-chart-title {
+  font-size: 1.2rem !important;
+  font-weight: normal;
+  margin: .5vr 0;
+  padding: 0 !important;
+}

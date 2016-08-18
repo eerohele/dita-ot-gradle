@@ -1,5 +1,8 @@
 plugins {
     id 'com.gradle.plugin-publish' version '0.9.1'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.4.0'
+    id 'com.moowork.node' version '0.13'
+    id 'com.moowork.gulp' version '0.13'
 }
 
 apply plugin: 'com.gradle.plugin-publish'
@@ -42,7 +45,7 @@ codenarc {
     configFile = file('config/codenarc/codenarc.groovy')
 }
 
-File ditaHome = new File("${projectDir}/dita-ot/src/main")
+File ditaHome = new File("$projectDir/dita-ot/src/main")
 
 test {
     dependsOn 'integrate'
@@ -53,13 +56,64 @@ test {
 group = 'com.github.eerohele'
 version = '0.4.0'
 
-task integrate(type: JavaExec, dependsOn: ':dost:copyInstall') {
-    classpath configurations.testCompile
-    main = 'org.apache.tools.ant.launch.Launcher'
-    args("-lib", "${ditaHome}/lib", "-buildfile", "${ditaHome}/integrator.xml")
+task buildDitaOt(type: GradleBuild) {
+    buildFile = "$projectDir/dita-ot/build.gradle"
+    tasks = ['buildLocal']
 }
 
-task publish(dependsOn: ['check'])
+task integrate(type: JavaExec, dependsOn: buildDitaOt) {
+    classpath configurations.testCompile
+    main = 'org.apache.tools.ant.launch.Launcher'
+    args("-lib", "$ditaHome/lib", "-buildfile", "$ditaHome/integrator.xml")
+}
+
+task symlink {
+    ant.symlink(
+        action: "delete",
+        link: "$ditaHome/plugins/io.github.eerohele"
+    )
+
+    ant.symlink(
+        resource: "${projectDir}/src/main/dita-ot/io.github.eerohele",
+        link: "$ditaHome/plugins/io.github.eerohele"
+    )
+}
+
+task setupDitaOt(dependsOn: ['symlink', 'integrate'])
+
+task publish(dependsOn: ['docs', 'check'])
+
+ditaOt.dir ditaHome
+
+task copyResources(type: Copy) {
+    from 'src/main/resources/data.json'
+    into buildDir
+}
+
+dita {
+    dependsOn 'setupDitaOt', 'copyResources'
+
+    input 'src/main/dita/index.ditamap'
+    output 'docs'
+
+    filter 'src/main/ditaval/default.ditaval'
+    transtype 'html5'
+    devMode true
+
+    properties {
+        property(name: 'processing-mode', value: 'strict')
+        property(name: 'args.xhtml.toc', value: 'toc')
+    }
+}
+
+task docs(dependsOn: [dita, gulp_styles, gulp_scripts])
+
+tasks.gulp_styles.dependsOn('installGulp', 'npmInstall')
+tasks.gulp_scripts.dependsOn('installGulp', 'npmInstall')
+
+npm_install {
+    args = ['--loglevel', 'error']
+}
 
 pluginBundle {
     website = 'https://github.com/eerohele/dita-ot-gradle'

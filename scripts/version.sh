@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Bump version number in every build.gradle file in the examples directory.
+# Bump version number in every build.gradle file in the repository.
 
 set -euf -o pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 main() {
-  find "$DIR/../examples" -name "build.gradle" -print0 |
+  find "$DIR/.." -name "build.gradle" -print0 |
     xargs -0 perl -pi -e "s/$1/$2/g"
 }
 

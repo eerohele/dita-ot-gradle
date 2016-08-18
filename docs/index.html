@@ -1,0 +1,263 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="copyright" content="(C) Copyright 2016"><meta name="DC.rights.owner" content="(C) Copyright 2016"><meta name="DC.Type" content="topic"><meta name="DC.Relation" scheme="URI" content="https://docs.gradle.org/current/userguide/overview.html#sec:special_feature_of_gradle"><meta name="DC.Relation" scheme="URI" content="https://docs.gradle.org/current/userguide/multi_project_builds.html"><meta name="DC.Relation" scheme="URI" content="http://www.dita-ot.org/dev/getting-started/installing-client.html"><meta name="DC.Relation" scheme="URI" content="https://docs.gradle.org/current/userguide/installation.html"><meta name="DC.Relation" scheme="URI" content="https://github.com/eerohele/dita-ot-gradle/blob/master/examples"><meta name="DC.Relation" scheme="URI" content="https://docs.gradle.org/current/userguide/working_with_files.html"><meta name="DC.Relation" scheme="URI" content="http://docs.oasis-open.org/dita/dita/v1.3/csprd01/part3-all-inclusive/archSpec/base/condproc.html"><meta name="prodname" content="DITA Open Toolkit Gradle Plugin"><meta name="prodname" content="DITA Open Toolkit Gradle Plugin"><meta name="prodname" content="DITA Open Toolkit Gradle Plugin"><meta name="prodname" content="DITA Open Toolkit Gradle Plugin"><meta name="prodname" content="DITA Open Toolkit Gradle Plugin"><meta name="prodname" content="DITA Open Toolkit Gradle Plugin"><meta name="DC.Creator" content="Eero Helenius"><meta name="DC.Creator" content="Eero Helenius"><meta name="DC.Creator" content="Eero Helenius"><meta name="DC.Creator" content="Eero Helenius"><meta name="DC.Creator" content="Eero Helenius"><meta name="DC.Creator" content="Eero Helenius"><meta name="DC.Format" content="XHTML"><meta name="DC.Identifier" content="introduction"><link rel="stylesheet" type="text/css" href="commonltr.css"><title>DITA Open Toolkit Gradle Plugin</title><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.6.0/metricsgraphics.min.css"><link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,700" rel="stylesheet" type="text/css"></head><body><main role="main"><article role="article" aria-labelledby="ariaid-title1"><article class="nested0" aria-labelledby="ariaid-title1" id="introduction">
+  <h1 class="title topictitle1" id="ariaid-title1">
+    <span class="keyword">DITA Open Toolkit Gradle Plugin</span>
+  </h1>
+
+  
+
+  <div class="body"><div class="abstract">
+    <p class="p">A fast, versatile, and pleasant DITA publishing experience.</p>
+  </div>
+    <p class="p"><span class="keyword">DITA-OT Gradle Plugin</span> is a <a class="xref" href="http://gradle.org" target="_blank">Gradle</a>
+    plugin for publishing <a class="xref" href="http://dita.xml.org" target="_blank">DITA</a> documents that's more
+    powerful and faster than using <a class="xref" href="http://dita-ot.org" target="_blank">DITA Open Toolkit</a> directly.</p>
+    <p class="p">Backed by the full power of Gradle, you can also use
+      <span class="keyword">DITA-OT Gradle Plugin</span> for more complex publishing
+      scenarios, such as <a class="xref" href="https://github.com/eerohele/dita-ot-gradle/blob/gh-pages/build.gradle" target="_blank">the one for this website</a>.</p>
+
+    <div class="div platform-profiler">Choose your operating system:
+      <ul class="ul hidden">
+        <li class="li" data-props="osx">OS X</li>
+        <li class="li" data-props="windows">Windows</li>
+        <li class="li" data-props="linux">Linux</li>
+      </ul></div>
+  </div>
+</article><article class="topic nested0" aria-labelledby="ariaid-title2" id="unique_193064011">
+  <h1 class="title topictitle1" id="ariaid-title2">Features</h1>
+
+  <div class="body">
+    <div class="bodydiv">
+      <section class="section"><h2 class="title sectiontitle">Performance</h2>
+        
+        <p class="p">Depending on the size of your document,
+          <span class="keyword">DITA-OT Gradle Plugin</span> can
+          <span class="ph" data-audience="user">magically</span> decrease your publishing times by
+          up to 70%<a name="fnsrc_1" href="#fntarg_1"><sup>1</sup></a>
+          after the first run. The difference is more noticeable with small or
+          medium documents.</p>
+
+        <p class="p">Here's a graph that shows the development of the publishing
+          duration in seconds over 50&nbsp;runs for the <a class="xref" href="http://www.dita-ot.org/dev/" target="_blank">DITA-OT user guide</a> with and without the <span class="keyword">DITA-OT Gradle Plugin</span><a name="fnsrc_2" href="#fntarg_2"><sup>2</sup></a>:
+        </p>
+
+        <div class="div metrics"></div>
+
+        <div class="note note note_note"><span class="note__title notetitle">Note:</span> <p class="p">You must have <a class="xref" href="https://docs.gradle.org/current/userguide/gradle_daemon.html" target="_blank">the Gradle Daemon enabled</a> to get
+          the performance benefit.</p></div>
+
+        <p class="p" data-audience="developer">The performance improvement is due to the
+        <a class="xref" href="https://docs.gradle.org/current/userguide/gradle_daemon.html" target="_blank">Gradle Daemon</a>, which effectively removes
+              the <dfn class="term">JVM</dfn> warmup time.
+        </p>
+
+        <p class="p" data-audience="developer">If you're feeling adventurous and you have a
+          multi-project build, you can also try Gradle's
+          <span class="keyword option">--parallel</span> option to build your documents in parallel
+          and speed builds up even more. However, since DITA-OT isn't fully
+          thread-safe, your builds might become unreliable.</p>
+      </section>
+
+      <section class="section"><h2 class="title sectiontitle">Easy to configure</h2>
+        
+        <p class="p">After you've installed Gradle<a name="fnsrc_3" href="#fntarg_3"><sup>3</sup></a> and DITA-OT, using
+          <span class="keyword">DITA-OT Gradle Plugin</span> is simple. There's no need to
+          use <code class="ph filepath">startcmd.bat</code> or mess with your classpath:
+          just create a <a class="xref" href="https://github.com/eerohele/dita-ot-gradle/blob/master/examples/simple/build.gradle" target="_blank">a simple Gradle buildfile</a>, run Gradle, and
+          voilà: your published document should appear in your project's build
+          directory (<code class="ph filepath">build</code> by default).
+        </p>
+
+        <p class="p">Just like Gradle, <span class="keyword">DITA-OT Gradle Plugin</span> works on all
+        major platforms.</p>
+
+        <p class="p" data-audience="developer">(The <dfn class="term">API</dfn> is pretty nice, too.)</p>
+      </section>
+
+      <section class="section"><h2 class="title sectiontitle">Versatile publishing</h2>
+        
+        <p class="p">With <span class="keyword">DITA-OT Gradle Plugin</span>, you easily publish
+          large document sets in one go. If you want to publish every file
+          with a <code class="ph filepath">ditamap</code> extension in the
+          <code class="ph filepath">dita</code> subdirectory using the PDF transtype, do
+          something like this:</p>
+
+        <pre class="pre codeblock language-groovy"><code>dita {
+    input fileTree(dir: 'dita', include: '*.ditamap')
+    transtype 'pdf'
+}</code></pre>
+
+        <p class="p">By default, <span class="keyword">DITA-OT Gradle Plugin</span> looks for a
+        <code class="ph filepath">properties</code> file the has the same basename as your
+        input file and that's in the same directory as your input file<a name="fnsrc_4" href="#fntarg_4"><sup>4</sup></a> and uses any DITA-OT parameters you define
+        in it to publish that input file.</p>
+
+        <p class="p">You can combine these two features to publish many DITA map files at
+          once and define document-specific properties (such as the location
+          of the DITAVAL file).</p>
+
+        <p class="p">If you want to define multiple DITA-OT publishing tasks in the same
+           Gradle buildfile (if you want to publish the same document multiple
+           times with different parameters, for example) you can use the
+           alternative syntax for defining tasks:</p>
+
+        <pre class="pre codeblock language-groovy"><code>import com.github.eerohele.DitaOtTask
+
+task web(type: DitaOtTask) {
+    input 'root.ditamap'
+    transtype 'html5'
+    filter 'web.ditaval'
+}
+
+task pdf(type: DitaOtTask) {
+    input 'root.ditamap'
+    transtype 'pdf'
+    filter 'print.ditaval'
+
+    properties {
+      property name: 'args.rellinks', value: 'all'
+    }
+}</code></pre>
+      </section>
+
+      <section class="section"><h2 class="title sectiontitle">Incremental builds</h2>
+        
+        <p class="p"><span class="keyword">DITA-OT Gradle Plugin</span> checks whether your source files
+        have changed<a name="fnsrc_5" href="#fntarg_5"><sup>5</sup></a> and only runs DITA-OT if they
+        have (or if you force it to by passing the
+        <span class="keyword option">--rerun-tasks</span> option).</p>
+        <p class="p">If you're publishing a large document set, you can set up a
+          <a class="xref" href="https://github.com/eerohele/dita-ot-gradle/tree/master/examples/multi" target="_blank">
+            multi-project build</a> and speed up the feedback cycle by
+            publishing only those documents that have changed.</p>
+      </section>
+
+      <section class="section"><h2 class="title sectiontitle">Continuous builds</h2>
+        
+        <p class="p">You can also use Gradle's <a class="xref" href="http://gradle.org/feature-spotlight-continuous-build/" target="_blank">continuous build feature</a> option
+          to tell DITA-OT to automatically republish your document when it
+          changes:</p>
+
+        <pre class="pre codeblock language-bash"><code>$ gradle --continuous
+...
+Waiting for changes to input files of tasks... (ctrl-d to exit)
+Change detected, executing build...
+...</code></pre>
+
+        <p class="p">This is especially useful when writing a small document or a single
+          topic because it lets you see the effects of your changes fairly
+          quickly.</p>
+      </section>
+    </div>
+
+  </div>
+
+  <nav role="navigation" class="related-links"><div class="linklist linklist relinfo"><strong>Related information</strong><br><div><a class="link" href="https://docs.gradle.org/current/userguide/overview.html#sec:special_feature_of_gradle" target="_blank">Gradle: Features</a></div><div><a class="link" href="https://docs.gradle.org/current/userguide/multi_project_builds.html" target="_blank">Gradle: Multi-project Builds</a></div></div></nav>
+</article><article class="topic task nested0" aria-labelledby="ariaid-title3" id="install">
+  <h1 class="title topictitle1" id="ariaid-title3">Installing <span class="keyword">DITA-OT Gradle Plugin</span></h1>
+
+  <div class="body taskbody">
+    <ol class="ol steps"><li class="li step stepexpand">
+        <p class="ph cmd">Install <a class="xref" href="http://dita-ot.org" target="_blank">DITA Open Toolkit</a>.</p>
+      </li><li class="li step stepexpand">
+        <p class="ph cmd">Install <a class="xref" href="http://gradle.org" target="_blank">Gradle</a>.</p>
+
+        <div class="itemgroup info" data-platform="osx">If you have <a class="xref" href="http://brew.sh" target="_blank">Homebrew</a> installed, you can just run
+          <span class="keyword cmdname">brew install gradle</span>.</div>
+        <div class="itemgroup info" data-platform="linux">Gradle is probably available on your
+          favorite package manager.</div>
+      </li><li class="li step stepexpand">
+        <p class="ph cmd">Copy-paste this Gradle script into a file called <code class="ph filepath">build.gradle</code>:</p>
+
+        <div class="itemgroup stepxmp">
+          <div class="note note note_note" data-audience="user"><span class="note__title notetitle">Note:</span> Replace the values indicated by the comments
+            (lines that start with two forward slashes) with your own
+            values.</div>
+
+          <pre class="pre codeblock language-groovy" data-platform="windows"><code>plugins {
+    id 'com.gradle.plugin-publish' version '0.9.1'
+}
+
+defaultTasks 'dita'
+
+// Replace this with the path to your DITA-OT installation.
+// Note the forward slash instead of the backslash!
+ditaOt.dir 'C:/DITA-OT'
+
+dita {
+    // Replace this with the path to the DITA file you want to publish.
+    input 'my.ditamap'
+
+    // Replace this with the format(s) you want to publish into.
+    transtype 'html5', 'pdf'
+}</code></pre>
+          <pre class="pre codeblock language-groovy" data-platform="osx linux"><code>plugins {
+    id 'com.gradle.plugin-publish' version '0.9.1'
+}
+
+defaultTasks 'dita'
+
+// Replace this with the path to your DITA-OT installation.
+ditaOt.dir '/opt/dita-ot'
+
+dita {
+    // Replace this with the path to the DITA file you want to publish.
+    input 'my.ditamap'
+
+    // Replace this with the format(s) you want to publish into.
+    transtype 'html5', 'pdf'
+}</code></pre>
+        </div>
+      </li><li class="li step stepexpand">
+        <p class="ph cmd">In the directory where you saved <code class="ph filepath">build.gradle</code>,
+        run <code class="ph filepath">gradle</code>.</p>
+        <div class="itemgroup stepresult">The output will appear in the <code class="ph filepath">build</code>
+          subdirectory of the directory where <code class="ph filepath">build.gradle</code>
+          is.</div>
+      </li></ol>
+  </div>
+
+  <nav role="navigation" class="related-links"><div class="linklist linklist relinfo"><strong>Related information</strong><br><div><a class="link" href="http://www.dita-ot.org/dev/getting-started/installing-client.html" target="_blank">Installing DITA Open Toolkit</a></div><div><a class="link" href="https://docs.gradle.org/current/userguide/installation.html" target="_blank">Installing Gradle</a></div><div><a class="link" href="https://github.com/eerohele/dita-ot-gradle/blob/master/examples" target="_blank">Sample buildfiles</a></div></div></nav>
+</article><article class="topic reference nested0" aria-labelledby="ariaid-title4" id="options">
+  <h1 class="title topictitle1" id="ariaid-title4">Options</h1>
+
+  <div class="body refbody">
+    <table class="simpletable properties"><col style="width:16.666666666666664%"><col style="width:16.666666666666664%"><col style="width:66.66666666666666%"><thead><tr class="sthead prophead">
+        <th class="stentry proptypehd" id="options__proptypehd__1">Type</th>
+        <th class="stentry propvaluehd" id="options__propvaluehd__1">Option</th>
+        <th class="stentry propdeschd" id="options__propdeschd__1">Description</th>
+      </tr></thead><tbody><tr class="strow property"><td class="stentry proptype" headers="d49e479">String | File</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">input</span></td><td class="stentry propdesc" headers="d49e485">The input file.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">String | File</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">output</span></td><td class="stentry propdesc" headers="d49e485">The output directory. Default:
+          <code class="ph filepath">build</code>.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">String...</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">transtype</span></td><td class="stentry propdesc" headers="d49e485">One or more  format to publish into.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">String | File</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">filter</span></td><td class="stentry propdesc" headers="d49e485">The DITAVAL file.</td></tr><tr class="strow property" data-audience="developer"><td class="stentry proptype" headers="d49e479">String | File</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">temp</span></td><td class="stentry propdesc" headers="d49e485">The DITA-OT temporary directory.</td></tr><tr class="strow property" data-audience="developer"><td class="stentry proptype" headers="d49e479">Boolean</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">devMode</span></td><td class="stentry propdesc" headers="d49e485">Detect changes in DITA-OT directory in addition to input DITA
+          files. Useful for stylesheet developers. Default:
+          <code class="ph codeph">false</code>.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">Boolean</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">singleOutputDir</span></td><td class="stentry propdesc" headers="d49e485">Multiple input files ➞ single output directory. Default:
+          <code class="ph codeph">false</code>.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">Boolean</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">useAssociatedFilter</span></td><td class="stentry propdesc" headers="d49e485">For every input file, use DITAVAL file in same directory with
+          same basename. Default: <code class="ph codeph">false</code>.</td></tr></tbody></table>
+  </div>
+
+  <nav role="navigation" class="related-links"><div class="linklist linklist relinfo"><strong>Related information</strong><br><div><a class="link" href="https://docs.gradle.org/current/userguide/working_with_files.html" target="_blank">Gradle: Working with files</a></div><div><a class="link" href="http://docs.oasis-open.org/dita/dita/v1.3/csprd01/part3-all-inclusive/archSpec/base/condproc.html" target="_blank">DITA 1.3 Specification: Conditional processing</a></div></div></nav>
+</article><article class="topic nested0" aria-labelledby="ariaid-title5" id="acknowledgements">
+  <h1 class="title topictitle1" id="ariaid-title5">Acknowledgements</h1>
+
+  <div class="body">
+    <ul class="ul">
+      <li class="li">The <a class="xref" href="http://asciidoctor.org/docs/asciidoctor-gradle-plugin/" target="_blank">Asciidoctor Gradle Plugin</a>, which is an
+        extremely useful resource on how to write a custom Gradle plugin.</li>
+    </ul>
+  </div>
+</article><div class="fn"><a name="fntarg_1" href="#fnsrc_1"><sup>1</sup></a>  This figure only holds for relatively small
+          documents where the overhead of creating the JVM, loading
+          classes, compiling XSLT stylesheets, and so on takes up more time than
+          the actual processing. If your document takes 30 minutes to process
+          now, it won't take 9&nbsp;minutes with <span class="keyword">DITA-OT Gradle Plugin</span>: more like 28&nbsp;minutes, most likely.</div><div class="fn"><a name="fntarg_2" href="#fnsrc_2"><sup>2</sup></a>  DITA Open Toolkit 2.2 (development version),
+          Gradle 2.7, MacBook Pro, 2,5 GHz Intel Core i5, 8 GB 1600 MHz DDR3.</div><div class="fn"><a name="fntarg_3" href="#fnsrc_3"><sup>3</sup></a>  If you're on OS X or Linux,
+          installing Gradle is painless. On Windows, you'll have to set at
+          least one environment variable, unfortunately.</div><div class="fn"><a name="fntarg_4" href="#fnsrc_4"><sup>4</sup></a>  For
+        example, if your DITA map file is called
+        <code class="ph filepath">my-awesome-document.ditamap</code>,
+        <span class="keyword">DITA-OT Gradle Plugin</span> looks for a file called
+        <code class="ph filepath">my-awesome-document.properties</code> in the same
+        directory as that file.</div><div class="fn"><a name="fntarg_5" href="#fnsrc_5"><sup>5</sup></a>  It currently checks whether any of the files under the
+        directory where your source file is have changed. If you have files
+        outside that directory, <span class="keyword">DITA-OT Gradle Plugin</span> can't detect
+        changes to those files.</div></article></main><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.6.0/metricsgraphics.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.0/platform.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/2014.01.31/classList.min.js"></script><script src="app.js"></script></body></html>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA 1.3 Topic//EN" "topic.dtd">
+
+<topic id="introduction">
+  <title>
+    <keyword keyref="plugin.long-name"/>
+  </title>
+
+  <abstract>
+    <p>A fast, versatile, and pleasant DITA publishing experience.</p>
+  </abstract>
+
+  <body>
+    <p><keyword keyref="plugin.short-name"/> is a <xref keyref="links.gradle"/>
+    plugin for publishing <xref keyref="links.dita"/> documents that's more
+    powerful and faster than using <xref keyref="links.dita-ot"/> directly.</p>
+    <p>Backed by the full power of Gradle, you can also use
+      <keyword keyref="plugin.short-name"/> for more complex publishing
+      scenarios, such as <xref
+      keyref="links.plugin-website-source">the one for this website</xref>.</p>
+
+    <div outputclass="platform-profiler">Choose your operating system:
+      <ul outputclass="hidden">
+        <li props="osx">OS X</li>
+        <li props="windows">Windows</li>
+        <li props="linux">Linux</li>
+      </ul></div>
+  </body>
+</topic>

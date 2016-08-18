@@ -1,0 +1,5 @@
+<val>
+  <prop att="audience" action="passthrough"/>
+  <prop att="platform" action="passthrough"/>
+  <prop att="props" action="passthrough"/>
+</val>
