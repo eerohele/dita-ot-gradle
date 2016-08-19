@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE map PUBLIC "-//OASIS//DTD DITA 1.3 Map//EN" "map.dtd">
+
+<map id="dita-ot-gradle" chunk="to-content select-branch">
+  <title>
+    <keyword keyref="plugin.long-name"/>
+  </title>
+
+  <topicmeta>
+    <author type="creator"
+            href="http://github.com/eerohele"
+            format="html"
+            scope="external">Eero Helenius</author>
+    <prodinfo>
+      <prodname>
+        <keyword keyref="plugin.long-name"/>
+      </prodname>
+    </prodinfo>
+  </topicmeta>
+
+  <keydef keys="variables" href="variables.ditamap" format="ditamap"/>
+
+  <topicref href="introduction.dita"/>
+  <topicref href="features.dita"/>
+  <topicref href="install.dita"/>
+  <topicref href="options.dita"/>
+  <topicref href="acknowledgements.dita"/>
+
+  <!-- Can't use this because of #1816. -->
+  <!--
+  <glossref keys="jvm" href="jvm.dita"/>
+  -->
+</map>

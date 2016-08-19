@@ -1,0 +1,27 @@
+@import 'settings';
+
+code, .filepath, .option, .cmdname {
+  color: #777;
+  font-family: var(--font-monospace);
+  background: rgb(240, 240, 240);
+  padding: 0 .25em;
+  box-shadow: 1px 1px 0px #ccc;
+  vertical-align: top;
+}
+
+pre[class*="language-"] {
+  margin: .5vr 0;
+  padding: .5vr;
+  box-shadow: 1px 1px 0px #bbb;
+}
+
+pre[class*="language-"], code[class*="language-"] {
+  font-family: var(--font-monospace);
+  line-height: .5vr;
+}
+
+pre code[class*="language-"] {
+  box-shadow: none;
+  padding: 0;
+  background: transparent;
+}

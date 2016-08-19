@@ -1,0 +1,15 @@
+@import 'settings';
+
+.note {
+  color:  var(--text-color-light);
+  display: table;
+  line-height: .5vr;
+  margin-top: .5vr;
+}
+
+.note__title {
+  color: var(--text-color-complement);
+  font-weight: 600;
+  display: table-cell;
+  padding-right: .5vr;
+}

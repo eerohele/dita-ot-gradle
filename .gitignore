@@ -2,3 +2,11 @@ build/
 .gradle/
 bower_components/
 node_modules/
+
+# Build artifacts
+docs/*
+!docs/index.html
+!docs/commonltr.css
+!docs/app.js
+!docs/data.json
+

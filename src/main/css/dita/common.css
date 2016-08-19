@@ -1,0 +1,29 @@
+@import 'settings';
+
+.abstract p {
+  font-size: 20px;
+  color: var(--text-color-light);
+  margin: 0 0 1vr 0;
+}
+
+.title {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.body {
+  line-height: 1vr;
+  lost-center: var(--main-width);
+}
+
+.bodydiv, .section {
+  line-height: 1vr;
+}
+
+.section .title {
+  font-weight: 300;
+}
+
+.itemgroup {
+  margin: 0;
+}

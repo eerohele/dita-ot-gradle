@@ -1,0 +1,43 @@
+@import 'settings';
+
+.cmd {
+  margin: 0;
+}
+
+.stepxmp, .stepresult {
+  margin-left: -.5vr;
+  padding-left: .5vr;
+  position: relative;
+}
+
+.stepxmp {
+  border-left: 3px solid var(--border-color-light);
+}
+
+.stepxmp:before, .stepresult:before {
+  color: var(--text-color-light);
+  text-transform: lowercase;
+  font-variant: small-caps;
+  position: absolute;
+  text-align: right;
+  width: 100px;
+}
+
+.stepxmp:before {
+  content: 'Example';
+  left: -110px;
+}
+
+.stepresult {
+  color: #555;
+  font-size: small;
+  margin-top: 0;
+  margin-bottom: 1vr;
+}
+
+.stepresult:before {
+  content: '➟';
+  color: var(--text-color-complement);
+  left: -92px;
+  font-size: large;
+}
