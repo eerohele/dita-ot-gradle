@@ -22,7 +22,7 @@
   </keydef>
 
   <keydef keys="links.plugin-website-source"
-    href="https://github.com/eerohele/dita-ot-gradle/blob/gh-pages/build.gradle"
+    href="https://github.com/eerohele/dita-ot-gradle/blob/master/build.gradle"
     format="html" scope="external">
     <topicmeta>
       <keywords>
