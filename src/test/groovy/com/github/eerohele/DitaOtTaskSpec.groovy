@@ -16,7 +16,7 @@ class DitaOtTaskSpec extends Specification {
 
     private static final String ROOT_DITAMAP = 'root.ditamap'
     private static final String ROOT_DITAVAL = 'root.ditaval'
-    private static final String DEFAULT_TRANSTYPE = 'xhtml'
+    private static final String DEFAULT_TRANSTYPE = 'html5'
 
     Project project
 
@@ -369,7 +369,7 @@ need to set the dita.home system property to point to that installation.''')
             project.dita.render()
 
         then: 'Build succeeds.'
-            new File("${project.buildDir}/topic1.html").exists()
+            new File(project.buildDir, 'topic1.html').exists()
             notThrown BuildException
 
         cleanup:
