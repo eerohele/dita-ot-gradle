@@ -8,7 +8,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.apache.tools.ant.BuildException
 
 import spock.lang.Specification
-import spock.lang.Ignore
 
 class DitaOtTaskSpec extends Specification {
     private static final String DITA = 'dita'

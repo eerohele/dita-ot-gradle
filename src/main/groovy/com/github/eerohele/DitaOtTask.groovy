@@ -180,7 +180,6 @@ class DitaOtTask extends DefaultTask {
 
                 this.options.transtype.each { String transtype ->
                     File outputDir = getOutputDirectory(inputFile, transtype)
-                    println(outputDir.toString())
 
                     ant(antfile: new File(ditaHome, 'build.xml')) {
                         property(name: Properties.ARGS_INPUT, location: inputFile.getPath())
