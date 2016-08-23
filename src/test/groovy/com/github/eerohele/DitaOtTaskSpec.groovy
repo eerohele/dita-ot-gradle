@@ -218,10 +218,9 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
-    @Ignore
     def 'Project cache and output directories are not included in the input file tree'() {
-        setup:
-            File cacheDir = new File("$examplesDir/simple/.gradle")
+        given:
+            File cacheDir = new File(examplesDir, 'simple/.gradle')
             cacheDir.mkdir()
             project.buildDir.mkdir()
 
@@ -234,12 +233,6 @@ need to set the dita.home system property to point to that installation.''')
         then:
             cacheDir.exists() && !task.getInputFileTree().contains(cacheDir)
             project.buildDir.exists() && !task.getInputFileTree().contains(project.buildDir)
-
-        cleanup:
-            cacheDir.delete()
-            project.buildDir.delete()
-            assert !cacheDir.exists()
-            assert !project.buildDir.exists()
     }
 
     @SuppressWarnings('MethodName')
