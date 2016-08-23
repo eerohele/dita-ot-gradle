@@ -15,7 +15,7 @@
     powerful and faster than using <a class="xref" href="http://dita-ot.org" target="_blank">DITA Open Toolkit</a> directly.</p>
     <p class="p">Backed by the full power of Gradle, you can also use
       <span class="keyword">DITA-OT Gradle Plugin</span> for more complex publishing
-      scenarios, such as <a class="xref" href="https://github.com/eerohele/dita-ot-gradle/blob/gh-pages/build.gradle" target="_blank">the one for this website</a>.</p>
+      scenarios, such as <a class="xref" href="https://github.com/eerohele/dita-ot-gradle/blob/master/build.gradle" target="_blank">the one for this website</a>.</p>
 
     <div class="div platform-profiler">Choose your operating system:
       <ul class="ul hidden">
@@ -24,7 +24,7 @@
         <li class="li" data-props="linux">Linux</li>
       </ul></div>
   </div>
-</article><article class="topic nested0" aria-labelledby="ariaid-title2" id="unique_193064011">
+</article><article class="topic nested0" aria-labelledby="ariaid-title2" id="unique_322366258">
   <h1 class="title topictitle1" id="ariaid-title2">Features</h1>
 
   <div class="body">
@@ -44,7 +44,7 @@
 
         <div class="div metrics"></div>
 
-        <div class="note note note_note"><span class="note__title notetitle">Note:</span> <p class="p">You must have <a class="xref" href="https://docs.gradle.org/current/userguide/gradle_daemon.html" target="_blank">the Gradle Daemon enabled</a> to get
+        <div class="note note note_note"><span class="note__title">Note:</span> <p class="p">You must have <a class="xref" href="https://docs.gradle.org/current/userguide/gradle_daemon.html" target="_blank">the Gradle Daemon enabled</a> to get
           the performance benefit.</p></div>
 
         <p class="p" data-audience="developer">The performance improvement is due to the
@@ -54,7 +54,7 @@
 
         <p class="p" data-audience="developer">If you're feeling adventurous and you have a
           multi-project build, you can also try Gradle's
-          <span class="keyword option">--parallel</span> option to build your documents in parallel
+          <span class="keyword option option">--parallel</span> option to build your documents in parallel
           and speed builds up even more. However, since DITA-OT isn't fully
           thread-safe, your builds might become unreliable.</p>
       </section>
@@ -126,7 +126,7 @@ task pdf(type: DitaOtTask) {
         <p class="p"><span class="keyword">DITA-OT Gradle Plugin</span> checks whether your source files
         have changed<a name="fnsrc_5" href="#fntarg_5"><sup>5</sup></a> and only runs DITA-OT if they
         have (or if you force it to by passing the
-        <span class="keyword option">--rerun-tasks</span> option).</p>
+        <span class="keyword option option">--rerun-tasks</span> option).</p>
         <p class="p">If you're publishing a large document set, you can set up a
           <a class="xref" href="https://github.com/eerohele/dita-ot-gradle/tree/master/examples/multi" target="_blank">
             multi-project build</a> and speed up the feedback cycle by
@@ -157,26 +157,26 @@ Change detected, executing build...
 </article><article class="topic task nested0" aria-labelledby="ariaid-title3" id="install">
   <h1 class="title topictitle1" id="ariaid-title3">Installing <span class="keyword">DITA-OT Gradle Plugin</span></h1>
 
-  <div class="body taskbody">
+  <div xmlns:related-links="http://dita-ot.sourceforge.net/ns/200709/related-links" xmlns:dita2html="http://dita-ot.sourceforge.net/ns/200801/dita2html" xmlns:ditamsg="http://dita-ot.sourceforge.net/ns/200704/ditamsg" class="body taskbody">
     <ol class="ol steps"><li class="li step stepexpand">
         <p class="ph cmd">Install <a class="xref" href="http://dita-ot.org" target="_blank">DITA Open Toolkit</a>.</p>
       </li><li class="li step stepexpand">
         <p class="ph cmd">Install <a class="xref" href="http://gradle.org" target="_blank">Gradle</a>.</p>
 
         <div class="itemgroup info" data-platform="osx">If you have <a class="xref" href="http://brew.sh" target="_blank">Homebrew</a> installed, you can just run
-          <span class="keyword cmdname">brew install gradle</span>.</div>
+          <span class="keyword cmdname cmdname">brew install gradle</span>.</div>
         <div class="itemgroup info" data-platform="linux">Gradle is probably available on your
           favorite package manager.</div>
       </li><li class="li step stepexpand">
         <p class="ph cmd">Copy-paste this Gradle script into a file called <code class="ph filepath">build.gradle</code>:</p>
 
         <div class="itemgroup stepxmp">
-          <div class="note note note_note" data-audience="user"><span class="note__title notetitle">Note:</span> Replace the values indicated by the comments
+          <div class="note note note_note" data-audience="user"><span class="note__title">Note:</span> Replace the values indicated by the comments
             (lines that start with two forward slashes) with your own
             values.</div>
 
           <pre class="pre codeblock language-groovy" data-platform="windows"><code>plugins {
-    id 'com.gradle.plugin-publish' version '0.9.1'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.4.0'
 }
 
 defaultTasks 'dita'
@@ -193,7 +193,7 @@ dita {
     transtype 'html5', 'pdf'
 }</code></pre>
           <pre class="pre codeblock language-groovy" data-platform="osx linux"><code>plugins {
-    id 'com.gradle.plugin-publish' version '0.9.1'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.4.0'
 }
 
 defaultTasks 'dita'
@@ -223,15 +223,11 @@ dita {
   <h1 class="title topictitle1" id="ariaid-title4">Options</h1>
 
   <div class="body refbody">
-    <table class="simpletable properties"><col style="width:16.666666666666664%"><col style="width:16.666666666666664%"><col style="width:66.66666666666666%"><thead><tr class="sthead prophead">
-        <th class="stentry proptypehd" id="options__proptypehd__1">Type</th>
-        <th class="stentry propvaluehd" id="options__propvaluehd__1">Option</th>
-        <th class="stentry propdeschd" id="options__propdeschd__1">Description</th>
-      </tr></thead><tbody><tr class="strow property"><td class="stentry proptype" headers="d49e479">String | File</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">input</span></td><td class="stentry propdesc" headers="d49e485">The input file.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">String | File</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">output</span></td><td class="stentry propdesc" headers="d49e485">The output directory. Default:
-          <code class="ph filepath">build</code>.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">String...</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">transtype</span></td><td class="stentry propdesc" headers="d49e485">One or more  format to publish into.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">String | File</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">filter</span></td><td class="stentry propdesc" headers="d49e485">The DITAVAL file.</td></tr><tr class="strow property" data-audience="developer"><td class="stentry proptype" headers="d49e479">String | File</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">temp</span></td><td class="stentry propdesc" headers="d49e485">The DITA-OT temporary directory.</td></tr><tr class="strow property" data-audience="developer"><td class="stentry proptype" headers="d49e479">Boolean</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">devMode</span></td><td class="stentry propdesc" headers="d49e485">Detect changes in DITA-OT directory in addition to input DITA
+    <table class="simpletable properties"><col xmlns:ditamsg="http://dita-ot.sourceforge.net/ns/200704/ditamsg" style="width:16.666666666666664%"><col xmlns:ditamsg="http://dita-ot.sourceforge.net/ns/200704/ditamsg" style="width:16.666666666666664%"><col xmlns:ditamsg="http://dita-ot.sourceforge.net/ns/200704/ditamsg" style="width:66.66666666666666%"><thead><tr class="sthead prophead"><th xmlns:ditamsg="http://dita-ot.sourceforge.net/ns/200704/ditamsg" class="stentry proptypehd" id="options__proptypehd__1">Type</th><th xmlns:ditamsg="http://dita-ot.sourceforge.net/ns/200704/ditamsg" class="stentry propvaluehd" id="options__propvaluehd__1">Option</th><th xmlns:ditamsg="http://dita-ot.sourceforge.net/ns/200704/ditamsg" class="stentry propdeschd" id="options__propdeschd__1">Description</th></tr></thead><tbody><tr class="strow property"><td style="vertical-align:top;" headers="d36e479" class="stentry proptype">String | File</td><td style="vertical-align:top;" headers="d36e482" class="stentry propvalue"><span class="keyword option option">input</span></td><td style="vertical-align:top;" headers="d36e485" class="stentry propdesc">The input file.</td></tr><tr class="strow property"><td style="vertical-align:top;" headers="d36e479" class="stentry proptype">String | File</td><td style="vertical-align:top;" headers="d36e482" class="stentry propvalue"><span class="keyword option option">output</span></td><td style="vertical-align:top;" headers="d36e485" class="stentry propdesc">The output directory. Default:
+          <code class="ph filepath">build</code>.</td></tr><tr class="strow property"><td style="vertical-align:top;" headers="d36e479" class="stentry proptype">String...</td><td style="vertical-align:top;" headers="d36e482" class="stentry propvalue"><span class="keyword option option">transtype</span></td><td style="vertical-align:top;" headers="d36e485" class="stentry propdesc">One or more  format to publish into.</td></tr><tr class="strow property"><td style="vertical-align:top;" headers="d36e479" class="stentry proptype">String | File</td><td style="vertical-align:top;" headers="d36e482" class="stentry propvalue"><span class="keyword option option">filter</span></td><td style="vertical-align:top;" headers="d36e485" class="stentry propdesc">The DITAVAL file.</td></tr><tr class="strow property" data-audience="developer"><td style="vertical-align:top;" headers="d36e479" class="stentry proptype">String | File</td><td style="vertical-align:top;" headers="d36e482" class="stentry propvalue"><span class="keyword option option">temp</span></td><td style="vertical-align:top;" headers="d36e485" class="stentry propdesc">The DITA-OT temporary directory.</td></tr><tr class="strow property" data-audience="developer"><td style="vertical-align:top;" headers="d36e479" class="stentry proptype">Boolean</td><td style="vertical-align:top;" headers="d36e482" class="stentry propvalue"><span class="keyword option option">devMode</span></td><td style="vertical-align:top;" headers="d36e485" class="stentry propdesc">Detect changes in DITA-OT directory in addition to input DITA
           files. Useful for stylesheet developers. Default:
-          <code class="ph codeph">false</code>.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">Boolean</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">singleOutputDir</span></td><td class="stentry propdesc" headers="d49e485">Multiple input files ➞ single output directory. Default:
-          <code class="ph codeph">false</code>.</td></tr><tr class="strow property"><td class="stentry proptype" headers="d49e479">Boolean</td><td class="stentry propvalue" headers="d49e482"><span class="keyword option">useAssociatedFilter</span></td><td class="stentry propdesc" headers="d49e485">For every input file, use DITAVAL file in same directory with
+          <code class="ph codeph">false</code>.</td></tr><tr class="strow property"><td style="vertical-align:top;" headers="d36e479" class="stentry proptype">Boolean</td><td style="vertical-align:top;" headers="d36e482" class="stentry propvalue"><span class="keyword option option">singleOutputDir</span></td><td style="vertical-align:top;" headers="d36e485" class="stentry propdesc">Multiple input files ➞ single output directory. Default:
+          <code class="ph codeph">false</code>.</td></tr><tr class="strow property"><td style="vertical-align:top;" headers="d36e479" class="stentry proptype">Boolean</td><td style="vertical-align:top;" headers="d36e482" class="stentry propvalue"><span class="keyword option option">useAssociatedFilter</span></td><td style="vertical-align:top;" headers="d36e485" class="stentry propdesc">For every input file, use DITAVAL file in same directory with
           same basename. Default: <code class="ph codeph">false</code>.</td></tr></tbody></table>
   </div>
 
