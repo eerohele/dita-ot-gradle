@@ -1,6 +1,6 @@
 plugins {
-    id 'com.gradle.plugin-publish' version '0.9.1'
     id 'com.github.eerohele.dita-ot-gradle' version '0.4.0'
+    id 'com.gradle.plugin-publish' version '0.9.1'
     id 'com.moowork.node' version '0.13'
     id 'com.moowork.gulp' version '0.13'
 }
@@ -45,7 +45,8 @@ codenarc {
     configFile = file('config/codenarc/codenarc.groovy')
 }
 
-File ditaHome = new File("$projectDir/dita-ot/src/main")
+File ditaHome = new File(projectDir, 'dita-ot/src/main')
+String docsDir = new File(projectDir, 'docs').getPath()
 
 test {
     dependsOn 'integrate'
@@ -79,34 +80,37 @@ task symlink {
     )
 }
 
-task setupDitaOt(dependsOn: ['symlink', 'integrate'])
-
-task publish(dependsOn: ['docs', 'check'])
+task setupDitaOt(dependsOn: [symlink, integrate])
 
 ditaOt.dir ditaHome
 
 task copyResources(type: Copy) {
-    from 'src/main/resources/data.json'
-    into buildDir
+    from "$projectDir/src/main/resources/data.json"
+    into docsDir
 }
 
 dita {
-    dependsOn 'setupDitaOt', 'copyResources'
+    dependsOn setupDitaOt
+    input "$projectDir/src/main/dita/index.ditamap"
+    output docsDir
 
-    input 'src/main/dita/index.ditamap'
-    output 'docs'
-
-    filter 'src/main/ditaval/default.ditaval'
+    filter "$projectDir/src/main/ditaval/default.ditaval"
     transtype 'html5'
     devMode true
 
     properties {
         property(name: 'processing-mode', value: 'strict')
+        property(name: 'dita.input.valfile', location: "$projectDir/src/main/ditaval/default.ditaval")
         property(name: 'args.xhtml.toc', value: 'toc')
     }
 }
 
-task docs(dependsOn: [dita, gulp_styles, gulp_scripts])
+task docs(dependsOn: [
+    dita, copyResources, gulp_styles, gulp_scripts
+])
+
+
+task publish(dependsOn: [docs, check])
 
 tasks.gulp_styles.dependsOn('installGulp', 'npmInstall')
 tasks.gulp_scripts.dependsOn('installGulp', 'npmInstall')
