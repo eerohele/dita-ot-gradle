@@ -26,9 +26,4 @@
   <topicref href="install.dita"/>
   <topicref href="options.dita"/>
   <topicref href="acknowledgements.dita"/>
-
-  <!-- Can't use this because of #1816. -->
-  <!--
-  <glossref keys="jvm" href="jvm.dita"/>
-  -->
 </map>

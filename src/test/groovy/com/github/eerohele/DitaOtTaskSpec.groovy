@@ -8,7 +8,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.apache.tools.ant.BuildException
 
 import spock.lang.Specification
-import spock.lang.Ignore
 
 class DitaOtTaskSpec extends Specification {
     private static final String DITA = 'dita'
@@ -16,7 +15,7 @@ class DitaOtTaskSpec extends Specification {
 
     private static final String ROOT_DITAMAP = 'root.ditamap'
     private static final String ROOT_DITAVAL = 'root.ditaval'
-    private static final String DEFAULT_TRANSTYPE = 'xhtml'
+    private static final String DEFAULT_TRANSTYPE = 'html5'
 
     Project project
 
@@ -218,10 +217,9 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
-    @Ignore
     def 'Project cache and output directories are not included in the input file tree'() {
-        setup:
-            File cacheDir = new File("$examplesDir/simple/.gradle")
+        given:
+            File cacheDir = new File(examplesDir, 'simple/.gradle')
             cacheDir.mkdir()
             project.buildDir.mkdir()
 
@@ -234,12 +232,6 @@ need to set the dita.home system property to point to that installation.''')
         then:
             cacheDir.exists() && !task.getInputFileTree().contains(cacheDir)
             project.buildDir.exists() && !task.getInputFileTree().contains(project.buildDir)
-
-        cleanup:
-            cacheDir.delete()
-            project.buildDir.delete()
-            assert !cacheDir.exists()
-            assert !project.buildDir.exists()
     }
 
     @SuppressWarnings('MethodName')
@@ -369,7 +361,7 @@ need to set the dita.home system property to point to that installation.''')
             project.dita.render()
 
         then: 'Build succeeds.'
-            new File("${project.buildDir}/topic1.html").exists()
+            new File(project.buildDir, 'topic1.html').exists()
             notThrown BuildException
 
         cleanup:

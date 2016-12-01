@@ -19,21 +19,14 @@ defaultTasks 'check'
 
 dependencies {
     compile gradleApi()
-
     compile 'commons-io:commons-io:1.4'
 
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
-        exclude group: 'org.hamcrest', module: 'hamcrest-core'
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4-rc-1') {
+        exclude module: 'groovy-all'
     }
 
-    testCompile ('com.github.dita-ot:dost:2.1.2') {
-        exclude group: 'commons-io', module: 'commons-io'
-    }
-
+    testCompile 'com.google.guava:guava:19.0'
     testCompile 'xml-resolver:xml-resolver:1.2'
-    testCompile 'com.ibm.icu:icu4j:54.1'
-    testCompile 'org.apache.ant:ant-launcher:1.9.7'
 }
 
 repositories {
@@ -134,5 +127,5 @@ pluginBundle {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.0'
+    gradleVersion = '2.14'
 }

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA 1.3 Topic//EN" "topic.dtd">
+<!DOCTYPE concept PUBLIC "-//OASIS//DTD DITA 1.3 Concept//EN" "concept.dtd">
 
-<topic id="introduction">
+<concept id="features">
   <title>Features</title>
 
-  <body>
-    <bodydiv>
+  <conbody>
+    <conbodydiv>
       <section>
         <title>Performance</title>
         <p>Depending on the size of your document,
           <keyword keyref="plugin.short-name"/> can
           <ph audience="user">magically</ph> decrease your publishing times by
           up to 70%<fn>This figure only holds for relatively small
-          documents where the overhead of creating the JVM, loading
-          classes, compiling XSLT stylesheets, and so on takes up more time than
-          the actual processing. If your document takes 30 minutes to process
-          now, it won't take 9&#160;minutes with <keyword
-          keyref="plugin.short-name"/>: more like 28&#160;minutes, most likely.</fn>
-          after the first run. The difference is more noticeable with small or
-          medium documents.</p>
+          documents where the overhead of creating the
+          <term>Java Virtual Machine (JVM)</term>, loading classes, compiling
+          XSLT stylesheets, and so on takes up more time than the actual
+          processing. If your document takes 30 minutes to process now, it won't
+          take 9&#160;minutes with <keyword keyref="plugin.short-name"/>: more
+          like 28&#160;minutes, most likely.</fn> after the first run. The
+          difference is more noticeable with small or medium documents.</p>
 
         <p>Here's a graph that shows the development of the publishing
           duration in seconds over 50&#160;runs for the <xref
@@ -153,9 +153,9 @@ Change detected, executing build...
           topic because it lets you see the effects of your changes fairly
           quickly.</p>
       </section>
-    </bodydiv>
+    </conbodydiv>
 
-  </body>
+  </conbody>
 
   <related-links scope="external" format="html">
     <link href="https://docs.gradle.org/current/userguide/overview.html#sec:special_feature_of_gradle">
@@ -166,4 +166,5 @@ Change detected, executing build...
       <linktext>Gradle: Multi-project Builds</linktext>
     </link>
   </related-links>
-</topic>
+
+</concept>
