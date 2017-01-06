@@ -27,5 +27,6 @@ class DitaOtPlugin implements Plugin<Project> {
         )
 
         System.setProperty('java.awt.headless', 'true')
+        System.setProperty('org.apache.commons.logging.Log', 'org.apache.commons.logging.impl.NoOpLog')
     }
 }
