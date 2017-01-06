@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.1 - 2016-01-06
+- Fix Apache FOP performance degradation with DITA-OT 2.4.x
+
 ## 0.4.0 - 2016-07-04
 - Fix support for Gradle 2.14
 - Add support for automatically installing DITA-OT plugins #8
