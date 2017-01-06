@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.4.0'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.4.1'
     id 'com.gradle.plugin-publish' version '0.9.1'
     id 'com.moowork.node' version '0.13'
     id 'com.moowork.gulp' version '0.13'
@@ -48,7 +48,7 @@ test {
 }
 
 group = 'com.github.eerohele'
-version = '0.4.0'
+version = '0.4.1'
 
 task buildDitaOt(type: GradleBuild) {
     buildFile = "$projectDir/dita-ot/build.gradle"
