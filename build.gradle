@@ -9,6 +9,7 @@ apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'codenarc'
+apply plugin: 'java-gradle-plugin'
 
 allprojects {
     sourceCompatibility = 1.7
@@ -21,10 +22,13 @@ dependencies {
     compile gradleApi()
     compile 'commons-io:commons-io:1.4'
 
-    testCompile('org.spockframework:spock-core:1.1-groovy-2.4-rc-1') {
+    testCompile gradleTestKit()
+
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
 
+    testCompile 'junit:junit:4.12'
     testCompile 'com.google.guava:guava:19.0'
     testCompile 'xml-resolver:xml-resolver:1.2'
 }
@@ -42,7 +46,7 @@ File ditaHome = new File(projectDir, 'dita-ot/src/main')
 String docsDir = new File(projectDir, 'docs').getPath()
 
 test {
-    dependsOn 'integrate'
+    dependsOn 'setupDitaOt'
     systemProperty 'dita.home', System.getProperty('dita.home', ditaHome.getPath())
     systemProperty 'examples.dir', new File(projectDir, 'examples')
 }
@@ -53,12 +57,6 @@ version = '0.4.1'
 task buildDitaOt(type: GradleBuild) {
     buildFile = "$projectDir/dita-ot/build.gradle"
     tasks = ['buildLocal']
-}
-
-task integrate(type: JavaExec, dependsOn: buildDitaOt) {
-    classpath configurations.testCompile
-    main = 'org.apache.tools.ant.launch.Launcher'
-    args("-lib", "$ditaHome/lib", "-buildfile", "$ditaHome/integrator.xml")
 }
 
 task symlink {
@@ -73,7 +71,7 @@ task symlink {
     )
 }
 
-task setupDitaOt(dependsOn: [symlink, integrate])
+task setupDitaOt(dependsOn: [buildDitaOt, symlink])
 
 ditaOt.dir ditaHome
 

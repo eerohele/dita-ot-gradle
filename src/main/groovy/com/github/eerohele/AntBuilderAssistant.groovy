@@ -1,5 +1,6 @@
 package com.github.eerohele
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 
@@ -15,25 +16,48 @@ import org.gradle.internal.installation.CurrentGradleInstallation
 
 import org.gradle.util.GradleVersion
 
-import org.apache.tools.ant.BuildException
-
 class AntBuilderAssistant {
     private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<IsolatedAntBuilder>()
+
+    private static FileCollection getPluginArchives(Project project) {
+        File plugins = [
+                new File(project.ditaOt.dir, 'config/plugins.xml'),
+                new File(project.ditaOt.dir, 'resources/plugins.xml')
+        ].find { it.exists() }
+
+        if (plugins == null) {
+            throw new GradleException(
+                    """\
+                    Can't find DITA-OT plugin XML file.
+                    Are you sure you're using a valid DITA-OT directory?""".stripIndent()
+            )
+        }
+
+        List<String> archives = new XmlSlurper().parse(plugins).plugin.collectMany { plugin ->
+            String xmlBase = plugin['@xml:base'].text()
+            File pluginDir = new File(plugins.getParent(), xmlBase)
+            assert pluginDir.exists()
+            plugin.feature.@file.collect { file -> new File(pluginDir.getParent(), file.text()) }
+        }
+
+        assert archives != null && archives.size() > 0
+
+        project.files(archives)
+    }
 
     private static FileCollection getClasspath(Project project) {
         project.fileTree(dir: project.ditaOt.dir).matching {
             include(
-                'resources/',
-                'lib/**/*.jar',
-                'plugins/org.dita.pdf2/lib/fo.jar',
-                'plugins/org.dita.pdf2/build/libs/fo.jar'
+                    'config/',
+                    'resources/',
+                    'lib/**/*.jar'
             )
 
             exclude(
-                'lib/ant-launcher.jar',
-                'lib/ant.jar'
+                    'lib/ant-launcher.jar',
+                    'lib/ant.jar'
             )
-        }
+        } + getPluginArchives(project)
     }
 
     protected static IsolatedAntBuilder makeAntBuilder(Project project) {
@@ -42,7 +66,7 @@ class AntBuilderAssistant {
         DefaultIsolatedAntBuilder antBuilder
 
         if (classpath == null) {
-            throw new BuildException(DitaOtPlugin.MESSAGES.classpathError)
+            throw new GradleException(DitaOtPlugin.MESSAGES.classpathError)
         }
 
         if (GradleVersion.current() >= GradleVersion.version('2.13')) {
