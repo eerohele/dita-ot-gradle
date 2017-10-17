@@ -1,15 +1,23 @@
 package com.github.eerohele
 
+import org.gradle.testkit.runner.GradleRunner
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.InvalidUserDataException
 import org.gradle.testfixtures.ProjectBuilder
+
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 
 import org.apache.tools.ant.BuildException
 
 import spock.lang.Specification
 
 class DitaOtTaskSpec extends Specification {
+    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+    File buildFile
+
     private static final String DITA = 'dita'
     private static final String DITA_OT = 'ditaOt'
 
@@ -28,6 +36,7 @@ class DitaOtTaskSpec extends Specification {
 
     void setup() {
         ditaHome = System.getProperty('dita.home')
+        buildFile = testProjectDir.newFile('build.gradle')
 
         if (!ditaHome || !new File(ditaHome).isDirectory()) {
             throw new InvalidUserDataException('''dita.home system property not
@@ -36,6 +45,8 @@ need to set the dita.home system property to point to that installation.''')
         }
 
         examplesDir = System.getProperty('examples.dir')
+
+        assert examplesDir != null
 
         project = ProjectBuilder.builder().withName('test').build()
         project.configurations.create(DITA)
@@ -348,23 +359,31 @@ need to set the dita.home system property to point to that installation.''')
     @SuppressWarnings('MethodName')
     def 'Does not throw any errors of everything is set up properly'() {
         setup: 'Project is set up correctly and DITA-OT dir is given.'
-            project.apply plugin: DitaOtPlugin
-            project.ditaOt.dir ditaHome
-            project.evaluate()
+            buildFile << """
+                    plugins {
+                        id 'com.github.eerohele.dita-ot-gradle'
+                    }
+    
+                    ditaOt {
+                        dir '$ditaHome'
+                    }
+    
+                    dita {
+                        input '$examplesDir/simple/dita/root.ditamap'
+                        transtype 'html5'
+                    }
+                """
 
         when:
-            project.dita {
-                input "$examplesDir/simple/dita/root.ditamap"
-                transtype DEFAULT_TRANSTYPE
-            }
-
-            project.dita.render()
+            def result = GradleRunner.create()
+                                     .withProjectDir(testProjectDir.root)
+                                     .withArguments('dita')
+                                     .withPluginClasspath()
+                                     .build()
 
         then: 'Build succeeds.'
-            new File(project.buildDir, 'topic1.html').exists()
+            result.task(':dita').outcome == SUCCESS
+            new File("${testProjectDir.root}/build/topic1.html").exists()
             notThrown BuildException
-
-        cleanup:
-            project.tasks.findByName('clean').execute()
     }
 }

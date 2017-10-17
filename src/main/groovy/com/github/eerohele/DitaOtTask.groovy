@@ -8,6 +8,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectories
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 
@@ -23,6 +24,7 @@ class DitaOtTask extends DefaultTask {
         this.options.devMode = d
     }
 
+    @InputFiles
     void input(Object i) {
         this.options.input = i
     }
@@ -31,6 +33,7 @@ class DitaOtTask extends DefaultTask {
         this.options.filter = f
     }
 
+    @OutputDirectory
     void output(String o) {
         this.options.output = o
     }
