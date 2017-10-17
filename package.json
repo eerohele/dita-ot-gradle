@@ -9,7 +9,7 @@
     "browserify": "^11.2.0",
     "cssnano": "^3.2.0",
     "cssnext": "^1.8.4",
-    "gulp": "^3.9.0",
+    "gulp": "^3.9.1",
     "gulp-babel": "^5.2.1",
     "gulp-postcss": "^6.0.1",
     "gulp-rename": "^1.2.2",
