@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.2 - 2017-10-29
+- Exclude Gradle cache files from up-to-date check #13
+
 ## 0.4.2 - 2017-10-17
 - Fix DITA-OT 3 and Gradle 4 compatibility issues #12
 
