@@ -76,7 +76,7 @@ class DitaOtTask extends DefaultTask {
 
         Set<FileTree> inputFiles = getInputFiles().collect {
             project.fileTree(dir: it.getParent()).matching {
-                exclude '.gradle', outputDir
+                exclude '**/.gradle/**', outputDir
             }
         } as Set
 
