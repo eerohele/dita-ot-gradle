@@ -38,7 +38,7 @@ repositories {
 }
 
 codenarc {
-    toolVersion = '0.24.1'
+    toolVersion = '1.0'
     configFile = file('config/codenarc/codenarc.groovy')
 }
 
