@@ -19,49 +19,8 @@ import org.gradle.util.GradleVersion
 class AntBuilderAssistant {
     private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<IsolatedAntBuilder>()
 
-    private static FileCollection getPluginArchives(Project project) {
-        File plugins = [
-                new File(project.ditaOt.dir, 'config/plugins.xml'),
-                new File(project.ditaOt.dir, 'resources/plugins.xml')
-        ].find { it.exists() }
-
-        if (plugins == null) {
-            throw new GradleException(
-                    """\
-                    Can't find DITA-OT plugin XML file.
-                    Are you sure you're using a valid DITA-OT directory?""".stripIndent()
-            )
-        }
-
-        List<String> archives = new XmlSlurper().parse(plugins).plugin.collectMany { plugin ->
-            String xmlBase = plugin['@xml:base'].text()
-            File pluginDir = new File(plugins.getParent(), xmlBase)
-            assert pluginDir.exists()
-            plugin.feature.@file.collect { file -> new File(pluginDir.getParent(), file.text()) }
-        }
-
-        assert archives != null && archives.size() > 0
-
-        project.files(archives)
-    }
-
-    private static FileCollection getClasspath(Project project) {
-        project.fileTree(dir: project.ditaOt.dir).matching {
-            include(
-                    'config/',
-                    'resources/',
-                    'lib/**/*.jar'
-            )
-
-            exclude(
-                    'lib/ant-launcher.jar',
-                    'lib/ant.jar'
-            )
-        } + getPluginArchives(project)
-    }
-
     protected static IsolatedAntBuilder makeAntBuilder(Project project) {
-        FileCollection classpath = getClasspath(project)
+        FileCollection classpath = project.ditaOt.classpath
         ModuleRegistry moduleRegistry
         DefaultIsolatedAntBuilder antBuilder
 

@@ -36,7 +36,7 @@ class DitaOtPluginSpec extends Specification {
             project.apply plugin: DitaOtPlugin
 
         when:
-            project.ditaOt.dir '/opt/dita-ot'
+            project.ditaOt.dir System.getProperty('dita.home')
 
         then:
             project.ditaOt.dir.class == File

@@ -1,5 +1,6 @@
 package com.github.eerohele
 
+import org.gradle.api.file.FileCollection
 import org.gradle.testkit.runner.GradleRunner
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.api.Project
@@ -280,6 +281,24 @@ need to set the dita.home system property to point to that installation.''')
 
         then:
             !task.getInputFileTree().contains(new File(ditaHome, 'build.xml'))
+    }
+
+    @SuppressWarnings('MethodName')
+    @SuppressWarnings('DuplicateStringLiteral')
+    def 'Allows overriding and augmenting the default classpath'() {
+        when:
+            project.tasks.create(name: DITA_OT, type: DitaOtSetupTask) {
+                dir ditaHome
+
+                classpath getDefaultClasspath(project).matching {
+                    exclude('**/Saxon*.jar')
+                } + project.file('foo.jar')
+            }
+
+        then:
+            FileCollection classpath = project.tasks.getByName(DITA_OT).getProperties().get('classpath')
+            classpath.getFiles().findAll { it.getName().matches(/.*Saxon.*\.jar/)}.isEmpty()
+            classpath.contains(project.file('foo.jar'))
     }
 
     @SuppressWarnings('MethodName')
