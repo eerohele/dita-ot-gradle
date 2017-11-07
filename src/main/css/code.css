@@ -17,7 +17,7 @@ pre[class*="language-"] {
 
 pre[class*="language-"], code[class*="language-"] {
   font-family: var(--font-monospace);
-  line-height: 1vr;
+  line-height: .75vr;
 }
 
 pre code[class*="language-"] {
