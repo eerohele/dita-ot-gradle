@@ -23,7 +23,7 @@ article article:last-of-type {
   margin-bottom: .5vr;
 }
 
-article h1 {
+article h1, article h2 {
   lost-center: var(--main-width);
   position: relative;
 }
