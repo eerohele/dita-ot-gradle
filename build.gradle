@@ -52,7 +52,7 @@ test {
 }
 
 group = 'com.github.eerohele'
-version = '0.4.3'
+version = '0.5.0'
 
 task buildDitaOt(type: GradleBuild) {
     buildFile = "$projectDir/dita-ot/build.gradle"
