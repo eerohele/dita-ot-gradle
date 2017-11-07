@@ -297,7 +297,7 @@ need to set the dita.home system property to point to that installation.''')
 
         then:
             FileCollection classpath = project.tasks.getByName(DITA_OT).getProperties().get('classpath')
-            classpath.getFiles().findAll { it.getName().matches(/.*Saxon.*\.jar/)}.isEmpty()
+            classpath.getFiles().findAll { it.getName().matches(/.*Saxon.*\.jar/) }.isEmpty()
             classpath.contains(project.file('foo.jar'))
     }
 
