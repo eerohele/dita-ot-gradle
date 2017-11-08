@@ -6,13 +6,12 @@ jdk:
 branches:
   only:
     - master
-    - develop
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 
 before_script:
-  - git submodule update --init --recursive
+  - git submodule update --init --remote --recursive
 
 script: ./gradlew :check
 
