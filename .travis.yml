@@ -11,6 +11,7 @@ before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 
 before_script:
+  - ./gradlew -b dita-ot/build.gradle :buildLocal
   - git submodule update --init --remote --recursive
 
 script: ./gradlew :check
