@@ -29,11 +29,11 @@ class DitaOtSetupTask extends DefaultTask {
     }
 
     FileTree getDefaultClasspath(Project project) {
-        Classpath.forProject(project).asType(FileTree)
+        Classpath.forProject(project).getAsFileTree()
     }
 
     FileTree getPluginClasspath(Project project) {
-        Classpath.pluginClasspath(project).asType(FileTree)
+        Classpath.pluginClasspath(project).getAsFileTree()
     }
 
     @TaskAction
