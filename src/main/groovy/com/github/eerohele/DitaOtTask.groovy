@@ -24,6 +24,10 @@ class DitaOtTask extends DefaultTask {
         this.options.devMode = d
     }
 
+    void ditaOt(Object d) {
+        this.options.ditaOt = project.file(d)
+    }
+
     @InputFiles
     void input(Object i) {
         this.options.input = i
@@ -58,6 +62,10 @@ class DitaOtTask extends DefaultTask {
         this.options.useAssociatedFilter = a
     }
 
+    File getDitaHome() {
+        this.options.ditaOt ? this.options.ditaOt : project.ditaOt.dir
+    }
+
     /** Get input files for up-to-date check.
      *
      * By default, all files under all input directories are included in the
@@ -85,9 +93,7 @@ class DitaOtTask extends DefaultTask {
         this.options.filter && inputFiles << project.files(this.options.filter)
 
         if (this.options.devMode) {
-            File ditaHome = project.ditaOt.dir
-
-            inputFiles + project.fileTree(dir: ditaHome).matching {
+            inputFiles + project.fileTree(dir: getDitaHome()).matching {
                 exclude 'temp',
                         'lib/dost-configuration.jar',
                         'lib/org.dita.dost.platform/plugin.properties'
@@ -171,13 +177,13 @@ class DitaOtTask extends DefaultTask {
 
     @TaskAction
     void render() {
-        File ditaHome = project.ditaOt.dir
+        File ditaHome = getDitaHome()
 
         if (project.ditaOt == null || ditaHome == null) {
             throw new InvalidUserDataException(DitaOtPlugin.MESSAGES.ditaHomeError)
         }
 
-        AntBuilderAssistant.getAntBuilder(project).execute {
+        AntBuilderAssistant.getAntBuilder(project, ditaHome).execute {
             getInputFiles().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 

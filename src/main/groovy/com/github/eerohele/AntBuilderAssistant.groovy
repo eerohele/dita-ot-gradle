@@ -19,8 +19,8 @@ import org.gradle.util.GradleVersion
 class AntBuilderAssistant {
     private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<IsolatedAntBuilder>()
 
-    protected static IsolatedAntBuilder makeAntBuilder(Project project) {
-        FileCollection classpath = project.ditaOt.classpath
+    protected static IsolatedAntBuilder makeAntBuilder(Project project, File ditaHome) {
+        FileCollection classpath = Classpath.compile(project, ditaHome)
         ModuleRegistry moduleRegistry
         DefaultIsolatedAntBuilder antBuilder
 
@@ -51,11 +51,11 @@ class AntBuilderAssistant {
         antBuilder
     }
 
-    protected static IsolatedAntBuilder getAntBuilder(Project project) {
+    protected static IsolatedAntBuilder getAntBuilder(Project project, File ditaHome) {
         IsolatedAntBuilder antBuilder = THREAD_LOCAL_ANT_BUILDER.get()
 
         if (antBuilder == null) {
-            antBuilder = makeAntBuilder(project)
+            antBuilder = makeAntBuilder(project, ditaHome)
             THREAD_LOCAL_ANT_BUILDER.set(antBuilder)
         }
 

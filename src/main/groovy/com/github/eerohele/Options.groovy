@@ -7,6 +7,7 @@ class Options {
     Boolean singleOutputDir = false
     Boolean useAssociatedFilter = false
 
+    File ditaOt
     Object input
     Object filter
     String output

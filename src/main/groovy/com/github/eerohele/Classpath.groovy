@@ -5,14 +5,14 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 
 class Classpath {
-    static FileCollection pluginClasspath(Project project) {
-        if (project.ditaOt.dir == null) {
+    static FileCollection pluginClasspath(Project project, File ditaHome) {
+        if (ditaHome == null) {
             throw new GradleException("You must specify the DITA-OT directory (ditaOt.dir) before you can retrieve the plugin classpath.")
         }
 
         File plugins = [
-                new File(project.ditaOt.dir, 'config/plugins.xml'),
-                new File(project.ditaOt.dir, 'resources/plugins.xml')
+                new File(ditaHome, 'config/plugins.xml'),
+                new File(ditaHome, 'resources/plugins.xml')
         ].find { it.exists() }
 
         if (plugins == null) {
@@ -35,8 +35,8 @@ class Classpath {
         project.files(archives)
     }
 
-    static FileCollection forProject(Project project) {
-        project.fileTree(dir: project.ditaOt.dir).matching {
+    static FileCollection compile(Project project, File ditaHome) {
+        project.fileTree(dir: ditaHome).matching {
             include(
                     'config/',
                     'resources/',
@@ -47,6 +47,6 @@ class Classpath {
                     'lib/ant-launcher.jar',
                     'lib/ant.jar'
             )
-        } + pluginClasspath(project)
+        } + pluginClasspath(project, ditaHome)
     }
 }
