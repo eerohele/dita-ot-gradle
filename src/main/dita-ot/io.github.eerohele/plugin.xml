@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<plugin id="com.github.eerohele.html5">
-  <require plugin="org.dita.html5"/>
-  <feature extension="dita.xsl.html5" type="file" file="xsl/main.xsl"/>
-</plugin>
