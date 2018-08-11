@@ -69,6 +69,15 @@ pluginBundle {
     }
 }
 
+gradlePlugin {
+    plugins {
+        customPlugin {
+            id = 'com.github.eerohele.dita-ot-gradle'
+            implementationClass = 'com.github.eerohele.DitaOtPlugin'
+        }
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '4.2.1'
 }
