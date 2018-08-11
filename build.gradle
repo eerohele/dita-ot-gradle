@@ -1,8 +1,5 @@
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.5.0'
     id 'com.gradle.plugin-publish' version '0.9.8'
-    id 'com.moowork.node' version '0.13'
-    id 'com.moowork.gulp' version '0.13'
 }
 
 apply plugin: 'com.gradle.plugin-publish'
@@ -43,7 +40,6 @@ codenarc {
 }
 
 File ditaHome = new File(projectDir, 'dita-ot/src/main')
-String docsDir = new File(projectDir, 'docs').getPath()
 
 test {
     dependsOn 'setupDitaOt'
@@ -52,62 +48,11 @@ test {
 }
 
 group = 'com.github.eerohele'
-version = '0.6.0-beta1'
+version = '0.6.0-beta2'
 
 task buildDitaOt(type: GradleBuild) {
     buildFile = "$projectDir/dita-ot/build.gradle"
     tasks = ['buildLocal']
-}
-
-task symlink {
-    ant.symlink(
-        action: "delete",
-        link: "$ditaHome/plugins/io.github.eerohele"
-    )
-
-    ant.symlink(
-        resource: "${projectDir}/src/main/dita-ot/io.github.eerohele",
-        link: "$ditaHome/plugins/io.github.eerohele"
-    )
-}
-
-task setupDitaOt(dependsOn: [buildDitaOt, symlink])
-
-ditaOt.dir ditaHome
-
-task copyResources(type: Copy) {
-    from "$projectDir/src/main/resources/data.json"
-    into docsDir
-}
-
-dita {
-    dependsOn setupDitaOt
-    input "$projectDir/src/main/dita/index.ditamap"
-    output docsDir
-
-    filter "$projectDir/src/main/ditaval/default.ditaval"
-    transtype 'html5'
-    devMode true
-
-    properties {
-        property(name: 'processing-mode', value: 'strict')
-        property(name: 'dita.input.valfile', location: "$projectDir/src/main/ditaval/default.ditaval")
-        property(name: 'args.xhtml.toc', value: 'toc')
-    }
-}
-
-task docs(dependsOn: [
-    dita, copyResources, gulp_styles, gulp_scripts
-])
-
-
-task publish(dependsOn: [docs, check])
-
-tasks.gulp_styles.dependsOn('installGulp', 'npmInstall')
-tasks.gulp_scripts.dependsOn('installGulp', 'npmInstall')
-
-npm_install {
-    args = ['--loglevel', 'error']
 }
 
 pluginBundle {
