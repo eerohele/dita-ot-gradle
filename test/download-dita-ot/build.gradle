@@ -1,14 +1,7 @@
-buildscript{
-    dependencies{
-        classpath 'com.github.eerohele:dita-ot-gradle:1.0.0-SNAPSHOT'
-    }
-}
-
 plugins {
-    id "de.undercouch.download" version '3.4.2'
+    id 'de.undercouch.download' version '3.4.2'
+    id 'com.github.eerohele.dita-ot-gradle' version '1.0-SNAPSHOT'
 }
-
-apply plugin: "com.github.eerohele.dita-ot-gradle"
 
 def ditaOtVersion = '3.2.1'
 
@@ -30,7 +23,6 @@ dita {
     ditaOt "${buildDir}/dita-ot-${ditaOtVersion}"
     input 'dita/root.ditamap'
     transtype 'html5'
-    plugins 'org.lwdita': 'https://github.com/jelovirt/org.lwdita/releases/download/2.0.5/org.lwdita-2.0.5.zip'
 }
 
 defaultTasks 'dita'
