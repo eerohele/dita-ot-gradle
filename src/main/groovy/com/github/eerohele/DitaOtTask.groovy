@@ -97,7 +97,7 @@ class DitaOtTask extends DefaultTask {
                 exclude 'temp',
                         'lib/dost-configuration.jar',
                         'lib/org.dita.dost.platform/plugin.properties'
-            }
+            } as Set<FileTree>
         } else {
             inputFiles
         }
@@ -109,7 +109,7 @@ class DitaOtTask extends DefaultTask {
             this.options.transtype.collect {
                 getOutputDirectory(file, it)
             }
-        }.flatten() as Set
+        }.flatten() as Set<File>
     }
 
     FileCollection getInputFiles() {
