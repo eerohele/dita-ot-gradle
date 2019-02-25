@@ -4,6 +4,7 @@ import org.apache.commons.io.FilenameUtils as FilenameUtils
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.InputFiles
@@ -68,6 +69,12 @@ class DitaOtTask extends DefaultTask {
 
     FileTree getDefaultClasspath() {
         Classpath.compile(project, this.options.ditaOt).getAsFileTree()
+    }
+
+    FileTree getDefaultClasspath(Project project) {
+        // Retained for backwards compatibility
+        logger.warn("getDefaultClasspath(project) is deprecated. Use getDefaultClasspath() instead.")
+        getDefaultClasspath()
     }
 
     File getDitaHome() {
