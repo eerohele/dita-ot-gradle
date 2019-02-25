@@ -10,3 +10,4 @@ docs/*
 !docs/app.js
 !docs/data.json
 
+*.hprof
