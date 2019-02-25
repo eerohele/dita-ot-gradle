@@ -18,7 +18,7 @@ class DitaOtSetupTask extends DefaultTask {
 
     @SuppressWarnings('ConfusingMethodName')
     void dir(Object dir) {
-        this.dir = project.file(dir)
+        Options.ditaOt = project.ditaOt.dir = project.file(dir)
     }
 
     @SuppressWarnings('ConfusingMethodName')
@@ -45,7 +45,7 @@ class DitaOtSetupTask extends DefaultTask {
     @TaskAction
     void install() {
         if (this.plugins != null && this.dir != null) {
-            AntBuilderAssistant.getAntBuilder(this.dir).execute {
+            AntBuilderAssistant.getAntBuilder(getDefaultClasspath(this.dir)).execute {
                 this.plugins.each { Object plugin ->
                     ant(
                             antfile: new File(this.dir, 'integrator.xml'),

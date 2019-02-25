@@ -25,7 +25,11 @@ class DitaOtTask extends DefaultTask {
     }
 
     void ditaOt(Object d) {
-        this.options.ditaOt = project.file(d)
+        Options.ditaOt = project.file(d)
+    }
+
+    void classpath(Object... classpath) {
+        this.options.classpath = project.files(classpath)
     }
 
     @InputFiles
@@ -60,6 +64,10 @@ class DitaOtTask extends DefaultTask {
 
     void useAssociatedFilter(Boolean a) {
         this.options.useAssociatedFilter = a
+    }
+
+    FileTree getDefaultClasspath() {
+        Classpath.compile(project, this.options.ditaOt).getAsFileTree()
     }
 
     File getDitaHome() {
@@ -161,7 +169,7 @@ class DitaOtTask extends DefaultTask {
      * Example: if the input file is `subdir/root.ditamap` and the given
      * extension is ".properties", the associated file is
      *
-     *`subdir/root.properties`.
+     * `subdir/root.properties`.
      *
      * @param inputFile Input file.
      * @param extension The extension of the associated file.
@@ -183,7 +191,11 @@ class DitaOtTask extends DefaultTask {
             throw new InvalidUserDataException(DitaOtPlugin.MESSAGES.ditaHomeError)
         }
 
-        AntBuilderAssistant.getAntBuilder(project, ditaHome).execute {
+        if (this.options.classpath == null) {
+            this.options.classpath = defaultClasspath
+        }
+
+        AntBuilderAssistant.getAntBuilder(this.options.classpath).execute {
             getInputFiles().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
@@ -218,7 +230,7 @@ class DitaOtTask extends DefaultTask {
 
                         if (this.options.filter || this.options.useAssociatedFilter) {
                             property(name: Properties.ARGS_FILTER,
-                                     location: getDitavalFile(inputFile).getPath())
+                                    location: getDitavalFile(inputFile).getPath())
                         }
                     }
                 }

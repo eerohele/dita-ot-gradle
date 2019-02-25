@@ -1,7 +1,6 @@
 package com.github.eerohele
 
 import org.gradle.api.GradleException
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 
 import org.gradle.api.internal.ClassPathRegistry
@@ -19,8 +18,7 @@ import org.gradle.util.GradleVersion
 class AntBuilderAssistant {
     private static final ThreadLocal<IsolatedAntBuilder> THREAD_LOCAL_ANT_BUILDER = new ThreadLocal<IsolatedAntBuilder>()
 
-    protected static IsolatedAntBuilder makeAntBuilder(Project project, File ditaHome) {
-        FileCollection classpath = Classpath.compile(project, ditaHome)
+    protected static IsolatedAntBuilder makeAntBuilder(FileCollection classpath) {
         ModuleRegistry moduleRegistry
         DefaultIsolatedAntBuilder antBuilder
 
@@ -51,11 +49,11 @@ class AntBuilderAssistant {
         antBuilder
     }
 
-    protected static IsolatedAntBuilder getAntBuilder(Project project, File ditaHome) {
+    protected static IsolatedAntBuilder getAntBuilder(FileCollection classpath) {
         IsolatedAntBuilder antBuilder = THREAD_LOCAL_ANT_BUILDER.get()
 
         if (antBuilder == null) {
-            antBuilder = makeAntBuilder(project, ditaHome)
+            antBuilder = makeAntBuilder(classpath)
             THREAD_LOCAL_ANT_BUILDER.set(antBuilder)
         }
 

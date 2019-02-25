@@ -2,7 +2,8 @@ package com.github.eerohele
 
 import org.gradle.api.file.FileCollection
 import org.gradle.testkit.runner.GradleRunner
-import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+
+import static org.gradle.testkit.runner.TaskOutcome.*
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.InvalidUserDataException
@@ -18,6 +19,7 @@ import spock.lang.Specification
 class DitaOtTaskSpec extends Specification {
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
     File buildFile
+    File settingsFile
 
     private static final String DITA = 'dita'
     private static final String DITA_OT = 'ditaOt'
@@ -37,7 +39,9 @@ class DitaOtTaskSpec extends Specification {
 
     void setup() {
         ditaHome = System.getProperty('dita.home')
+
         buildFile = testProjectDir.newFile('build.gradle')
+        settingsFile = testProjectDir.newFile('settings.gradle')
 
         if (!ditaHome || !new File(ditaHome).isDirectory()) {
             throw new InvalidUserDataException('''dita.home system property not
@@ -341,39 +345,48 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
-    def 'Throws InvalidUserDataException if DITA-OT directory is not set'() {
-        setup:
-            project.tasks.create(name: DITA_OT, type: DitaOtSetupTask)
+    def 'Build fails if DITA-OT directory is not set'() {
+        setup: 'Project is set up correctly and DITA-OT dir is given.'
+            settingsFile << "rootProject.name = 'dita-test'"
 
-            Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-                input "$examplesDir/simple/dita/root.ditamap"
-                transtype DEFAULT_TRANSTYPE
-            }
+            buildFile << """
+                plugins {
+                    id 'com.github.eerohele.dita-ot-gradle'
+                }
+                
+                dita {
+                    input '$examplesDir/simple/dita/root.ditamap'
+                    transtype 'html5'
+                }
+            """
 
         when:
-            task.render()
+            def result = GradleRunner.create()
+                    .withProjectDir(testProjectDir.root)
+                    .withArguments('dita')
+                    .withPluginClasspath()
+                    .buildAndFail()
 
         then:
-            thrown InvalidUserDataException
+            result.task(':dita').outcome == FAILED
     }
 
     @SuppressWarnings('MethodName')
-    def 'Does not throw any errors of everything is set up properly'() {
+    def 'Works when DITA-OT dir is defined inside the "dita" closure'() {
         setup: 'Project is set up correctly and DITA-OT dir is given.'
+            settingsFile << "rootProject.name = 'dita-test'"
+
             buildFile << """
                     plugins {
                         id 'com.github.eerohele.dita-ot-gradle'
                     }
-    
-                    ditaOt {
-                        dir '$ditaHome'
-                    }
-    
+
                     dita {
+                        ditaOt '$ditaHome'
                         input '$examplesDir/simple/dita/root.ditamap'
                         transtype 'html5'
                     }
-                """
+            """
 
         when:
             def result = GradleRunner.create()
@@ -385,6 +398,73 @@ need to set the dita.home system property to point to that installation.''')
         then: 'Build succeeds.'
             result.task(':dita').outcome == SUCCESS
             new File("${testProjectDir.root}/build/topic1.html").exists()
+            notThrown BuildException
+    }
+
+    @SuppressWarnings('MethodName')
+    def 'Works when DITA-OT dir is defined inside the "ditaOt" closure'() {
+        setup: 'Project is set up correctly and DITA-OT dir is given.'
+        settingsFile << "rootProject.name = 'dita-test'"
+
+        buildFile << """
+            plugins {
+                id 'com.github.eerohele.dita-ot-gradle'
+            }
+            
+            ditaOt {
+                dir '$ditaHome'
+            }
+            
+            dita {
+                input '$examplesDir/simple/dita/root.ditamap'
+                transtype 'html5'
+            }
+        """
+
+        when:
+            def result = GradleRunner.create()
+                    .withProjectDir(testProjectDir.root)
+                    .withArguments('dita')
+                    .withPluginClasspath()
+                    .build()
+
+        then: 'Build succeeds.'
+            result.task(':dita').outcome == SUCCESS
+            new File("${testProjectDir.root}/build/topic1.html").exists()
+            notThrown BuildException
+    }
+
+    @SuppressWarnings('MethodName')
+    def 'Installing plugins inside "ditaOt" (deprecated)'() {
+        setup:
+        settingsFile << "rootProject.name = 'dita-test'"
+
+        buildFile << """
+                plugins {
+                    id 'com.github.eerohele.dita-ot-gradle'
+                }
+
+                ditaOt {
+                    dir '$ditaHome'
+                    plugins 'https://github.com/jelovirt/org.lwdita/releases/download/2.2.0/org.lwdita-2.2.0.zip'
+                }
+                
+                dita {
+                    input '$examplesDir/simple/dita/root.ditamap'
+                    transtype 'markdown'
+                }
+                """
+
+        when:
+            def result = GradleRunner.create()
+                    .withProjectDir(testProjectDir.root)
+                    .withArguments('dita')
+                    .withPluginClasspath()
+                    .build()
+
+        then: 'Build succeeds.'
+            result.task(':dita').outcome == SUCCESS
+            new File("${testProjectDir.root}/build/topic1.md").exists()
             notThrown BuildException
     }
 }

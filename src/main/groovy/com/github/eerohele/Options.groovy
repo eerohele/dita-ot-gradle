@@ -1,5 +1,7 @@
 package com.github.eerohele
 
+import org.gradle.api.file.FileCollection
+
 class Options {
     static final String DEFAULT_TRANSTYPE = 'html5'
 
@@ -7,7 +9,8 @@ class Options {
     Boolean singleOutputDir = false
     Boolean useAssociatedFilter = false
 
-    File ditaOt
+    public static File ditaOt
+    FileCollection classpath
     Object input
     Object filter
     String output
