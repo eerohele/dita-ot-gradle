@@ -2,12 +2,12 @@
 
 plugins {
     id "de.undercouch.download" version '3.4.2'
-    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0-beta1'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0-beta2'
 }
 
 defaultTasks 'dita'
 
-String version = '3.0.4'
+String version = '3.2.1'
 
 task downloadDitaOt(type: Download) {
     src "https://github.com/dita-ot/dita-ot/releases/download/${version}/dita-ot-${version}.zip"
