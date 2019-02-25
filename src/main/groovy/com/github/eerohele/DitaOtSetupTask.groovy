@@ -62,7 +62,7 @@ class DitaOtSetupTask extends DefaultTask {
     void install() {
         logger.warn('The "ditaOt" task is deprecated.')
         if (this.plugins != null && this.dir != null) {
-            AntBuilderAssistant.getAntBuilder(getDefaultClasspath(this.dir)).execute {
+            Ant.builder(getDefaultClasspath(this.dir)).execute {
                 this.plugins.each { Object plugin ->
                     ant(
                             antfile: new File(this.dir, 'integrator.xml'),

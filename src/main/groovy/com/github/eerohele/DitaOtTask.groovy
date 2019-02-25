@@ -202,7 +202,7 @@ class DitaOtTask extends DefaultTask {
             this.options.classpath = defaultClasspath
         }
 
-        AntBuilderAssistant.getAntBuilder(this.options.classpath).execute {
+        Ant.builder(this.options.classpath).execute {
             getInputFiles().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
