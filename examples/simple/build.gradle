@@ -1,6 +1,6 @@
 // Load the DITA-OT Gradle plugin.
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.5.0'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0-beta2'
 }
 
 // The DITA-OT Gradle plugin adds a task called "dita" into your Gradle build-
@@ -8,12 +8,10 @@ plugins {
 // on the command line to run DITA-OT.
 defaultTasks 'dita'
 
-ditaOt {
-    // Tell Gradle where your DITA-OT installation is.
-    dir '/opt/dita-ot'
-}
-
 dita {
+    // Tell Gradle where your DITA-OT installation is.
+    ditaOt '/opt/dita-ot'
+
     // Point DITA-OT to the files you want to publish.
     input 'dita/root.ditamap'
 
