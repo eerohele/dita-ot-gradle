@@ -74,7 +74,7 @@ dita {
   </taskbody>
 
   <related-links scope="external" format="html">
-    <link href="http://www.dita-ot.org/dev/getting-started/installing-client.html">
+    <link href="https://www.dita-ot.org/dev/topics/installing-client.html">
       <linktext>Installing DITA Open Toolkit</linktext>
     </link>
 
