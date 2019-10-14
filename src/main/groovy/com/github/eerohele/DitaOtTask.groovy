@@ -71,6 +71,7 @@ class DitaOtTask extends DefaultTask {
         Classpath.compile(project, this.options.ditaOt).getAsFileTree()
     }
 
+    @SuppressWarnings('UnusedMethodParameter')
     FileTree getDefaultClasspath(Project project) {
         // Retained for backwards compatibility
         logger.warn("getDefaultClasspath(project) is deprecated. Use getDefaultClasspath() instead.")
@@ -202,7 +203,7 @@ class DitaOtTask extends DefaultTask {
             this.options.classpath = defaultClasspath
         }
 
-        Ant.builder(this.options.classpath).execute {
+        Ant.getBuilder(this.options.classpath).execute {
             getInputFiles().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 

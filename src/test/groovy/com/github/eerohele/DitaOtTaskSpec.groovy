@@ -3,7 +3,8 @@ package com.github.eerohele
 import org.gradle.api.file.FileCollection
 import org.gradle.testkit.runner.GradleRunner
 
-import static org.gradle.testkit.runner.TaskOutcome.*
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.InvalidUserDataException

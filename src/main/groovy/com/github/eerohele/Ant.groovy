@@ -49,7 +49,7 @@ class Ant {
         antBuilder
     }
 
-    protected static IsolatedAntBuilder builder(FileCollection classpath) {
+    protected static IsolatedAntBuilder getBuilder(FileCollection classpath) {
         IsolatedAntBuilder antBuilder = THREAD_LOCAL_ANT_BUILDER.get()
 
         if (antBuilder == null) {
