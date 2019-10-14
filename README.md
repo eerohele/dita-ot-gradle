@@ -1,4 +1,4 @@
-# DITA-OT Gradle Plugin [![Build Status](https://travis-ci.org/eerohele/dita-ot-gradle.svg?branch=master)](https://travis-ci.org/eerohele/dita-ot-gradle)
+# DITA-OT Gradle Plugin
 
 A [Gradle] plugin for publishing DITA documents with [DITA Open Toolkit].
 
