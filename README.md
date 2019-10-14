@@ -8,7 +8,7 @@ In your Gradle build script (`build.gradle`), add something like this:
 
 ```gradle
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.5.0'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0'
 }
 
 // Publish my.ditamap into the HTML5 output format.
@@ -29,7 +29,7 @@ By default, the output appears in the `build` subdirectory.
 
 ## Features
 
-- (Much) faster than running DITA-OT directly after the first build, thanks to the [Gradle Daemon].
+- After the first build, (much) faster than running DITA-OT directly, thanks to the [Gradle Daemon].
 - Easy to configure.
 - Versatile: publish [multiple documents at once](https://github.com/eerohele/dita-ot-gradle/tree/master/examples/filetree).
 - Incremental builds: only build DITA documents that have changed.
