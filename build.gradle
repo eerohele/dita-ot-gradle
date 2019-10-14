@@ -59,6 +59,10 @@ test {
     dependsOn installDitaOt
     systemProperty 'dita.home', System.getProperty('dita.home', "${buildDir}/dita-ot-${ditaOtVersion}")
     systemProperty 'examples.dir', new File(projectDir, 'examples')
+
+    testLogging {
+        exceptionFormat = 'full'
+    }
 }
 
 group = 'com.github.eerohele'
