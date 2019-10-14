@@ -148,7 +148,7 @@ need to set the dita.home system property to point to that installation.''')
         then:
             task.getOutputDirectories().collect {
                 File parent = new File(it.getParent())
-                new File(parent.getName(), it.getName()).getPath()
+                new File(parent.getName(), it.getName()).getPath().replace('\\', '/')
             } == [ 'one/html5', 'one/pdf', 'two/html5', 'two/pdf' ]
     }
 
