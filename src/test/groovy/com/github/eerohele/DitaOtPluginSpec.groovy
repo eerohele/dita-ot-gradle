@@ -17,28 +17,28 @@ class DitaOtPluginSpec extends Specification {
     @SuppressWarnings('MethodName')
     def "Apply plugin"() {
         expect:
-            project.tasks.findByName(DITA) == null
+        project.tasks.findByName(DITA) == null
 
         when:
-            project.apply plugin: DitaOtPlugin
+        project.apply plugin: DitaOtPlugin
 
         then:
-            Task task = project.tasks.findByName(DITA)
-            task != null
-            task.group == 'Documentation'
+        Task task = project.tasks.findByName(DITA)
+        task != null
+        task.group == 'Documentation'
 
-            project.tasks.findByName('clean') != null
+        project.tasks.findByName('clean') != null
     }
 
     @SuppressWarnings('MethodName')
     def "Load extensions"() {
         given:
-            project.apply plugin: DitaOtPlugin
+        project.apply plugin: DitaOtPlugin
 
         when:
-            project.ditaOt.dir System.getProperty('dita.home')
+        project.ditaOt.dir System.getProperty('dita.home')
 
         then:
-            project.ditaOt.dir.class == File
+        project.ditaOt.dir.class == File
     }
 }
