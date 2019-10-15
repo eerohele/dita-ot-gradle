@@ -357,7 +357,7 @@ need to set the dita.home system property to point to that installation.''')
                 }
                 
                 dita {
-                    input '$examplesDir/simple/dita/root.ditamap'
+                    input '$examplesDir${File.separator}simple${File.separator}dita${File.separator}root.ditamap'
                     transtype 'html5'
                 }
             """
