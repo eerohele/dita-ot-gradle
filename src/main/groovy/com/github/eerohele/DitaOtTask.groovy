@@ -7,6 +7,7 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
+import org.gradle.api.internal.project.IsolatedAntBuilder
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectories
 import org.gradle.api.tasks.OutputDirectory
@@ -191,6 +192,18 @@ class DitaOtTask extends DefaultTask {
         new File(FilenameUtils.concat(dirname, basename) + extension)
     }
 
+    private IsolatedAntBuilder antBuilder(FileCollection classpath) {
+        IsolatedAntBuilder builder = services.get(IsolatedAntBuilder) as IsolatedAntBuilder
+
+        builder.execute {
+            classpath*.toURI()*.toURL()*.each {
+                antProject.getClass().getClassLoader().addURL(it)
+            }
+        }
+
+        builder
+    }
+
     @TaskAction
     void render() {
         File ditaHome = getDitaHome()
@@ -203,7 +216,7 @@ class DitaOtTask extends DefaultTask {
             this.options.classpath = defaultClasspath
         }
 
-        Ant.getBuilder(this.options.classpath).execute {
+        antBuilder(this.options.classpath).execute {
             getInputFiles().each { File inputFile ->
                 File associatedPropertyFile = getAssociatedFile(inputFile, FileExtensions.PROPERTIES)
 
