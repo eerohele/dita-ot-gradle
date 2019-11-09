@@ -22,7 +22,6 @@ class DitaOtSetupTask extends DefaultTask {
     @Deprecated
     @SuppressWarnings('ConfusingMethodName')
     void dir(Object dir) {
-        logger.warn('The "ditaOt" task is deprecated. Use dita { ... ditaOt "/path/to/dita-ot" ... } instead.')
         Options.ditaOt = project.ditaOt.dir = project.file(dir)
     }
 
