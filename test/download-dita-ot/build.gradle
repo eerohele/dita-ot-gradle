@@ -3,7 +3,7 @@ plugins {
     id 'com.github.eerohele.dita-ot-gradle' version '1.0-SNAPSHOT'
 }
 
-def ditaOtVersion = '3.2.1'
+def ditaOtVersion = '3.4'
 
 task downloadDitaOt(type: Download) {
     src "https://github.com/dita-ot/dita-ot/releases/download/${ditaOtVersion}/dita-ot-${ditaOtVersion}.zip"
