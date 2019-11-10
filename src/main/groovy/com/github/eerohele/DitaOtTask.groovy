@@ -68,7 +68,7 @@ class DitaOtTask extends DefaultTask {
         this.options.useAssociatedFilter = a
     }
 
-    @InputFiles
+    @Internal
     FileTree getDefaultClasspath() {
         Classpath.compile(project, this.options.ditaOt).getAsFileTree()
     }
