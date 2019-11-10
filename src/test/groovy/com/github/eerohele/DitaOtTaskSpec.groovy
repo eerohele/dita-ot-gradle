@@ -1,10 +1,10 @@
 package com.github.eerohele
 
 import org.gradle.api.file.FileCollection
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.InvalidUserDataException
@@ -348,7 +348,7 @@ need to set the dita.home system property to point to that installation.''')
 
     @SuppressWarnings('MethodName')
     def 'Build fails if DITA-OT directory is not set'() {
-        setup: 'Project is set up correctly and DITA-OT dir is given.'
+        given:
         settingsFile << "rootProject.name = 'dita-test'"
 
         buildFile << """
@@ -363,19 +363,19 @@ need to set the dita.home system property to point to that installation.''')
             """
 
         when:
-        def result = GradleRunner.create()
+        BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments('dita')
                 .withPluginClasspath()
+                .withArguments('dita')
                 .buildAndFail()
 
         then:
-        result.task(':dita').outcome == FAILED
+        result.output.contains("You must specify the DITA-OT directory")
     }
 
     @SuppressWarnings('MethodName')
     def 'Works when DITA-OT dir is defined inside the "dita" closure'() {
-        setup: 'Project is set up correctly and DITA-OT dir is given.'
+        given:
         settingsFile << "rootProject.name = 'dita-test'"
 
         buildFile << """
@@ -391,13 +391,13 @@ need to set the dita.home system property to point to that installation.''')
             """
 
         when:
-        def result = GradleRunner.create()
+        BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments('dita')
                 .withPluginClasspath()
+                .withArguments('dita')
                 .build()
 
-        then: 'Build succeeds.'
+        then:
         result.task(':dita').outcome == SUCCESS
         new File("${testProjectDir.root}/build/topic1.html").exists()
         notThrown BuildException
@@ -405,7 +405,7 @@ need to set the dita.home system property to point to that installation.''')
 
     @SuppressWarnings('MethodName')
     def 'Works when DITA-OT dir is defined inside the "ditaOt" closure'() {
-        setup: 'Project is set up correctly and DITA-OT dir is given.'
+        given:
         settingsFile << "rootProject.name = 'dita-test'"
 
         buildFile << """
@@ -424,13 +424,13 @@ need to set the dita.home system property to point to that installation.''')
         """
 
         when:
-        def result = GradleRunner.create()
+        BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments('dita')
                 .withPluginClasspath()
+                .withArguments('dita')
                 .build()
 
-        then: 'Build succeeds.'
+        then:
         result.task(':dita').outcome == SUCCESS
         new File("${testProjectDir.root}/build/topic1.html").exists()
         notThrown BuildException
@@ -438,7 +438,7 @@ need to set the dita.home system property to point to that installation.''')
 
     @SuppressWarnings('MethodName')
     def 'Installing plugins inside "ditaOt" (deprecated)'() {
-        setup:
+        given:
         settingsFile << "rootProject.name = 'dita-test'"
 
         buildFile << """
@@ -458,13 +458,13 @@ need to set the dita.home system property to point to that installation.''')
                 """
 
         when:
-        def result = GradleRunner.create()
+        BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments('dita')
                 .withPluginClasspath()
+                .withArguments('dita')
                 .build()
 
-        then: 'Build succeeds.'
+        then:
         result.task(':dita').outcome == SUCCESS
         new File("${testProjectDir.root}/build/topic1.md").exists()
         notThrown BuildException
