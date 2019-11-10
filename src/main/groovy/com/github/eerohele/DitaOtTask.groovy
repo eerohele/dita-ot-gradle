@@ -8,7 +8,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.internal.project.IsolatedAntBuilder
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectories
@@ -80,7 +80,7 @@ class DitaOtTask extends DefaultTask {
         getDefaultClasspath()
     }
 
-    @InputFile
+    @InputDirectory
     File getDitaHome() {
         this.options.ditaOt ? this.options.ditaOt : project.ditaOt.dir
     }
