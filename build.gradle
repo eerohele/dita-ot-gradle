@@ -73,22 +73,16 @@ version = '0.6.0-beta3'
 pluginBundle {
     website = 'https://github.com/eerohele/dita-ot-gradle'
     vcsUrl = 'https://github.com/eerohele/dita-ot-gradle.git'
-    description = 'A Gradle plugin for running DITA Open Toolkit'
     tags = ['dita', 'dita-ot', 'documentation']
-
-    plugins {
-        DitaOtPlugin {
-            id = 'com.github.eerohele.dita-ot-gradle'
-            displayName = 'DITA-OT Gradle Plugin'
-        }
-    }
 }
 
 gradlePlugin {
     plugins {
-        customPlugin {
+        ditaOtPlugin {
             id = 'com.github.eerohele.dita-ot-gradle'
+            displayName = 'DITA-OT Gradle Plugin'
             implementationClass = 'com.github.eerohele.DitaOtPlugin'
+            description = 'A Gradle plugin for running DITA Open Toolkit'
         }
     }
 }
