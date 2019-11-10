@@ -60,7 +60,7 @@ test {
 }
 
 group = 'com.github.eerohele'
-version = '0.6.0-beta4'
+version = '0.6.0-beta5'
 
 pluginBundle {
     website = 'https://github.com/eerohele/dita-ot-gradle'
