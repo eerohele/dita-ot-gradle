@@ -1,0 +1,23 @@
+plugins {
+    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0-beta2'
+}
+
+import com.github.eerohele.DitaOtTask
+
+task web(type: DitaOtTask) {
+    ditaOt '/opt/dita-ot'
+    input 'dita/root.ditamap'
+    transtype 'html5'
+    filter 'dita/a.ditaval'
+}
+
+task pdf(type: DitaOtTask) {
+    ditaOt '/opt/dita-ot'
+    input 'dita/root.ditamap'
+    transtype 'pdf'
+    filter 'dita/b.ditaval'
+
+    properties {
+      property name: 'args.rellinks', value: 'all'
+    }
+}
