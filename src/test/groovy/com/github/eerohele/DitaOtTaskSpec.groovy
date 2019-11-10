@@ -51,7 +51,7 @@ properly set. To run the tests, you need a working DITA-OT installation and you
 need to set the dita.home system property to point to that installation.''')
         }
 
-        examplesDir = System.getProperty('examples.dir')
+        examplesDir = System.getProperty('examples.dir').replace('\\', '/')
 
         assert examplesDir != null
 
