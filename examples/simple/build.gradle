@@ -1,6 +1,6 @@
 // Load the DITA-OT Gradle plugin.
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0-beta2'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0'
 }
 
 // The DITA-OT Gradle plugin adds a task called "dita" into your Gradle build-
