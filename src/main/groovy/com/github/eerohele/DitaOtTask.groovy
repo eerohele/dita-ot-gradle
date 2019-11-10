@@ -8,13 +8,15 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.internal.project.IsolatedAntBuilder
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectories
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 
 class DitaOtTask extends DefaultTask {
+    @Internal
     Options options = new Options()
 
     DitaOtTask() {
@@ -34,7 +36,6 @@ class DitaOtTask extends DefaultTask {
         this.options.classpath = project.files(classpath)
     }
 
-    @InputFiles
     void input(Object i) {
         this.options.input = i
     }
@@ -43,7 +44,6 @@ class DitaOtTask extends DefaultTask {
         this.options.filter = f
     }
 
-    @OutputDirectory
     void output(String o) {
         this.options.output = o
     }
@@ -68,6 +68,7 @@ class DitaOtTask extends DefaultTask {
         this.options.useAssociatedFilter = a
     }
 
+    @InputFiles
     FileTree getDefaultClasspath() {
         Classpath.compile(project, this.options.ditaOt).getAsFileTree()
     }
@@ -79,6 +80,7 @@ class DitaOtTask extends DefaultTask {
         getDefaultClasspath()
     }
 
+    @InputFile
     File getDitaHome() {
         this.options.ditaOt ? this.options.ditaOt : project.ditaOt.dir
     }
@@ -129,6 +131,7 @@ class DitaOtTask extends DefaultTask {
         }.flatten() as Set<File>
     }
 
+    @InputFiles
     FileCollection getInputFiles() {
         project.files(this.options.input)
     }
