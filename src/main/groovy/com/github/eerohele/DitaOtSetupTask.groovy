@@ -4,16 +4,20 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 
 @Deprecated
 class DitaOtSetupTask extends DefaultTask {
+    @InputFiles
     FileCollection classpath
     File dir
     List<Object> plugins
 
     @Deprecated
     @SuppressWarnings('ConfusingMethodName')
+    @InputFiles
     void plugins(Object... plugins) {
         logger.warn('The "ditaOt" task is deprecated.')
         this.plugins = plugins
@@ -21,12 +25,14 @@ class DitaOtSetupTask extends DefaultTask {
 
     @Deprecated
     @SuppressWarnings('ConfusingMethodName')
+    @InputFile
     void dir(Object dir) {
         Options.ditaOt = project.ditaOt.dir = project.file(dir)
     }
 
     @Deprecated
     @SuppressWarnings('ConfusingMethodName')
+    @InputFiles
     void classpath(Object... classpath) {
         logger.warn('The "ditaOt" task is deprecated.')
         this.classpath = project.files(classpath)
