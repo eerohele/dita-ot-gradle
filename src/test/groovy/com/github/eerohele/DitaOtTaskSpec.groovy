@@ -129,8 +129,8 @@ need to set the dita.home system property to point to that installation.''')
     def 'Giving multiple input files'() {
         when:
         Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-            input project.files("$examplesDir/multi/one/one.ditamap",
-                    "$examplesDir/multi/two/two.ditamap")
+            input project.files("$examplesDir/multi-project/one/one.ditamap",
+                    "$examplesDir/multi-project/two/two.ditamap")
         }
 
         then:
@@ -141,8 +141,8 @@ need to set the dita.home system property to point to that installation.''')
     def 'Giving multiple input files and multiple transtypes'() {
         when:
         Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-            input project.files("$examplesDir/multi/one/one.ditamap",
-                    "$examplesDir/multi/two/two.ditamap")
+            input project.files("$examplesDir/multi-project/one/one.ditamap",
+                    "$examplesDir/multi-project/two/two.ditamap")
             transtype 'html5', 'pdf'
         }
 
@@ -157,14 +157,14 @@ need to set the dita.home system property to point to that installation.''')
     def 'Includes containing directories in up-to-date check'() {
         when:
         Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-            input project.files("$examplesDir/multi/one/one.ditamap",
-                    "$examplesDir/multi/two/two.ditamap")
+            input project.files("$examplesDir/multi-project/one/one.ditamap",
+                    "$examplesDir/multi-project/two/two.ditamap")
         }
 
         then:
         Set<File> inputFiles = task.getInputFileTree().files.flatten()
-        inputFiles.contains(new File("$examplesDir/multi/one/one.ditamap"))
-        inputFiles.contains(new File("$examplesDir/multi/two/two.ditamap"))
+        inputFiles.contains(new File("$examplesDir/multi-project/one/one.ditamap"))
+        inputFiles.contains(new File("$examplesDir/multi-project/two/two.ditamap"))
     }
 
     @SuppressWarnings('MethodName')
@@ -326,8 +326,8 @@ need to set the dita.home system property to point to that installation.''')
         when:
         Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
             singleOutputDir true
-            input project.files("$examplesDir/multi/one/one.ditamap",
-                    "$examplesDir/multi/two/two.ditamap")
+            input project.files("$examplesDir/multi-project/one/one.ditamap",
+                    "$examplesDir/multi-project/two/two.ditamap")
         }
 
         then:
@@ -338,8 +338,8 @@ need to set the dita.home system property to point to that installation.''')
     def 'Multiple input files => multiple input folders'() {
         when:
         Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
-            input project.files("$examplesDir/multi/one/one.ditamap",
-                    "$examplesDir/multi/two/two.ditamap")
+            input project.files("$examplesDir/multi-project/one/one.ditamap",
+                    "$examplesDir/multi-project/two/two.ditamap")
         }
 
         then:
@@ -469,4 +469,47 @@ need to set the dita.home system property to point to that installation.''')
         new File("${testProjectDir.root}/build/topic1.md").exists()
         notThrown BuildException
     }
+
+    @SuppressWarnings('MethodName')
+    def 'Multiple publishing tasks'() {
+        given:
+        settingsFile << "rootProject.name = 'dita-test'"
+
+        buildFile << """
+                plugins {
+                    id 'com.github.eerohele.dita-ot-gradle'
+                }
+
+                import com.github.eerohele.DitaOtTask
+                
+                task web(type: DitaOtTask) {
+                    ditaOt '$ditaHome'
+                    input '$examplesDir/multi-task/dita/root.ditamap'
+                    transtype 'html5'
+                    filter '$examplesDir/multi-task/dita/a.ditaval'
+                }
+                
+                task pdf(type: DitaOtTask) {
+                    ditaOt '$ditaHome'
+                    input '$examplesDir/multi-task/dita/root.ditamap'
+                    transtype 'pdf'
+                    filter '$examplesDir/multi-task/dita/b.ditaval'
+                }
+                """
+
+        when:
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withPluginClasspath()
+                .withArguments('web', 'pdf')
+                .build()
+
+        then:
+        result.task(':web').outcome == SUCCESS
+        result.task(':pdf').outcome == SUCCESS
+        new File("${testProjectDir.root}/build/root.pdf").exists()
+        new File("${testProjectDir.root}/build/topic1.html").exists()
+        notThrown BuildException
+    }
+
 }
