@@ -40,7 +40,7 @@ class DitaOtTaskSpec extends Specification {
     }
 
     void setup() {
-        ditaHome = System.getProperty('dita.home')
+        ditaHome = System.getProperty('dita.home').replace('\\', '/')
 
         buildFile = testProjectDir.newFile('build.gradle')
         settingsFile = testProjectDir.newFile('settings.gradle')
