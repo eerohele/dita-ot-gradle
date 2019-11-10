@@ -2,7 +2,7 @@
 
 plugins {
     id "de.undercouch.download" version '4.0.1'
-    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0-beta2'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0'
 }
 
 defaultTasks 'dita'
