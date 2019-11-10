@@ -37,52 +37,9 @@ By default, the output appears in the `build` subdirectory.
 
 ## Examples
 
-### Multiple publishing tasks in a single Gradle buildfile
+See the [`examples`](https://github.com/eerohele/dita-ot-gradle/tree/master/examples) directory in this repository.
 
-```gradle
-import com.github.eerohele.DitaOtTask
-
-task web(type: DitaOtTask) {
-    input 'root.ditamap'
-    transtype 'html5'
-    filter 'web.ditaval'
-}
-
-task pdf(type: DitaOtTask) {
-    input 'root.ditamap'
-    transtype 'pdf'
-    filter 'print.ditaval'
-
-    properties {
-      property name: 'args.rellinks', value: 'all'
-    }
-}
-```
-
-### Specify publishing parameters
-
-```gradle
-// build.gradle
-dita {
-    ditaOt '/path/to/my/dita-ot/directory'
-    input 'my.ditamap'
-    transtype 'html5'
-}
-```
-
-```properties
-# my.properties
-
-# In the same directory as my.ditamap
-#
-# DITA-OT Gradle Plugin looks for a .properties file with the same name
-# in the same directory as your input DITA map file and uses the
-# publishing parameters specified in that file.
-args.artlbl = true
-```
-
-For more examples, see the `examples` directory in this repository.
-
+You're most welcome to contribute improvements on the current set of examples or entirely new examples.
 ## Options
 
 | Type | Option | Description |
