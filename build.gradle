@@ -53,6 +53,7 @@ test {
     systemProperty 'examples.dir', new File(projectDir, 'examples')
 
     testLogging {
+        showStandardStreams = true
         exceptionFormat = 'full'
     }
 }
