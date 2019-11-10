@@ -7,6 +7,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
+import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -373,7 +374,7 @@ need to set the dita.home system property to point to that installation.''')
                 .buildAndFail()
 
         then:
-        result.output.contains("You must specify the DITA-OT directory")
+        result.task(':dita').outcome == FAILED
     }
 
     @SuppressWarnings('MethodName')
