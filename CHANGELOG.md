@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.6.0 – UNRELEASED
+- Allow setting DITA-OT location in execution phase #14, #19
+- Migrate documentation into README.md 
+
 ## 0.5.0 - 2017-11-07
 - Add support for overriding/augmenting DITA-OT classpath #10
 
