@@ -1,15 +1,11 @@
 plugins {
+    id 'codenarc'
+    id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version '0.10.1'
     id 'de.undercouch.download' version '4.0.1'
     id 'se.patrikerdes.use-latest-versions' version '0.2.13'
     id 'com.github.ben-manes.versions' version '0.27.0'
 }
-
-apply plugin: 'com.gradle.plugin-publish'
-apply plugin: 'groovy'
-apply plugin: 'maven'
-apply plugin: 'codenarc'
-apply plugin: 'java-gradle-plugin'
 
 allprojects {
     sourceCompatibility = 1.7
@@ -19,8 +15,8 @@ allprojects {
 defaultTasks 'check'
 
 dependencies {
-    compile gradleApi()
-    compile 'commons-io:commons-io:2.6'
+    implementation gradleApi()
+    implementation 'commons-io:commons-io:2.6'
 
     testImplementation gradleTestKit()
 
