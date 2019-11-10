@@ -21,6 +21,7 @@ dependencies {
     }
 
     testImplementation 'junit:junit:4.13-rc-1'
+    testCompile('org.jsoup:jsoup:1.12.1')
 }
 
 repositories {

@@ -4,6 +4,9 @@ import org.gradle.api.file.FileCollection
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -512,4 +515,34 @@ need to set the dita.home system property to point to that installation.''')
         notThrown BuildException
     }
 
+    @SuppressWarnings('MethodName')
+    def 'Filtering with DITAVAL'() {
+        given:
+        settingsFile << "rootProject.name = 'dita-test'"
+
+        buildFile << """
+                plugins {
+                    id 'com.github.eerohele.dita-ot-gradle'
+                }
+
+                dita {
+                    ditaOt '$ditaHome'
+                    input '$examplesDir/simple/dita/root.ditamap'
+                    filter '$examplesDir/simple/dita/root.ditaval'
+                    transtype 'html5'
+                }
+                """
+
+        when:
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withPluginClasspath()
+                .withArguments('dita')
+                .build()
+
+        then:
+        result.task(':dita').outcome == SUCCESS
+        Document doc = Jsoup.parse(new File("${testProjectDir.root}/build/topic1.html"), 'UTF-8')
+        doc.select("p").first().outerHtml() == '<p class="p">baz </p>'
+    }
 }
