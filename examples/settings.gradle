@@ -1,4 +1,4 @@
 rootProject.name = 'dita-ot-gradle-examples'
 
 includeBuild '../'
-include 'download', 'filetree', 'multi-task', 'multi-project', 'simple'
+include 'classpath', 'download', 'filetree', 'multi-task', 'multi-project', 'simple'
