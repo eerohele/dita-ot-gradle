@@ -583,4 +583,22 @@ need to set the dita.home system property to point to that installation.''')
         Document doc = Jsoup.parse(new File("${testProjectDir.root}/build/topic1.html"), 'UTF-8')
         doc.select("p").first().outerHtml() == '<p class="p">baz </p>'
     }
+
+    @SuppressWarnings('MethodName')
+    def 'Building all examples succeeds'() {
+        when:
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(project.file(examplesDir))
+                .withPluginClasspath()
+                .withArguments('clean', 'dita', "-PditaHome=$ditaHome")
+                .forwardOutput()
+                .build()
+
+        then:
+        result.task(':classpath:dita').outcome == SUCCESS
+        result.task(':download:dita').outcome == SUCCESS
+        result.task(':filetree:dita').outcome == SUCCESS
+        result.task(':multi-task:dita').outcome == NO_SOURCE
+        result.task(':simple:dita').outcome == SUCCESS
+    }
 }
