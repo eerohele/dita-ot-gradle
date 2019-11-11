@@ -12,5 +12,5 @@ subprojects {
     apply plugin: 'com.github.eerohele.dita-ot-gradle'
 
     // Use the same DITA-OT installation for all subprojects.
-    dita.ditaOt '/opt/dita-ot'
+    dita.ditaOt findProperty('ditaHome')
 }

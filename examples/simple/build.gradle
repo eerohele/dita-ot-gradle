@@ -12,7 +12,11 @@ defaultTasks 'dita'
 
 dita {
     // Tell Gradle where your DITA-OT installation is.
-    ditaOt '/opt/dita-ot'
+    //
+    // In this case, we read DITA-OT installation location from a parameter
+    // passed to the build script. You could just pass the path as a String or
+    // a file.
+    ditaOt findProperty('ditaHome')
 
     // Point DITA-OT to the files you want to publish.
     input 'dita/root.ditamap'

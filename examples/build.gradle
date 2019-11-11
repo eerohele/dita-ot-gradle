@@ -1,1 +1,3 @@
 defaultTasks 'dita'
+
+ext.setProperty('ditaHome', new File(projectDir.getParent(), "build/dita-ot"))

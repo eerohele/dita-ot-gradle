@@ -5,14 +5,14 @@ plugins {
 import com.github.eerohele.DitaOtTask
 
 task web(type: DitaOtTask) {
-    ditaOt '/opt/dita-ot'
+    ditaOt findProperty('ditaHome')
     input 'dita/root.ditamap'
     transtype 'html5'
     filter 'dita/a.ditaval'
 }
 
 task pdf(type: DitaOtTask) {
-    ditaOt '/opt/dita-ot'
+    ditaOt findProperty('ditaHome')
     input 'dita/root.ditamap'
     transtype 'pdf'
     filter 'dita/b.ditaval'
