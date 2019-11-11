@@ -36,6 +36,8 @@ class Classpath {
     }
 
     static FileCollection compile(Project project, File ditaHome) {
+        System.setProperty("logback.configurationFile", "${ditaHome}/config/logback.xml")
+
         project.fileTree(dir: ditaHome).matching {
             include(
                     'config/',
