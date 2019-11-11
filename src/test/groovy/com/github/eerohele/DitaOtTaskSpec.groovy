@@ -372,6 +372,7 @@ need to set the dita.home system property to point to that installation.''')
                 .withProjectDir(testProjectDir.root)
                 .withPluginClasspath()
                 .withArguments('dita')
+                .forwardOutput()
                 .buildAndFail()
 
         then:
@@ -400,6 +401,7 @@ need to set the dita.home system property to point to that installation.''')
                 .withProjectDir(testProjectDir.root)
                 .withPluginClasspath()
                 .withArguments('dita')
+                .forwardOutput()
                 .build()
 
         then:
@@ -433,6 +435,7 @@ need to set the dita.home system property to point to that installation.''')
                 .withProjectDir(testProjectDir.root)
                 .withPluginClasspath()
                 .withArguments('dita')
+                .forwardOutput()
                 .build()
 
         then:
@@ -467,6 +470,7 @@ need to set the dita.home system property to point to that installation.''')
                 .withProjectDir(testProjectDir.root)
                 .withPluginClasspath()
                 .withArguments('dita')
+                .forwardOutput()
                 .build()
 
         then:
@@ -496,6 +500,7 @@ need to set the dita.home system property to point to that installation.''')
                 .withProjectDir(testProjectDir.root)
                 .withPluginClasspath()
                 .withArguments('dita')
+                .forwardOutput()
                 .build()
 
         then:
@@ -535,6 +540,7 @@ need to set the dita.home system property to point to that installation.''')
                 .withProjectDir(testProjectDir.root)
                 .withPluginClasspath()
                 .withArguments('web', 'pdf')
+                .forwardOutput()
                 .build()
 
         then:
@@ -569,6 +575,7 @@ need to set the dita.home system property to point to that installation.''')
                 .withProjectDir(testProjectDir.root)
                 .withPluginClasspath()
                 .withArguments('dita')
+                .forwardOutput()
                 .build()
 
         then:
