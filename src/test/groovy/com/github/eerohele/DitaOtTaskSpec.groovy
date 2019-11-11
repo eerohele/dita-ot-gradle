@@ -8,6 +8,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
+import static org.gradle.testkit.runner.TaskOutcome.NO_SOURCE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -472,6 +473,33 @@ need to set the dita.home system property to point to that installation.''')
         result.task(':dita').outcome == SUCCESS
         new File("${testProjectDir.root}/build/topic1.md").exists()
         notThrown BuildException
+    }
+
+    @SuppressWarnings('MethodName')
+    def 'Specifying no inputs skips the task'() {
+        given:
+        settingsFile << "rootProject.name = 'dita-test'"
+
+        buildFile << """
+                plugins {
+                    id 'com.github.eerohele.dita-ot-gradle'
+                }
+                
+                dita {
+                    ditaOt '$ditaHome'
+                    transtype 'html5'
+                }
+                """
+
+        when:
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withPluginClasspath()
+                .withArguments('dita')
+                .build()
+
+        then:
+        result.task(':dita').outcome == NO_SOURCE
     }
 
     /*
