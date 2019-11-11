@@ -44,7 +44,7 @@ You're most welcome to contribute improvements on the current set of examples or
 ## Downloading DITA Open Toolkit
 
 You can use the [Gradle Download Task](https://github.com/michel-kraemer/gradle-download-task) to download DITA-OT and
-use the downloaded version in your build. See the [`download-dita-ot` test scenario](https://github.com/eerohele/dita-ot-gradle/blob/master/test/download-dita-ot/build.gradle) for an example.
+use the downloaded version in your build. See the [`download` example](https://github.com/eerohele/dita-ot-gradle/blob/master/examples/download/build.gradle) for an example.
 
 ## Options
 

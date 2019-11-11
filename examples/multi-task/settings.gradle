@@ -1,1 +1,3 @@
 rootProject.name = 'dita-ot-gradle-multi-task'
+
+includeBuild '../../'

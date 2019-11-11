@@ -1,1 +1,3 @@
-rootProject.name = 'dita-ot-gradle-download'
+rootProject.name = 'download-dita-ot'
+
+includeBuild '../../'

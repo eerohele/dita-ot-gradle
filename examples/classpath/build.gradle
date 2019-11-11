@@ -1,0 +1,32 @@
+// Use Saxon-PE instead of Saxon-HE
+
+plugins {
+    id 'de.undercouch.download' version '4.0.1'
+    id 'com.github.eerohele.dita-ot-gradle' version '1.0-SNAPSHOT'
+}
+
+task downloadSaxonPE(type: Download) {
+    src "https://www.saxonica.com/download/SaxonPE9-9-1-5J.zip"
+    dest file("${buildDir}/SaxonPE9-9-1-5J.zip")
+    overwrite false
+}
+
+task extractSaxonPE(dependsOn: downloadSaxonPE, type: Copy) {
+    from zipTree(downloadSaxonPE.dest)
+    into buildDir
+}
+
+task installSaxonPE(dependsOn: [extractSaxonPE])
+
+dita {
+    dependsOn installSaxonPE
+    ditaOt '/opt/dita-ot'
+    input 'dita/root.ditamap'
+    transtype 'html5'
+
+    classpath defaultClasspath.matching {
+        exclude('**/Saxon-HE*.jar')
+    } + file("${buildDir}/saxon9pe.jar")
+}
+
+defaultTasks 'dita'
