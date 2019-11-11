@@ -28,7 +28,7 @@ class DitaOtSetupTask extends DefaultTask {
     @Deprecated
     @SuppressWarnings('ConfusingMethodName')
     void dir(Object dir) {
-        Options.ditaOt = project.ditaOt.dir = project.file(dir)
+        project.ditaOt.dir = project.file(dir)
     }
 
     @Deprecated

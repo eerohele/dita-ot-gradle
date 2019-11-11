@@ -29,7 +29,7 @@ class DitaOtTask extends DefaultTask {
     }
 
     void ditaOt(Object d) {
-        Options.ditaOt = project.file(d)
+        this.options.ditaOt = project.file(d)
     }
 
     void classpath(Object... classpath) {
@@ -70,7 +70,7 @@ class DitaOtTask extends DefaultTask {
 
     @Internal
     FileTree getDefaultClasspath() {
-        Classpath.compile(project, this.options.ditaOt).getAsFileTree()
+        Classpath.compile(project, getDitaHome()).getAsFileTree()
     }
 
     @SuppressWarnings('UnusedMethodParameter')

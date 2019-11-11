@@ -9,7 +9,7 @@ class Options {
     Boolean singleOutputDir = false
     Boolean useAssociatedFilter = false
 
-    public static File ditaOt
+    File ditaOt
     FileCollection classpath
     Object input
     Object filter
