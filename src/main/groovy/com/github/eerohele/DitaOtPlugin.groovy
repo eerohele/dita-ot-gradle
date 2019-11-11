@@ -25,8 +25,5 @@ class DitaOtPlugin implements Plugin<Project> {
             group: 'Documentation',
             description: 'Publishes DITA documentation with DITA Open Toolkit.'
         )
-
-        System.setProperty('java.awt.headless', 'true')
-        System.setProperty('org.apache.commons.logging.Log', 'org.apache.commons.logging.impl.NoOpLog')
     }
 }
