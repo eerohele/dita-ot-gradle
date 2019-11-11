@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.6.0'
+    id 'com.github.eerohele.dita-ot-gradle' version '1.0-SNAPSHOT'
 }
 
 import com.github.eerohele.DitaOtTask
