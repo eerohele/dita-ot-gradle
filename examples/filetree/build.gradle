@@ -7,7 +7,7 @@ plugins {
 defaultTasks 'dita'
 
 dita {
-    ditaOt '/opt/dita-ot'
+    ditaOt findProperty('ditaHome')
 
     // Publish all .ditamap files in the 'dita' directory.
     input fileTree(dir: 'dita', include: '*.ditamap')

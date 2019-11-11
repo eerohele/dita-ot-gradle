@@ -20,7 +20,7 @@ task installSaxonPE(dependsOn: [extractSaxonPE])
 
 dita {
     dependsOn installSaxonPE
-    ditaOt '/opt/dita-ot'
+    ditaOt findProperty('ditaHome')
     input 'dita/root.ditamap'
     transtype 'html5'
 

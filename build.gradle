@@ -44,13 +44,17 @@ task downloadDitaOt(type: Download) {
 task extractDitaOt(dependsOn: downloadDitaOt, type: Copy) {
     from zipTree(downloadDitaOt.dest)
     into buildDir
+
+    doLast {
+        file("${buildDir}/dita-ot-${ditaOtVersion}").renameTo("${buildDir}/dita-ot")
+    }
 }
 
 task installDitaOt(dependsOn: [extractDitaOt])
 
 test {
     dependsOn installDitaOt
-    systemProperty 'dita.home', System.getProperty('dita.home', "${buildDir}/dita-ot-${ditaOtVersion}")
+    systemProperty 'dita.home', System.getProperty('dita.home', new File(buildDir, 'dita-ot').getCanonicalPath())
     systemProperty 'examples.dir', new File(projectDir, 'examples')
 
     testLogging {
