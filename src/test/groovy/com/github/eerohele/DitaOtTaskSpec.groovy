@@ -507,7 +507,6 @@ need to set the dita.home system property to point to that installation.''')
         result.task(':dita').outcome == NO_SOURCE
     }
 
-    /*
     @SuppressWarnings('MethodName')
     def 'Multiple publishing tasks'() {
         given:
@@ -550,7 +549,6 @@ need to set the dita.home system property to point to that installation.''')
         new File("${testProjectDir.root}/build/topic1.html").exists()
         notThrown BuildException
     }
-    */
 
     @SuppressWarnings('MethodName')
     def 'Filtering with DITAVAL'() {
