@@ -73,6 +73,7 @@ class DitaOtTask extends DefaultTask {
         Classpath.compile(project, getDitaHome()).getAsFileTree()
     }
 
+    @Deprecated
     @SuppressWarnings('UnusedMethodParameter')
     FileTree getDefaultClasspath(Project project) {
         // Retained for backwards compatibility
