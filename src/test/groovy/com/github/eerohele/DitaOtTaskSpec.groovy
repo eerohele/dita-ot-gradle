@@ -507,7 +507,6 @@ need to set the dita.home system property to point to that installation.''')
         result.task(':dita').outcome == NO_SOURCE
     }
 
-    /*
     @SuppressWarnings('MethodName')
     def 'Multiple publishing tasks'() {
         given:
@@ -550,7 +549,6 @@ need to set the dita.home system property to point to that installation.''')
         new File("${testProjectDir.root}/build/topic1.html").exists()
         notThrown BuildException
     }
-    */
 
     @SuppressWarnings('MethodName')
     def 'Filtering with DITAVAL'() {
@@ -584,6 +582,8 @@ need to set the dita.home system property to point to that installation.''')
         doc.select("p").first().outerHtml() == '<p class="p">baz </p>'
     }
 
+    /*
+    // macOS CI build runs out of heap space
     @SuppressWarnings('MethodName')
     def 'Building all examples succeeds'() {
         when:
@@ -601,4 +601,5 @@ need to set the dita.home system property to point to that installation.''')
         result.task(':multi-task:dita').outcome == NO_SOURCE
         result.task(':simple:dita').outcome == SUCCESS
     }
+    */
 }
