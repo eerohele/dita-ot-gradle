@@ -37,7 +37,9 @@ By default, the output appears in the `build` subdirectory.
 
 ## Examples
 
-See the [`examples`](https://github.com/eerohele/dita-ot-gradle/tree/master/examples) directory in this repository.
+To get started, see [the simple example](https://github.com/eerohele/dita-ot-gradle/tree/master/examples/simple) buildfile.
+
+For more examples, see the [`examples`](https://github.com/eerohele/dita-ot-gradle/tree/master/examples) directory in this repository.
 
 You're most welcome to contribute improvements on the current set of examples or entirely new examples.
 
