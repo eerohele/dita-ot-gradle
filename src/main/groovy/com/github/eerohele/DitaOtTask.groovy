@@ -131,9 +131,14 @@ class DitaOtTask extends DefaultTask {
         }.flatten() as Set<File>
     }
 
+    @SkipWhenEmpty
     @InputFiles
     FileCollection getInputFiles() {
-        project.files(this.options.input)
+        if (this.options.input == null) {
+            project.files()
+        } else {
+            project.files(this.options.input)
+        }
     }
 
     File getDitavalFile(File inputFile) {
