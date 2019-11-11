@@ -1,6 +1,7 @@
 // Load the DITA-OT Gradle plugin.
 plugins {
-    // This is a dummy version — use the actual latest version instead.
+    // This is a dummy version number — use the actual latest version number
+    // instead.
     id 'com.github.eerohele.dita-ot-gradle' version '1.0-SNAPSHOT'
 }
 
