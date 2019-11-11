@@ -1,15 +1,7 @@
 // See the 'simple' example for comments on the basic properties.
 
-buildscript {
-  repositories {
-    maven {
-      url 'https://plugins.gradle.org/m2/'
-    }
-  }
-
-  dependencies {
-    classpath 'com.github.eerohele:dita-ot-gradle:1.0-SNAPSHOT'
-  }
+plugins {
+    id 'com.github.eerohele.dita-ot-gradle' version '1.0-SNAPSHOT' apply false
 }
 
 // Set 'dita' as the default task for this project.
