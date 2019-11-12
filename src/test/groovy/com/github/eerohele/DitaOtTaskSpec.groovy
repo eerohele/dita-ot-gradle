@@ -380,41 +380,6 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
-    def 'Filtering with DITAVAL'() {
-        given:
-        settingsFile << "rootProject.name = 'dita-test'"
-
-        buildFile << """
-                plugins {
-                    id 'com.github.eerohele.dita-ot-gradle'
-                }
-
-                dita {
-                    ditaOt '$ditaHome'
-                    input '$examplesDir/simple/dita/root.ditamap'
-                    filter '$examplesDir/simple/dita/root.ditaval'
-                    transtype 'html5'
-                }
-                """
-
-        when:
-        BuildResult result = GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .withPluginClasspath()
-                .withArguments('dita')
-                .forwardOutput()
-                .build()
-
-        then:
-        result.task(':dita').outcome == SUCCESS
-        Document doc = Jsoup.parse(new File("${testProjectDir.root}/build/topic1.html"), 'UTF-8')
-        doc.select("p").first().outerHtml() == '<p class="p">baz </p>'
-    }
-
-    /*
-    // macOS CI build runs out of heap space
-
-    @SuppressWarnings('MethodName')
     def 'Works when DITA-OT dir is defined inside the "dita" closure'() {
         given:
         settingsFile << "rootProject.name = 'dita-test'"
@@ -543,6 +508,41 @@ need to set the dita.home system property to point to that installation.''')
     }
 
     @SuppressWarnings('MethodName')
+    def 'Filtering with DITAVAL'() {
+        given:
+        settingsFile << "rootProject.name = 'dita-test'"
+
+        buildFile << """
+                plugins {
+                    id 'com.github.eerohele.dita-ot-gradle'
+                }
+
+                dita {
+                    ditaOt '$ditaHome'
+                    input '$examplesDir/simple/dita/root.ditamap'
+                    filter '$examplesDir/simple/dita/root.ditaval'
+                    transtype 'html5'
+                }
+                """
+
+        when:
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(testProjectDir.root)
+                .withPluginClasspath()
+                .withArguments('dita')
+                .forwardOutput()
+                .build()
+
+        then:
+        result.task(':dita').outcome == SUCCESS
+        Document doc = Jsoup.parse(new File("${testProjectDir.root}/build/topic1.html"), 'UTF-8')
+        doc.select("p").first().outerHtml() == '<p class="p">baz </p>'
+    }
+
+    /*
+    // macOS CI build runs out of heap space
+
+    @SuppressWarnings('MethodName')
     def 'Multiple publishing tasks'() {
         given:
         settingsFile << "rootProject.name = 'dita-test'"
@@ -553,14 +553,14 @@ need to set the dita.home system property to point to that installation.''')
                 }
 
                 import com.github.eerohele.DitaOtTask
-                
+
                 task web(type: DitaOtTask) {
                     ditaOt '$ditaHome'
                     input '$examplesDir/multi-task/dita/root.ditamap'
                     transtype 'html5'
                     filter '$examplesDir/multi-task/dita/a.ditaval'
                 }
-                
+
                 task pdf(type: DitaOtTask) {
                     ditaOt '$ditaHome'
                     input '$examplesDir/multi-task/dita/root.ditamap'
