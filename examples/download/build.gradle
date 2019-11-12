@@ -7,6 +7,8 @@ plugins {
 
 def ditaOtVersion = '3.4'
 
+// Download and install DITA-OT
+
 task downloadDitaOt(type: Download) {
     src "https://github.com/dita-ot/dita-ot/releases/download/${ditaOtVersion}/dita-ot-${ditaOtVersion}.zip"
     dest new File(buildDir, "dita-ot-${ditaOtVersion}.zip")
@@ -18,13 +20,29 @@ task extract(dependsOn: downloadDitaOt, type: Copy) {
     into buildDir
 }
 
-task install(dependsOn: [extract])
+def ditaHome = "${buildDir}/dita-ot-${ditaOtVersion}"
+
+// Install DITA-OT plugins from DITA-OT Plugin Registry
+
+def plugins = ['org.lwdita', 'org.dita.normalize']
+
+plugins.each { id ->
+    tasks.create(id, Exec) {
+        // Install plugin if not already installed, otherwise build will fail
+        onlyIf { !file("$ditaHome/plugins/$id").exists() }
+        outputs.dir("$ditaHome/plugins/$id")
+        workingDir ditaHome
+        commandLine 'bin/dita', '--install', id
+    }
+}
+
+task install(dependsOn: [extract, plugins])
 
 dita {
     dependsOn install
-    ditaOt "${buildDir}/dita-ot-${ditaOtVersion}"
+    ditaOt ditaHome
     input 'dita/root.ditamap'
-    transtype 'html5'
+    transtype 'markdown'
 }
 
 defaultTasks 'dita'
