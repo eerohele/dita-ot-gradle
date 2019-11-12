@@ -2,9 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.6.0 – UNRELEASED
+## 0.6.0 – 2019-11-12
 - Allow setting DITA-OT location in execution phase #14, #19
-- Migrate documentation into README.md 
+
+  This lets you retrieve DITA-OT in the same Gradle build that uses it to
+  publish things.
+
+- Migrate documentation into README.md
+- Overhaul examples 
 
 ## 0.5.0 - 2017-11-07
 - Add support for overriding/augmenting DITA-OT classpath #10
