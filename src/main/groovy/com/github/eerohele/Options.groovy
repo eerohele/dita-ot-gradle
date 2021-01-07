@@ -13,7 +13,7 @@ class Options {
     FileCollection classpath
     Object input
     Object filter
-    String output
+    File output
     Object temp = getDefaultTempDir()
 
     Closure properties

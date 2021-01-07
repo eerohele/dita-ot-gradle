@@ -539,6 +539,20 @@ need to set the dita.home system property to point to that installation.''')
         doc.select("p").first().outerHtml() == '<p class="p">baz </p>'
     }
 
+    @SuppressWarnings('MethodName')
+    @SuppressWarnings('DuplicateStringLiteral')
+    @SuppressWarnings('DuplicateListLiteral')
+    def 'Relative output directory resolves against project root directory'() {
+        when:
+        Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
+            input ROOT_DITAMAP
+            output 'out'
+        }
+
+        then:
+        task.getOutputDirectories()*.getCanonicalPath() == [new File(project.rootDir, 'out').getCanonicalPath()]
+    }
+
     /*
     // macOS CI build runs out of heap space
 

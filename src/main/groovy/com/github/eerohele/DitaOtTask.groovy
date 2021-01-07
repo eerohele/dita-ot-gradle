@@ -45,7 +45,7 @@ class DitaOtTask extends DefaultTask {
     }
 
     void output(String o) {
-        this.options.output = o
+        this.options.output = project.file(o)
     }
 
     void temp(String t) {
@@ -100,7 +100,7 @@ class DitaOtTask extends DefaultTask {
     @InputFiles
     @SkipWhenEmpty
     Set<FileTree> getInputFileTree() {
-        String outputDir = FilenameUtils.getBaseName(this.options.output)
+        String outputDir = FilenameUtils.getBaseName(this.options.output.getPath())
 
         Set<FileTree> inputFiles = getInputFiles().collect {
             project.fileTree(dir: it.getParent()).matching {
@@ -166,7 +166,7 @@ class DitaOtTask extends DefaultTask {
         File baseOutputDir = null
 
         if (this.options.singleOutputDir || getInputFiles().size() == 1) {
-            baseOutputDir = new File(this.options.output)
+            baseOutputDir = this.options.output
         } else {
             String basename = FilenameUtils.getBaseName(inputFile.getPath())
             baseOutputDir = new File(this.options.output, basename)
