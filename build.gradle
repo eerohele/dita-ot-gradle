@@ -2,10 +2,10 @@ plugins {
     id 'groovy'
     id 'codenarc'
     id 'java-gradle-plugin'
-    id 'com.gradle.plugin-publish' version '0.10.1'
-    id 'de.undercouch.download' version '4.0.1'
-    id 'se.patrikerdes.use-latest-versions' version '0.2.13'
-    id 'com.github.ben-manes.versions' version '0.27.0'
+    id 'com.gradle.plugin-publish' version '0.12.0'
+    id 'de.undercouch.download' version '4.1.1'
+    id 'se.patrikerdes.use-latest-versions' version '0.2.15'
+    id 'com.github.ben-manes.versions' version '0.36.0'
 }
 
 sourceCompatibility = 1.8
@@ -14,14 +14,14 @@ defaultTasks 'check'
 
 dependencies {
     implementation localGroovy()
-    implementation 'commons-io:commons-io:2.6'
+    implementation 'commons-io:commons-io:2.8.0'
 
     testImplementation('org.spockframework:spock-core:1.3-groovy-2.5') {
         exclude module: 'groovy-all'
     }
 
-    testImplementation 'junit:junit:4.13-rc-1'
-    testCompile('org.jsoup:jsoup:1.12.1')
+    testImplementation 'junit:junit:4.13.1'
+    testCompile('org.jsoup:jsoup:1.13.1')
 }
 
 repositories {

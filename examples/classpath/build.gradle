@@ -1,7 +1,7 @@
 // Use Saxon-PE instead of Saxon-HE
 
 plugins {
-    id 'de.undercouch.download' version '4.0.1'
+    id 'de.undercouch.download' version '4.1.1'
     id 'com.github.eerohele.dita-ot-gradle' version '1.0-SNAPSHOT'
 }
 
