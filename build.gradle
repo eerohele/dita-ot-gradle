@@ -33,7 +33,7 @@ codenarc {
     configFile = file('config/codenarc/codenarc.groovy')
 }
 
-def ditaOtVersion = '3.4'
+def ditaOtVersion = '3.6'
 
 task downloadDitaOt(type: Download) {
     src "https://github.com/dita-ot/dita-ot/releases/download/${ditaOtVersion}/dita-ot-${ditaOtVersion}.zip"
