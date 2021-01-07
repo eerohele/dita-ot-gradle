@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.7.0 - 2020-01-07
+- Resolve relative output dir against project root dir #24
+
 ## 0.6.0 – 2019-11-12
 - Allow setting DITA-OT location in execution phase #14, #19
 
