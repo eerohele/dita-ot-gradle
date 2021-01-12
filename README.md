@@ -67,7 +67,7 @@ To pass an Ant property to DITA-OT, use the `properties` block. For example:
 // Give DITA-OT additional parameters.
 //
 // For a list of the parameters DITA-OT understands, see:
-// http://www.dita-ot.org/2.1/parameters/
+// https://www.dita-ot.org/dev/parameters/
 properties {
     property(name: 'processing-mode', value: 'strict')
 }
