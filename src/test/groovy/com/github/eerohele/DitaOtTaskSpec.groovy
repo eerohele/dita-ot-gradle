@@ -542,15 +542,17 @@ need to set the dita.home system property to point to that installation.''')
     @SuppressWarnings('MethodName')
     @SuppressWarnings('DuplicateStringLiteral')
     @SuppressWarnings('DuplicateListLiteral')
-    def 'Relative output directory resolves against project root directory'() {
+    def 'Relative output and temp directories resolve against project root directory'() {
         when:
         Task task = project.tasks.create(name: DITA, type: DitaOtTask) {
             input ROOT_DITAMAP
             output 'out'
+            temp 'temp'
         }
 
         then:
         task.getOutputDirectories()*.getCanonicalPath() == [new File(project.rootDir, 'out').getCanonicalPath()]
+        task.options.temp.getCanonicalPath() == new File(project.rootDir, 'temp').getCanonicalPath()
     }
 
     /*

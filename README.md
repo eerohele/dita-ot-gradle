@@ -8,7 +8,7 @@ In your Gradle build script (`build.gradle`), add something like this:
 
 ```gradle
 plugins {
-    id 'com.github.eerohele.dita-ot-gradle' version '0.7.0'
+    id 'com.github.eerohele.dita-ot-gradle' version '0.7.1'
 }
 
 // Publish my.ditamap into the HTML5 output format.

@@ -49,7 +49,7 @@ class DitaOtTask extends DefaultTask {
     }
 
     void temp(String t) {
-        this.options.temp = t
+        this.options.temp = project.file(t)
     }
 
     void properties(Closure p) {

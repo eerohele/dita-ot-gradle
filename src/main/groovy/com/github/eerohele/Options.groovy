@@ -14,7 +14,7 @@ class Options {
     Object input
     Object filter
     File output
-    Object temp = getDefaultTempDir()
+    File temp = getDefaultTempDir()
 
     Closure properties
     List<String> transtype = [DEFAULT_TRANSTYPE]
