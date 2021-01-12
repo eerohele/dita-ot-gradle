@@ -58,7 +58,30 @@ use the downloaded version in your build. See the [`download` example](https://g
 | `String` or `File` | `filter` | Path to DITAVAL file to use for publishing. |
 | `Boolean` | `singleOutputDir` | Multiple input files ➞ single output directory. Default: `false`. |
 | `Boolean` |	`useAssociatedFilter` |	For every input file, use DITAVAL file in same directory with same basename. Default: `false`. |
-| `String` | `property` | Pass Ant properties to DITA-OT. If your Ant properties are paths (such as `args.cssroot`), you need to use absolute paths. If the path is under the same directory as `build.gradle`, you can use the `projectDir` variable like this: `"${projectDir}/my/awesome/path"` (note the double quotes, single quotes won't work.))
+
+## Passing Ant properties to DITA-OT
+
+To pass an Ant property to DITA-OT, use the `properties` block. For example:
+
+```groovy
+// Give DITA-OT additional parameters.
+//
+// For a list of the parameters DITA-OT understands, see:
+// http://www.dita-ot.org/2.1/parameters/
+properties {
+    property(name: 'processing-mode', value: 'strict')
+}
+```
+
+If your Ant properties are paths (such as `args.cssroot`), you need to use absolute paths. If the path is under the same directory as `build.gradle`, you can use the `projectDir` variable:
+
+```groovy
+properties {
+    // Note the double quotes around the value; with single quotes,
+    // the projectDir variable won't be expanded.
+    property(name: 'args.cssroot', value: "${projectDir}/my/awesome/path")
+}
+```
 
 ## License
 
