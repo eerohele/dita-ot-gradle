@@ -58,6 +58,7 @@ use the downloaded version in your build. See the [`download` example](https://g
 | `String` or `File` | `filter` | Path to DITAVAL file to use for publishing. |
 | `Boolean` | `singleOutputDir` | Multiple input files ➞ single output directory. Default: `false`. |
 | `Boolean` |	`useAssociatedFilter` |	For every input file, use DITAVAL file in same directory with same basename. Default: `false`. |
+| `String` | `property` | Pass Ant properties to DITA-OT. If your Ant properties are paths (such as `args.cssroot`), you need to use absolute paths. If the path is under the same directory as `build.gradle`, you can use the `projectDir` variable like this: `"${projectDir}/my/awesome/path"` (note the double quotes, single quotes won't work.))
 
 ## License
 
